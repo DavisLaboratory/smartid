@@ -1,0 +1,29 @@
+---
+title: "smartid: Scoring and MARker selection method based on modified Tf-IDf"
+author:
+  - name: Jinjin Chen
+    affiliation:
+      - Bioinformatics Division, Walter and Eliza Hall Institute of Medical Research, Parkville, VIC 3052, Australia
+      - Department of Medical Biology, University of Melbourne, Parkville, VIC 3010, Australia
+    email: chen.j@wehi.edu.au
+date: "`r format(Sys.time(), '%d %b %Y')`"
+output: 
+  BiocStyle::html_document:
+    toc: true
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{smartid: Scoring and MARker selection method based on modified Tf-IDf}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(smartid)
+```
