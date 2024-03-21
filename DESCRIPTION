@@ -39,6 +39,7 @@ Imports:
     mixtools,
     sparseMatrixStats,
     stats,
+    SummarizedExperiment,
     tidyr,
     utils
 Suggests: 
