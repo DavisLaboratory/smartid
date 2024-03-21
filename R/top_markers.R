@@ -11,18 +11,20 @@
 #'
 #' @examples
 #' data <- matrix(rgamma(100, 2), 10, dimnames = list(1:10))
-#' top_markers(data, label = rep(c("A", "B"), 5))
-top_markers <- function(data, label, n = 10,
-                        use_glm = TRUE,
-                        scale = TRUE,
-                        softmax = TRUE,
-                        ...) {
-  if(use_glm == TRUE) {
+#' top_markers_init(data, label = rep(c("A", "B"), 5))
+top_markers_init <- function(data, label, n = 10,
+                             use.glm = TRUE,
+                             scale = TRUE,
+                             use.mgm = TRUE,
+                             softmax = TRUE,
+                             ...) {
+  if(use.glm == TRUE) {
     data <- top_markers_glm(
       data = data,
       label = label,
       n = n,
       scale = scale,
+      use.mgm = use.mgm,
       softmax = softmax,
       ...
     )
@@ -32,6 +34,7 @@ top_markers <- function(data, label, n = 10,
       label = label,
       n = n,
       scale = scale,
+      use.mgm = use.mgm,
       softmax = softmax,
       ...
     )
@@ -44,10 +47,11 @@ top_markers <- function(data, label, n = 10,
 #'
 #' @param data matrix, features in row and samples in column
 #' @param label vector, group labels
-#' @param n numeric, number of returned top genes for each group
+#' @param n integer, number of returned top genes for each group
 #' @param method character, specify metric to compute, can be one of "median",
 #'               "mad", "mean"
 #' @param scale logical, if to scale data by row
+#' @param use.mgm logical, if to scale data using [scale_mgm()]
 #' @param softmax logical, if to apply softmax transformation on output
 #'
 #' @return a tibble with feature names, group labels and ordered processed scores
@@ -58,10 +62,12 @@ top_markers <- function(data, label, n = 10,
 #' top_markers_abs(data, label = rep(c("A", "B"), 5))
 top_markers_abs <- function(data, label, n = 10,
                             method = c("median", "mad", "mean"),
-                            scale = TRUE,
+                            scale = TRUE, use.mgm = TRUE,
                             softmax = TRUE) {
   method <- match.arg(method)
-  if(scale == TRUE) {
+  if(scale & use.mgm) {
+    data <- scale_mgm(expr = data, label = label)
+  }else if(scale & !use.mgm) {
     ## scale scores on rows
     # mu_s <- sparseMatrixStats::rowMeans2(data, na.rm = TRUE)
     # sd_s <- sparseMatrixStats::rowSds(data, na.rm = TRUE)
@@ -98,9 +104,10 @@ top_markers_abs <- function(data, label, n = 10,
 #'
 #' @param data matrix, features in row and samples in column
 #' @param label vector, group labels
-#' @param n numeric, number of returned top genes for each group
+#' @param n integer, number of returned top genes for each group
 #' @param family family for glm, details in [stats::glm()]
 #' @param scale logical, if to scale data by row
+#' @param use.mgm logical, if to scale data using [scale_mgm()]
 #' @param softmax logical, if to apply softmax transformation on output
 #'
 #' @return a tibble with feature names, group labels and ordered processed scores
@@ -111,13 +118,13 @@ top_markers_abs <- function(data, label, n = 10,
 #' top_markers_glm(data, label = rep(c("A", "B"), 5))
 top_markers_glm <- function(data, label, n = 10,
                             family = gaussian(), # score are continuous non-negative, can use gamma or inverse.gaussian, if continuous and unbounded use gaussian, if discrete use poisson, if binary or proportions between [0,1] or binary freq counts use binomial
-                            scale = TRUE,
+                            scale = TRUE, use.mgm = TRUE,
                             # log = TRUE,
                             softmax = TRUE) {
   label <- factor(label) # factorize label
 
   ## scale
-  if(scale == TRUE) {
+  if(scale & !use.mgm) {
     ## scale scores on rows
     # mu_s <- sparseMatrixStats::rowMeans2(data, na.rm = TRUE)
     # sd_s <- sparseMatrixStats::rowSds(data, na.rm = TRUE)
@@ -125,6 +132,8 @@ top_markers_glm <- function(data, label, n = 10,
 
     data <- t(scale(t(data)))
     data[is.na(data)] <- 0 # assign 0 to NA when sd = 0
+  }else if(scale & use.mgm) {
+    data <- scale_mgm(expr = data, label = label)
   }
 
   # ## log score

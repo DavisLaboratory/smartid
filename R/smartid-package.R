@@ -2,6 +2,7 @@
 #' @import methods
 #' @import stats
 #' @import graphics
+#' @importClassesFrom Matrix dgCMatrix
 NULL
 
 #' Scoring and Marker Selection method based on modified TF-IDF
@@ -21,4 +22,13 @@ NULL
 #'
 NULL
 
-
+#' scRNA-seq test data of 4 groups simulated by `splatter`.
+#'
+#' A SingleCellExperiment object containing 4 groups with each group up-regulated
+#' DEGs saved in metadata.
+#'
+#' @format A SingleCellExperiment object of 100genes * 400 cells.
+#' @usage data(sim_sce_test)
+#' @return SingleCellExperiment
+#' @source [splatter::splatSimulate()]
+"sim_sce_test"

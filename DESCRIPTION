@@ -15,19 +15,25 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Collate: 
-    'cal_score.R'
-    'idf_wrappers.R'
+    'tf_idf_iae_wrappers.R'
+    'score.R'
+    'AllGenerics.R'
+    'gs_score-methods.R'
+    'objects.R'
     'plot.R'
     'scale_mgm.R'
+    'score-methods.R'
     'select_markers.R'
     'smartid-package.R'
     'top_markers.R'
+    'top_markers-methods.R'
 Depends: 
     R (>= 4.3)
 Imports: 
     dplyr,
     ggplot2,
     graphics,
+    Matrix,
     mclust,
     methods,
     mixtools,
@@ -40,5 +46,11 @@ Suggests:
     ggpubr,
     knitr,
     rmarkdown,
-    tidytext
+    scater,
+    splatter,
+    testthat (>= 3.0.0),
+    tidytext,
+    UpSetR
 VignetteBuilder: knitr
+Config/testthat/edition: 3
+LazyData: true

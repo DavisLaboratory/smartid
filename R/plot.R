@@ -51,16 +51,19 @@ plot_mm <- function(mixmdl, dist = c("norm", "gamma")) {
 
 ## plot density and hist for EM mixture model in mclust or clusters in hdbscan
 plot_mm_clust <- function(score, clust) {
-  data.frame(Scores = score, Comp = clust) |>
-    ggplot(aes(x = Scores, group = Comp, col = factor(Comp))) +
-    geom_histogram(aes(y = ..density.., fill = factor(Comp)), alpha = 0.5) +
+  clust <- factor(clust)
+  p <- data.frame(Scores = score, Comp = clust) |>
+    ggplot(aes(x = Scores, group = Comp, col = Comp)) +
+    geom_histogram(aes(y = ..density.., fill = Comp), alpha = 0.5) +
     geom_density() +
     geom_vline(
       data = stack(tapply(score, clust, mean)),
       aes(xintercept = values, col = ind)
     ) +
-    guides(col = "Component", fill = "Component") +
+    labs(col = "Component", fill = "Component") +
     theme_classic()
+
+  return(p)
 }
 
 
@@ -113,7 +116,7 @@ sin_score_boxplot <- function(data, features = NULL,
 ova_score_boxplot <- function(data, features,
                               ref.group, label,
                               method = "t.test") {
-  data.frame(Score = cal_score_init(data, features = features),
+  data.frame(Score = gs_score_init(data, features = features),
              Group = label) |>
     ggplot(aes(x = Group, y = Score, col = Group)) +
     geom_boxplot() +

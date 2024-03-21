@@ -24,7 +24,7 @@ NULL
 #' top_n <- top_markers(data, label = rep(c("A", "B"), 5))
 #' markers_mixmdl(top_n, k = 3)
 markers_mixmdl <- function(top_markers, column = ".dot",
-                           prob = 0.99, k = 3, ratio = 1.5,
+                           prob = 0.99, k = 3, ratio = 2,
                            dist = c("norm", "gamma"), # gamma takes much longer time, when data is extreme imbalanced using norm
                            maxit = 1e5,
                            plot = FALSE,
@@ -184,7 +184,7 @@ markers_hdbscan <- function(top_markers,
 
     if(plot == TRUE) {
       ## plot hist and density with mu
-      print(plot_mm_clust(cl))
+      print(plot_mm_clust(s, cl$cluster))
       ## plot hc with stable clusters
       plot(cl, show_flat = TRUE)
     }

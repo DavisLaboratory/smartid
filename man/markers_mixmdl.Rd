@@ -9,7 +9,7 @@ markers_mixmdl(
   column = ".dot",
   prob = 0.99,
   k = 3,
-  ratio = 1.5,
+  ratio = 2,
   dist = c("norm", "gamma"),
   maxit = 1e+05,
   plot = FALSE,

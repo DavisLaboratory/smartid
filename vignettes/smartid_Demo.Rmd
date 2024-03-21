@@ -1,5 +1,5 @@
 ---
-title: "smartid: Scoring and MARker selection method based on modified Tf-IDf"
+title: "A quick start guide to smartid: Scoring and MARker selection method based on modified Tf-IDf"
 author:
   - name: Jinjin Chen
     affiliation:
@@ -20,10 +20,286 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 8,
+  fig.height = 5
 )
 ```
 
-```{r setup}
-library(smartid)
+# Introduction
+
+------------------------------------------------------------------------
+
+**smartid**
+
+smartid is a package that enables automated selection of group specific signature, especially for rare population. This package is developed for generating specifc lists of signature genes based on TF-IDF modified methods for labeled data. It can also be used as a new gene-set scoring method or data transformation method for un-labeled data. Multiple visualization functions are implemented in this package.
+
+# Installation
+
+------------------------------------------------------------------------
+
+`smartid` R package can be installed from Bioconductor or [GitHub](https://github.com/DavisLaboratory/smartid).
+
+The most updated version of `smartid` is hosted on GitHub and can be installed using `devtools::install_github()` function provided by [devtools](https://cran.r-project.org/package=devtools).
+
+```{r installation, eval=FALSE}
+# if (!requireNamespace("devtools", quietly = TRUE)) {
+#   install.packages("devtools")
+# }
+# if (!requireNamespace("smartid", quietly = TRUE)) {
+#   devtools::install_github("DavisLaboratory/smartid")
+# }
+
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+if (!requireNamespace("smartid", quietly = TRUE)) {
+  BiocManager::install("smartid")
+}
 ```
+
+# Prepare Data
+
+------------------------------------------------------------------------
+
+To show a quick start guide of smartid, here we use package `splatter` to simulate a scRNA-seq data of 1000 genes * 3000 cells. This data consists of 4 groups, each has 2% DEGs except Group 4, which has no DEG as a negative control group.
+
+```{r set up, message=FALSE}
+library(smartid)
+library(SummarizedExperiment)
+library(splatter)
+library(ggplot2)
+library(scater)
+
+## set seed for reproducibility
+set.seed(123)
+sim_params <- newSplatParams(
+  nGenes = 1000,
+  batchCells = 3000,
+  group.prob = seq(0.1, 0.4, length.out = 4),
+  de.prob = c(0.02, 0.02, 0.02, 0),
+  # de.downProb = 0,
+  de.facLoc = 0.5,
+  de.facScale = 0.4
+)
+
+data_sim <- splatSimulate(sim_params, method = "groups")
+
+## get up markers based on fold change
+fc <- 1
+cols <- paste0("DEFacGroup", seq_along(unique(data_sim$Group)))
+defac <- as.data.frame(rowData(data_sim)[, cols])
+up <- lapply(cols, \(id)
+             dplyr::filter(defac, if_all(-!!sym(id), \(x) !!sym(id)/x > fc)) |> 
+                   rownames()
+                 )
+data_sim@metadata$up_markers <- setNames(up, cols)
+data_sim@metadata$up_markers
+data_sim
+```
+
+# Labeled Data
+
+------------------------------------------------------------------------
+
+`smartid` can be easily used to accurately identify specific marker genes on labeled data. By adapting and modifying TF-IDF approach, `smartid` shows robust power in finding marker genes, especially for rare population which many methods fail in.
+
+**marker identification of smartid includes 3 key steps:**
+
+  step 1. score samples  
+  step 2. scale and transform scores  
+  step 3. identify markers using expectatiion maximization (EM)  
+
+## Score Samples
+
+The first step is to score all samples/cells by using specified approach. The score can be composed of 3 terms: TF (term frequency), IDF (inverse document frequency) and IAE (inverse average expression). Each term has a couple of available choices with different formats to suit labeled or un-labeled data.
+
+TF here stands for gene frequency, which is similar to CPM, while IDF represents the inverse cell/sample frequency for scRNA-seq data, and IAE is the inverse average expression of each gene across all cells or cells in each labeled group.
+
+Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for marker identification.
+
+$$\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}$$
+
+Another advantage of smartid is that it can start with raw counts data, with no need for pre-processed data. And the scoring is quite fast.
+
+```{r}
+## compute score
+system.time(
+  data_sim <- cal_score(
+    data_sim,
+    tf = "logtf",
+    idf = "prob",
+    iae = "prob",
+    par.idf = list(label = "Group"),
+    par.iae = list(label = "Group")
+  )
+)
+
+## score and tf,idf,iae all saved
+assays(data_sim)
+names(metadata(data_sim))
+```
+
+## Scale and Transform Score
+
+Scaling is needed to find the markers specific to the group, however, standard scaling might fail due to the rare populations. Here smartid uses a special scaling strategy `scale_mgm`, which can scale im-balanced data by given group labels.
+
+The score will be transformed using softmax before passing to EM algorithm.
+
+```{r}
+top_m <- top_markers(
+  data = data_sim,
+  label = "Group",
+  n = Inf # set Inf to get all features processed score
+)
+top_m
+```
+The top n features for each group will be ordered and listed in `top_m`. `smartid` provides easy-to-use functions to visualize top feature scores in each group and compare with actual up-regulated DEGs.
+
+It's clear that the real UP DEGs are popping up to the top n features. And for the negative control "Group 4", the shape of top feature score is totally different from the ones with DEGs, which can provide more insights to help understand the data.
+
+```{r}
+score_barplot(
+  top_markers = top_m,
+  column = ".dot",
+  f_list = data_sim@metadata$up_markers,
+  n = 20
+)
+```
+
+As we can see, there is a UP DEG 'Gene76' not popping up in Group 2, we can check this gene's relative expression using violin plot. It is clear that this gene is not significantly highly expressed in Group 2 and the average expression is quite low across all cells.
+
+This can also be confirmed in data simulation information, where the scale factor is higher in Group2, but the GeneMean is too small to be confident. Thus this gene won't be selected by `smartid`.
+
+```{r}
+ggplot(data.frame("Gene76" = data_sim@metadata$tf["Gene76",],
+                  Group = data_sim$Group)) +
+  geom_violin(aes(x = Group, y = Gene76, fill = Group)) +
+  theme_bw()
+
+## sim gene info
+data_sim@rowRanges@elementMetadata[76,]
+```
+
+## Marker Selection
+
+As we can see from above, there is a distinctly different distribution of feature score between group with DEGs and without DEGs. And there is a clear separation (break point) between the real DEGs and non-DEGs.
+
+To help automatically select real markers for each group, smartid used an expectation maximization (EM) approach to identify which genes fall into the real DEGs distribution and which are not.
+
+Regarding the distribution of scores as a mixture model, here we can choose function `markers_mixmdl` in smartid to separate features. There are 2 available mixture model to choose: normal (Gaussian) or gamma. We choose "norm" here as it runs faster.
+
+`smartid` also allows to plot the mixture distribution plot after EM. It's obvious that the top 2 components of Group 4 share quite similar distribution, thus no markers will be selected for this group.
+
+```{r}
+set.seed(123)
+marker_ls <- markers_mixmdl(
+  top_markers = top_m,
+  column = ".dot",
+  ratio = 2,
+  dist = "norm",
+  plot = TRUE
+)
+marker_ls
+```
+
+We can also compare our selected markers with real DEGs. As there is no markers or DEG in group 4, only show overlap from Group1-3. It's clear that all the markers identified by smartid are real DEGs, with a couple of missing genes in Group 1 and 2. But as what we showed above, those genes only exhibit low mean expression across all cells, thus not confident enough to be selected as markers.
+
+```{r}
+library(UpSetR)
+
+upset(fromList(c(data_sim@metadata$up_markers, marker_ls)), nsets = 6)
+```
+
+`smartid` also provides some other implementation of marker selection. Here is another example using `mclust`. Different from `markers_mixmdl`, `markers_mclust` doesn't need a pre-defined number of components (which is 3 in `markers_mixmdl`), instead, it will select the number of components by searching a series of potential numbers. This method is sometimes more robust than `markers_mixmdl`.
+
+Similary, this method also allows to plot the mixture distribution for each component, but separately.
+
+
+```{r}
+set.seed(123)
+marker_ls_new <- markers_mclust(
+  top_markers = top_m,
+  column = ".dot",
+  dist = "norm",
+  plot = TRUE
+)
+names(marker_ls_new) <- paste(names(marker_ls_new), "new")
+```
+
+We can compare the marker list with the previous one. The overlap result shows 2 methods can achieve almost the same marker list for each group.
+
+```{r}
+upset(fromList(c(marker_ls, marker_ls_new)), nsets = 6)
+```
+
+
+# Un-labeled Data
+
+------------------------------------------------------------------------
+
+While for the unlabeled data, `smartid` also provides the score methods with no need for label information.
+
+Here we choose logTF * IDF_sd * IAE_sd for for gene-set scoring as a use case.
+
+$$\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}$$
+
+## Score Samples
+
+Similary, the first step is to score samples/cells using the specified method. This step also starts with raw counts data, without need for data pre-processing, which is quite convenient and fast.
+
+```{r}
+## compute score without label
+system.time(
+  data_sim <- cal_score(
+    data_sim,
+    tf = "logtf",
+    idf = "sd",
+    iae = "sd",
+    new.slot = "score_unlabel"
+  )
+)
+
+## new score is saved and tf,idf,iae all updated
+assays(data_sim)
+names(metadata(data_sim))
+```
+
+## Compute Overall Score for Gene-set
+
+To compare overall score of the given gene-set, we don't need to scale and tranform score this time. Using `gs_score` can easily compute the overall score for each cell based on the given gene-set list.
+
+```{r}
+## compute score for each group marker list
+data_sim <- gs_score(
+  data = data_sim,
+  features = marker_ls[1:3], # group 4 has no markers
+  slot = "score_unlabel",
+  suffix = "score.unlabel" # specify the suffix of names to save
+)
+
+## saved score
+colnames(data_sim@colData)
+```
+
+Now we get 3 columns of score for each group markers. We can then visualize the score across groups, see how well it can discern the target group.
+
+It's evident that the score can sufficiently separate the target group from all others.
+
+```{r, fig.width=10, fig.height=3}
+as.data.frame(data_sim@colData) |>
+  tidyr::pivot_longer("Group1.score.unlabel":"Group3.score.unlabel",
+                      names_to = "group markers",
+                      values_to = "score") |> 
+  ggplot(aes(x = Group, y =score, fill = Group)) +
+  geom_boxplot() +
+  facet_wrap(~`group markers`, scales = "free") +
+  theme_bw()
+```
+
+# SessionInfo
+
+```{r}
+sessionInfo()
+```
+

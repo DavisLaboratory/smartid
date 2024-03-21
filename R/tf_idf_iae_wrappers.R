@@ -1,13 +1,48 @@
 #################################################
+#-----------------TF variants------------------#
+#################################################
+
+## term frequency
+#' compute term/gene frequency within each cell
+#'
+#' @param expr a count matrix, features in row and cells in column
+#' @param log logical, if to do log-transformation
+#'
+#' @return a matrix of tf
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' tf(data)
+tf <- function(expr, log = FALSE) {
+  t.f <- sweep(expr, 2, colSums(expr, na.rm = TRUE) + 0.01, FUN = "/")
+  if(log) {
+    t.f <- log1p(t.f)
+  }
+
+  return(t.f)
+}
+
+#################################################
 #-----------------IDF variants------------------#
+#################################################
 
 ##-----------------unlabeled-------------------##
 
 ## inverse document frequency
 ### $$\mathbf{IDF_i} = log(1+\frac{n}{n_i+1})$$
 ### $$n: total\ counts\ of\ documents;\ n_i: \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
+
+#' standard inverse cell frequency
+#'
+#' @inheritParams idf_rf
+#'
+#' @return a vector of idf score for each feature
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' idf(data)
 idf <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of total obs
 
   # thres <- 0
@@ -21,8 +56,18 @@ idf <- function(expr, features = NULL, thres = 0) {
 ## inverse document frequency max
 ### $$\mathbf{IDF_{i,d}} = log(\frac{max_{\{i^{'}\in d\}}(n_{i^{'}})}{n_i+1})$$
 ### $$n: total\ counts\ of\ documents;\ n_i: \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
+
+#' inverse document frequency: max
+#'
+#' @inheritParams idf_rf
+#'
+#' @return a vector of idf score for each feature
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' idf_m(data)
 idf_m <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of total obs
 
   # thres <- 0
@@ -41,8 +86,18 @@ idf_m <- function(expr, features = NULL, thres = 0) {
 ## inverse document frequency sd
 ### $$\mathbf{IDF} = log(1+sd(N_{i})*\frac{n}{n_i+1})$$
 ### $$n: total\ counts\ of\ documents;\ n_i: \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
+
+#' inverse cell frequency using standard deviation (SD)
+#'
+#' @inheritParams idf_rf
+#'
+#' @return a vector of idf score for each feature
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' idf_sd(data)
 idf_sd <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of total obs
 
   # thres <- 0
@@ -55,9 +110,21 @@ idf_sd <- function(expr, features = NULL, thres = 0) {
 }
 
 ## inverse document frequency using hdbscan cluster as label
+#' Title
+#'
+#' @inheritParams idf_rf
+#' @param minPts integer, minimum size of clusters, default 2.
+#'               Details in [dbscan::hdbscan()].
+#' @param ... parameters for [dbscan::hdbscan()]
+#'
+#' @return a matrix of IDF score
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' idf_hdb(data)
 idf_hdb <- function(expr, features = NULL, multi = TRUE,
                     thres = 0, minPts = 2, ...) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
 
   ## initially compute naive tf-idf
   # tf <- (edgeR::cpm(expr)/1e6)[features, ]
@@ -79,9 +146,23 @@ idf_hdb <- function(expr, features = NULL, multi = TRUE,
 
 ## labeled inverse document frequency: relative frequency
 ### $$\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}})$$
+
+#' labeled inverse cell frequency: relative frequency
+#'
+#' @param expr a matrix, features in row and cells in column
+#' @param features vector, feature names or indexes to compute
+#' @param label vector, group label of each cell
+#' @param multi logical, if to compute based on binary (FALSE) or multi-class (TRUE)
+#' @param thres numeric, cell only counts when expr > threshold, default 0
+#'
+#' @return a matrix of IDF score
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' idf_rf(data, label = sample(c("A", "B"), 10, replace = TRUE))
 idf_rf <- function(expr, features = NULL, label,
                    multi = TRUE, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -112,9 +193,19 @@ idf_rf <- function(expr, features = NULL, label,
 ### modified from
 ### $$\mathbf{IDF_{i,j}} = log(1+\frac{A}{max(B)+1}*\frac{A}{C+1})$$
 ### A denotes the number of cells belonging to category D where the gene i occurs at least once; B denotes the number of cells not belonging to category D where the gene i occurs at least once; C denotes the number of cells belonging to category D where the gene i does not occur; D denotes the number of cells not belonging to category D where the gene i does not occur.
+
+#' labeled inverse cell frequency: probability based
+#'
+#' @inheritParams idf_rf
+#'
+#' @return a matrix of IDF score
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' idf_prob(data, label = sample(c("A", "B"), 10, replace = TRUE))
 idf_prob <- function(expr, features = NULL, label,
                      multi = TRUE, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -146,8 +237,18 @@ idf_prob <- function(expr, features = NULL, label,
 ### $$\mathbf{k}: type\ in\ total\ group\ K$$
 ### $$\mathbf{r_{k}}: rank\ of\ n_{i,j\in D})_{k}\ in\ total\ group\ K$$
 
+#' labeled inverse document frequency IGM
+#'
+#' @inheritParams idf_rf
+#' @param lambda numeric, hyperparameter for IGM
+#'
+#' @return a vector of igm score for each feature
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' idf_igm(data, label = sample(c("A", "B"), 10, replace = TRUE))
 idf_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -167,14 +268,25 @@ idf_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
 
 #################################################
 #-----------------IAE variants------------------#
+#################################################
 
 ##-----------------unlabeled-------------------##
 
 ## inverse average expression
 ### $$\mathbf{IAE_i} = log(1+\frac{n}{\hat N_{i,j}+1})$$
 ### $$n: total\ counts\ of\ documents;\ \hat N_{i,j}: max(0, N_{i,j} - threshold)$$
+
+#' standard inverse average expression
+#'
+#' @inheritParams idf_rf
+#'
+#' @return a vector of iae score for each feature
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' iae(data)
 iae <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of total obs
 
   # thres <- 0
@@ -190,8 +302,18 @@ iae <- function(expr, features = NULL, thres = 0) {
 ## inverse average expression max
 ### $$\mathbf{IAE_i} = log(1+\frac{max_{\{i^{'}\in d\}}(n_{i^{'}})}{n_i+1})$$
 ### $$n: total\ counts\ of\ documents;\ n_i: \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
+
+#' inverse average expression: max
+#'
+#' @inheritParams idf_rf
+#'
+#' @return a vector of iae score for each feature
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' iae_m(data)
 iae_m <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of total obs
 
   # thres <- 0
@@ -203,7 +325,7 @@ iae_m <- function(expr, features = NULL, thres = 0) {
   s_max <- ifelse(expr_offset > 0, s_row, 0) |> sparseMatrixStats::colMaxs()
 
   iae <- matrix(1/(1 + s_row), ncol = 1) %*% matrix(s_max, nrow = 1)
-  dimnames(iae) <- dimnames(sce)
+  dimnames(iae) <- dimnames(expr)
   iae <- log1p(iae[features, ])
   return(iae)
 }
@@ -211,8 +333,18 @@ iae_m <- function(expr, features = NULL, thres = 0) {
 ## inverse average expression sd
 ### $$\mathbf{IAE} = log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})$$
 ### $$n: total\ counts\ of\ documents;\ n_i: \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
+
+#' inverse average expression using standard deviation (SD)
+#'
+#' @inheritParams idf_rf
+#'
+#' @return a vector of iae score for each feature
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' iae_sd(data)
 iae_sd <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of obs
 
   # thres <- 0
@@ -227,9 +359,21 @@ iae_sd <- function(expr, features = NULL, thres = 0) {
 }
 
 ## inverse average expression using hdbscan cluster as label
+#' inverse average expression using hdbscan cluster as label
+#'
+#' @inheritParams idf_rf
+#' @param minPts integer, minimum size of clusters, default 2.
+#'               Details in [dbscan::hdbscan()].
+#' @param ... parameters for [dbscan::hdbscan()]
+#'
+#' @return a matrix of IAE score
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' iae_hdb(data)
 iae_hdb <- function(expr, features = NULL, multi = TRUE,
                     thres = 0, minPts = 2, ...) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
 
   ## initially compute naive tf-idf
   # tf <- (edgeR::cpm(expr)/1e6)[features, ]
@@ -268,9 +412,18 @@ iae_hdb <- function(expr, features = NULL, multi = TRUE,
 ###   or
 ### $$\mathbf{IAE} = log(1+\frac{mean(N_{i,j\in D})}{mean(N_{i,j\notin D})+ e^{-8}})$$
 
+#' labeled inverse average expression: relative frequency
+#'
+#' @inheritParams idf_rf
+#'
+#' @return a matrix of IAE score
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' iae_rf(data, label = sample(c("A", "B"), 10, replace = TRUE))
 iae_rf <- function(expr, features = NULL, label,
                    multi = TRUE, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -302,9 +455,18 @@ iae_rf <- function(expr, features = NULL, label,
 ### $$\mathbf{IDF_{i,j}} = log(1+\frac{A}{max(B)+1}*\frac{A}{C+1})$$
 ### A denotes the number of cells belonging to category D where the gene i occurs at least once; B denotes the number of cells not belonging to category D where the gene i occurs at least once; C denotes the number of cells belonging to category D where the gene i does not occur; D denotes the number of cells not belonging to category D where the gene i does not occur.
 
+#' labeled inverse average expression: probability based
+#'
+#' @inheritParams idf_rf
+#'
+#' @return a matrix of IAE score
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' iae_prob(data, label = sample(c("A", "B"), 10, replace = TRUE))
 iae_prob <- function(expr, features = NULL, label,
                      multi = TRUE, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -335,8 +497,18 @@ iae_prob <- function(expr, features = NULL, label,
 ### $$\mathbf{k}: type\ in\ total\ group\ K$$
 ### $$\mathbf{r_{k}}: rank\ of\ mean(N_{i,j\in D})_{k}\ in\ total\ group\ K$$
 
+#' labeled inverse average expression IGM
+#'
+#' @inheritParams idf_rf
+#' @param lambda numeric, hyperparameter for IGM
+#'
+#' @return a vector of igm score for each feature
+#'
+#' @examples
+#' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
+#' iae_igm(data, label = sample(c("A", "B"), 10, replace = TRUE))
 iae_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
-  if(is.null(features)) features <- rownames(expr)
+  if(is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)

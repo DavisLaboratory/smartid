@@ -10,6 +10,7 @@ top_markers_abs(
   n = 10,
   method = c("median", "mad", "mean"),
   scale = TRUE,
+  use.mgm = TRUE,
   softmax = TRUE
 )
 }
@@ -18,12 +19,14 @@ top_markers_abs(
 
 \item{label}{vector, group labels}
 
-\item{n}{numeric, number of returned top genes for each group}
+\item{n}{integer, number of returned top genes for each group}
 
 \item{method}{character, specify metric to compute, can be one of "median",
 "mad", "mean"}
 
 \item{scale}{logical, if to scale data by row}
+
+\item{use.mgm}{logical, if to scale data using \code{\link[=scale_mgm]{scale_mgm()}}}
 
 \item{softmax}{logical, if to apply softmax transformation on output}
 }
