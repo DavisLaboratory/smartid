@@ -27,6 +27,7 @@ a matrix of IAE score
 inverse average expression using hdbscan cluster as label
 }
 \examples{
+set.seed(123)
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-iae_hdb(data)
+smartid:::iae_hdb(data)
 }

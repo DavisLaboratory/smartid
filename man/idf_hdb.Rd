@@ -27,6 +27,7 @@ a matrix of IDF score
 Title
 }
 \examples{
+set.seed(123)
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-idf_hdb(data)
+smartid:::idf_hdb(data)
 }

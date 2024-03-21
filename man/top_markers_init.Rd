@@ -22,6 +22,9 @@ top_markers_init(
 
 \item{n}{integer, number of returned top genes for each group}
 
+\item{use.glm}{logical, if to use \code{\link[stats:glm]{stats::glm()}} to compute group mean score,
+if TRUE, also compute mean score difference as output}
+
 \item{scale}{logical, if to scale data by row}
 
 \item{use.mgm}{logical, if to scale data using \code{\link[=scale_mgm]{scale_mgm()}}}
@@ -29,9 +32,6 @@ top_markers_init(
 \item{softmax}{logical, if to apply softmax transformation on output}
 
 \item{...}{params for \code{\link[=top_markers_abs]{top_markers_abs()}} or \code{\link[=top_markers_glm]{top_markers_glm()}}}
-
-\item{use_glm}{logical, if to use \code{\link[stats:glm]{stats::glm()}} to compute group mean score,
-if TRUE, also compute mean score difference as output}
 }
 \value{
 a tibble with feature names, group labels and ordered processed scores

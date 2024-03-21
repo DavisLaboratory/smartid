@@ -21,5 +21,5 @@ inverse average expression: max
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-iae_m(data)
+smartid:::iae_m(data)
 }

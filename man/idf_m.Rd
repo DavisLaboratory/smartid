@@ -21,5 +21,5 @@ inverse document frequency: max
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-idf_m(data)
+smartid:::idf_m(data)
 }

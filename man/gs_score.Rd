@@ -22,6 +22,9 @@ gs_score(data, features = NULL, slot = "score", suffix = "score")
 
 \item{slot}{a character, specify which slot to use when data is se object,
 optional, default 'score'}
+
+\item{suffix}{a character, specify the name suffix to save score when
+features is a named list}
 }
 \value{
 A vector of overall score for each sample
@@ -30,6 +33,6 @@ A vector of overall score for each sample
 compute overall score based on the given marker list
 }
 \examples{
-data <- matrix(rnorm(100), 10, dimnames = list(seq_len(3)))
+data <- matrix(rnorm(100), 10, dimnames = list(seq_len(10)))
 gs_score(data, features = seq_len(3))
 }

@@ -49,6 +49,9 @@ top_markers(
 
 \item{n}{integer, number of returned top genes for each group}
 
+\item{use.glm}{logical, if to use \code{\link[stats:glm]{stats::glm()}} to compute group mean score,
+if TRUE, also compute mean score difference as output}
+
 \item{scale}{logical, if to scale data by row}
 
 \item{use.mgm}{logical, if to scale data using \code{\link[=scale_mgm]{scale_mgm()}}}

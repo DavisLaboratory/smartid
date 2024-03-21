@@ -21,5 +21,5 @@ inverse average expression using standard deviation (SD)
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-iae_sd(data)
+smartid:::iae_sd(data)
 }

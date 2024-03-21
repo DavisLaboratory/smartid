@@ -91,6 +91,8 @@ setGeneric(
 #' @param data an expression object, can be matrix or SummarizedExperiment
 #' @param slot a character, specify which slot to use when data is se object,
 #'             optional, default 'score'
+#' @param suffix a character, specify the name suffix to save score when
+#'               features is a named list
 #'
 #' @return A vector of overall score for each sample
 #'
@@ -98,7 +100,7 @@ setGeneric(
 #' @export
 #'
 #' @examples
-#' data <- matrix(rnorm(100), 10, dimnames = list(seq_len(3)))
+#' data <- matrix(rnorm(100), 10, dimnames = list(seq_len(10)))
 #' gs_score(data, features = seq_len(3))
 setGeneric(
   "gs_score",

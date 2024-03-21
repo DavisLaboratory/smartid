@@ -25,5 +25,5 @@ labeled inverse document frequency IGM
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-idf_igm(data, label = sample(c("A", "B"), 10, replace = TRUE))
+smartid:::idf_igm(data, label = sample(c("A", "B"), 10, replace = TRUE))
 }

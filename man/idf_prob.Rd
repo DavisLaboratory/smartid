@@ -25,5 +25,5 @@ labeled inverse cell frequency: probability based
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-idf_prob(data, label = sample(c("A", "B"), 10, replace = TRUE))
+smartid:::idf_prob(data, label = sample(c("A", "B"), 10, replace = TRUE))
 }

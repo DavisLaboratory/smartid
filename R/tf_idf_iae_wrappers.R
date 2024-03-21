@@ -12,7 +12,7 @@
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' tf(data)
+#' smartid:::tf(data)
 tf <- function(expr, log = FALSE) {
   t.f <- sweep(expr, 2, colSums(expr, na.rm = TRUE) + 0.01, FUN = "/")
   if(log) {
@@ -40,7 +40,7 @@ tf <- function(expr, log = FALSE) {
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' idf(data)
+#' smartid:::idf(data)
 idf <- function(expr, features = NULL, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of total obs
@@ -65,7 +65,7 @@ idf <- function(expr, features = NULL, thres = 0) {
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' idf_m(data)
+#' smartid:::idf_m(data)
 idf_m <- function(expr, features = NULL, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of total obs
@@ -95,7 +95,7 @@ idf_m <- function(expr, features = NULL, thres = 0) {
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' idf_sd(data)
+#' smartid:::idf_sd(data)
 idf_sd <- function(expr, features = NULL, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of total obs
@@ -120,8 +120,9 @@ idf_sd <- function(expr, features = NULL, thres = 0) {
 #' @return a matrix of IDF score
 #'
 #' @examples
+#' set.seed(123)
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' idf_hdb(data)
+#' smartid:::idf_hdb(data)
 idf_hdb <- function(expr, features = NULL, multi = TRUE,
                     thres = 0, minPts = 2, ...) {
   if(is.null(features)) features <- seq_len(nrow(expr))
@@ -159,7 +160,7 @@ idf_hdb <- function(expr, features = NULL, multi = TRUE,
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' idf_rf(data, label = sample(c("A", "B"), 10, replace = TRUE))
+#' smartid:::idf_rf(data, label = sample(c("A", "B"), 10, replace = TRUE))
 idf_rf <- function(expr, features = NULL, label,
                    multi = TRUE, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
@@ -202,7 +203,7 @@ idf_rf <- function(expr, features = NULL, label,
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' idf_prob(data, label = sample(c("A", "B"), 10, replace = TRUE))
+#' smartid:::idf_prob(data, label = sample(c("A", "B"), 10, replace = TRUE))
 idf_prob <- function(expr, features = NULL, label,
                      multi = TRUE, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
@@ -246,7 +247,7 @@ idf_prob <- function(expr, features = NULL, label,
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' idf_igm(data, label = sample(c("A", "B"), 10, replace = TRUE))
+#' smartid:::idf_igm(data, label = sample(c("A", "B"), 10, replace = TRUE))
 idf_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
 
@@ -284,7 +285,7 @@ idf_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' iae(data)
+#' smartid:::iae(data)
 iae <- function(expr, features = NULL, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of total obs
@@ -311,7 +312,7 @@ iae <- function(expr, features = NULL, thres = 0) {
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' iae_m(data)
+#' smartid:::iae_m(data)
 iae_m <- function(expr, features = NULL, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of total obs
@@ -342,7 +343,7 @@ iae_m <- function(expr, features = NULL, thres = 0) {
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' iae_sd(data)
+#' smartid:::iae_sd(data)
 iae_sd <- function(expr, features = NULL, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr)  ## number of obs
@@ -369,8 +370,9 @@ iae_sd <- function(expr, features = NULL, thres = 0) {
 #' @return a matrix of IAE score
 #'
 #' @examples
+#' set.seed(123)
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' iae_hdb(data)
+#' smartid:::iae_hdb(data)
 iae_hdb <- function(expr, features = NULL, multi = TRUE,
                     thres = 0, minPts = 2, ...) {
   if(is.null(features)) features <- seq_len(nrow(expr))
@@ -420,7 +422,7 @@ iae_hdb <- function(expr, features = NULL, multi = TRUE,
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' iae_rf(data, label = sample(c("A", "B"), 10, replace = TRUE))
+#' smartid:::iae_rf(data, label = sample(c("A", "B"), 10, replace = TRUE))
 iae_rf <- function(expr, features = NULL, label,
                    multi = TRUE, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
@@ -463,7 +465,7 @@ iae_rf <- function(expr, features = NULL, label,
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' iae_prob(data, label = sample(c("A", "B"), 10, replace = TRUE))
+#' smartid:::iae_prob(data, label = sample(c("A", "B"), 10, replace = TRUE))
 iae_prob <- function(expr, features = NULL, label,
                      multi = TRUE, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
@@ -506,7 +508,7 @@ iae_prob <- function(expr, features = NULL, label,
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-#' iae_igm(data, label = sample(c("A", "B"), 10, replace = TRUE))
+#' smartid:::iae_igm(data, label = sample(c("A", "B"), 10, replace = TRUE))
 iae_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
   if(is.null(features)) features <- seq_len(nrow(expr))
 

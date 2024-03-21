@@ -2,7 +2,7 @@
 #'
 #' @inheritParams top_markers_abs
 #' @inheritParams top_markers_glm
-#' @param use_glm logical, if to use [stats::glm()] to compute group mean score,
+#' @param use.glm logical, if to use [stats::glm()] to compute group mean score,
 #'                if TRUE, also compute mean score difference as output
 #' @param ... params for [top_markers_abs()] or [top_markers_glm()]
 #'
@@ -190,3 +190,4 @@ softmax <- function(x, tau = 1) {
 ## tanh: [-1, 1], similar to sigmoid, no need to sum 1
 tanh <- function(x) 2 / (1 + exp(-2*x)) - 1
 
+utils::globalVariables(c(".dot", "Scores"))

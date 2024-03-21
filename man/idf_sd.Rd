@@ -21,5 +21,5 @@ inverse cell frequency using standard deviation (SD)
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-idf_sd(data)
+smartid:::idf_sd(data)
 }

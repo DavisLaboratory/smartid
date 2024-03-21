@@ -39,7 +39,8 @@ Imports:
     mixtools,
     sparseMatrixStats,
     stats,
-    tidyr
+    tidyr,
+    utils
 Suggests: 
     BiocStyle,
     dbscan,

@@ -175,3 +175,5 @@ score_barplot <- function(top_markers, column = ".dot", f_list, n = 30) {
     theme_classic()
 }
 
+utils::globalVariables(c("Group", "Score", "x", "Scores", "Comp",
+                         "..density..", "stack", "values", "ind", "Type"))

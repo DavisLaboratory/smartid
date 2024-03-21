@@ -19,5 +19,5 @@ compute term/gene frequency within each cell
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-tf(data)
+smartid:::tf(data)
 }

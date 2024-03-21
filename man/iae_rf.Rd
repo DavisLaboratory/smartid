@@ -25,5 +25,5 @@ labeled inverse average expression: relative frequency
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
-iae_rf(data, label = sample(c("A", "B"), 10, replace = TRUE))
+smartid:::iae_rf(data, label = sample(c("A", "B"), 10, replace = TRUE))
 }

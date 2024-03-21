@@ -2,6 +2,8 @@
 #' @import methods
 #' @import stats
 #' @import graphics
+#' @importFrom SummarizedExperiment SummarizedExperiment assay
+#' @importFrom utils globalVariables stack
 #' @importClassesFrom Matrix dgCMatrix
 NULL
 
