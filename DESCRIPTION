@@ -53,6 +53,8 @@ Suggests:
     testthat (>= 3.0.0),
     tidytext,
     UpSetR
+URL: https://davislaboratory.github.io/smartid
+BugReports: https://github.com/DavisLaboratory/smartid/issues
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 LazyData: true
