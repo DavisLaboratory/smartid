@@ -58,7 +58,14 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/DavisLaboratory/smartid/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -82,9 +89,9 @@ Biology, University of Melbourne, Parkville, VIC 3010,
 Australia<br><a class="author_email" href="mailto:#"></a><a href="mailto:chen.j@wehi.edu.au" class="email">chen.j@wehi.edu.au</a>
       </address>
                   
-            <h4 data-toc-skip class="date">21 Mar 2024</h4>
+            <h4 data-toc-skip class="date">22 Mar 2024</h4>
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/DavisLaboratory/smartid/blob/HEAD/vignettes/smartid_Demo.Rmd" class="external-link"><code>vignettes/smartid_Demo.Rmd</code></a></small>
       <div class="hidden name"><code>smartid_Demo.Rmd</code></div>
 
     </div>
@@ -137,7 +144,7 @@ function provided by <a href="https://cran.r-project.org/package=devtools" class
 cells. This data consists of 4 groups, each has 2% DEGs except Group 4,
 which has no DEG as a negative control group.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">smartid</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://davislaboratory.github.io/smartid" class="external-link">smartid</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/SummarizedExperiment" class="external-link">SummarizedExperiment</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Oshlack/splatter" class="external-link">splatter</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
@@ -238,7 +245,7 @@ fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.206   0.000   0.206</span></span>
+<span><span class="co">#&gt;   0.196   0.008   0.204</span></span>
 <span></span>
 <span><span class="co">## score and tf,idf,iae all saved</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
@@ -438,7 +445,7 @@ need for data pre-processing, which is quite convenient and fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.144   0.008   0.151</span></span>
+<span><span class="co">#&gt;   0.137   0.016   0.153</span></span>
 <span></span>
 <span><span class="co">## new score is saved and tf,idf,iae all updated</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
