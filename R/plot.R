@@ -91,7 +91,7 @@ sin_score_boxplot <- function(data, features = NULL,
                               ref.group, label,
                               method = "t.test") {
   if (is.null(features)) features <- rownames(data)
-  data[features, ] |>
+  data[features, , drop = FALSE] |>
     as.matrix() |>
     as.data.frame() |>
     dplyr::add_rownames("Gene") |>
@@ -158,14 +158,6 @@ score_barplot <- function(top_markers, column = ".dot", f_list, n = 30) {
   if (missing(f_list)) {
     f_list <- list(Features = top_markers$Genes)
   }
-
-  # ## get top n markers
-  # top_markers <- top_markers(
-  #   data[features, ],
-  #   label = label,
-  #   n = n,
-  #   ...
-  # )
 
   ## extract top n markers
   top_markers <- dplyr::slice_max(top_markers, Scores, n = n)

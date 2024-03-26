@@ -151,8 +151,11 @@ top_markers_glm <- function(data, label, n = 10,
   # betas <- apply(betas, 2, \(x) x - (sum(x) - x)/(length(x) - 1))
 
   ## compute logFC (1 vs max excluding self) for each group
-  betas <- sapply(seq_len(nrow(betas)), \(i)
-  betas[i, ] - sparseMatrixStats::colMaxs(matrix(betas[-i, ], ncol = ncol(betas)))) |>
+  betas <- vapply(
+    seq_len(nrow(betas)), \(i)
+    betas[i, ] - sparseMatrixStats::colMaxs(betas[-i, , drop = FALSE]),
+    rep(1, ncol(betas))
+  ) |>
     t()
   rownames(betas) <- levels(label)
 

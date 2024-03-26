@@ -27,7 +27,7 @@ a matrix of inverse cell frequency score
 inverse document frequency using hdbscan cluster as label
 }
 \details{
-Details as \code{\link[smartid:::idf_prob]{smartid::::idf_prob()}}.
+Details as \code{\link[=idf_prob]{idf_prob()}}.
 }
 \examples{
 set.seed(123)

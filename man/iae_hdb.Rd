@@ -27,7 +27,7 @@ a matrix of inverse average expression score
 inverse average expression using hdbscan cluster as label
 }
 \details{
-Details as \code{\link[smartid:::iae_prob]{smartid::::iae_prob()}}.
+Details as \code{\link[=iae_prob]{iae_prob()}}.
 }
 \examples{
 set.seed(123)

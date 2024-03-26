@@ -37,6 +37,8 @@ Calculate score for each feature in each cell
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 label <- sample(c("A", "B"), 10, replace = TRUE)
-smartid:::cal_score_init(data, par.idf = list(label = label),
-                         par.iae = list(label = label))
+smartid:::cal_score_init(data,
+  par.idf = list(label = label),
+  par.iae = list(label = label)
+)
 }

@@ -26,7 +26,7 @@ gs_score_init <- function(score, features = NULL) {
   stopifnot("less than 2 features are in score rows!" = length(features) > 1)
 
   ## calculate mean score of features
-  m_score <- colMeans(score[features, ], na.rm = TRUE)
+  m_score <- colMeans(score[features, , drop = FALSE], na.rm = TRUE)
   return(m_score)
 }
 

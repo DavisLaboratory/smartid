@@ -17,8 +17,13 @@ scale_mgm <- function(expr, label) {
   # colnames(sds) <- unique(label)
 
   ## compute group means
-  mgm <- sapply(unique(label), \(i)
-  sparseMatrixStats::rowMeans2(expr[, label == i], na.rm = TRUE)) |> # get mean of each group
+  mgm <- vapply(
+    unique(label), \(i)
+    sparseMatrixStats::rowMeans2(expr[, label == i, drop = FALSE],
+      na.rm = TRUE
+    ),
+    rep(1, nrow(expr))
+  ) |> # get mean of each group
     rowMeans(na.rm = TRUE) # get mean of group mean
 
   ## scale
