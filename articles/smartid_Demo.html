@@ -228,25 +228,25 @@ each function, e.g. <code>?smartid:::idf</code>.</p>
 <span><span class="co">#&gt;                   "null"                   "prob"                     "rf" </span></span>
 <span><span class="co">#&gt;               unlabel SD         unlabel standard </span></span>
 <span><span class="co">#&gt;                     "sd"               "standard"</span></span></code></pre></div>
-<p>The basic version of TF, IDF and IAE can be termed as: <span class="math display">\[\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}\]</span>
-<span class="math display">\[\mathbf{IDF_i} =
-log(1+\frac{n}{n_i+1})\]</span> <span class="math display">\[\mathbf{IAE_i} = log(1+\frac{n}{\hat
-N_{i,j}+1})\]</span></p>
-<p><span class="math display">\[where\ N_{i,j}\ is\ the\ counts\ of\
+<p>The basic version of TF, IDF and IAE can be termed as: <span class="math inline">\(\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}\)</span>
+<span class="math inline">\(\mathbf{IDF_i} =
+log(1+\frac{n}{n_i+1})\)</span> <span class="math inline">\(\mathbf{IAE_i} = log(1+\frac{n}{\hat
+N_{i,j}+1})\)</span></p>
+<p><span class="math inline">\(where\ N_{i,j}\ is\ the\ counts\ of\
 feature\ i\ in\ cell\ j;\ \hat N_{i,j}\ is\ max(0,\ N_{i,j} -
-threshold);\]</span> <span class="math display">\[\ n\ is\ total\
-counts\ of\ documents(cells);\ n_i\ is\ \sum_{j = 1}^{n} sign(N_{i,j}
-&gt; threshold)\]</span></p>
+threshold);\)</span> <span class="math inline">\(\ n\ is\ total\ counts\
+of\ documents(cells);\ n_i\ is\ \sum_{j = 1}^{n} sign(N_{i,j} &gt;
+threshold)\)</span></p>
 <p>Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for
 marker identification.</p>
 <p><span class="math inline">\(\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}\)</span></p>
-<p>The probability version of IDF can be termed as: <span class="math display">\[\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in
+<p>The probability version of IDF can be termed as: <span class="math inline">\(\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in
 D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+
-e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})\]</span></p>
-<p>And the probability version of IAE can be termed as: <span class="math display">\[\mathbf{IAE_{i,j}} = log(1+\frac{mean(N_{i,j\in
-D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))\]</span>
-<span class="math display">\[where\ D\ is\ the\ category\ of\ cell\ j;\
-\hat D\ is\ the\ category\ other\ than\ D.\]</span></p>
+e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})\)</span></p>
+<p>And the probability version of IAE can be termed as: <span class="math inline">\(\mathbf{IAE_{i,j}} = log(1+\frac{mean(N_{i,j\in
+D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))\)</span>
+<span class="math inline">\(where\ D\ is\ the\ category\ of\ cell\ j;\
+\hat D\ is\ the\ category\ other\ than\ D.\)</span></p>
 <p>TF here stands for gene frequency, which is similar to CPM, while IDF
 represents the inverse cell/sample frequency for scRNA-seq data, and IAE
 is the inverse average expression of each gene across all cells or cells
@@ -267,7 +267,7 @@ quite fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.196   0.008   0.204</span></span>
+<span><span class="co">#&gt;   0.198   0.008   0.206</span></span>
 <span></span>
 <span><span class="co">## score and tf,idf,iae all saved</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
@@ -324,9 +324,9 @@ provide more insights to help understand the data.</p>
 <span>  n <span class="op">=</span> <span class="fl">20</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="smartid_Demo_files/figure-html/unnamed-chunk-5-1.png" width="768"></p>
-<p>As we can see, there is a UP DEG ‘Gene76’ not popping up in Group 2,
-we can check this gene’s relative expression using violin plot. It is
-clear that this gene is not significantly highly expressed in Group 2
+<p>As we can see, there is an UP DEG ‘Gene76’ not popping up in Group 2,
+we can check the relative expression of this gene using violin plot. It
+is clear that this gene is not significantly highly expressed in Group 2
 and the average expression is quite low across all cells.</p>
 <p>This can also be confirmed in data simulation information, where the
 scale factor is higher in Group2, but the GeneMean is too small to be
@@ -454,9 +454,9 @@ score methods with no need for label information.</p>
 <p>Here we choose logTF * IDF_sd * IAE_sd for for gene-set scoring as a
 use case.</p>
 <p><span class="math inline">\(\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}\)</span></p>
-<p><span class="math display">\[where\ \mathbf{IDF} =
-log(1+sd(N_{i})*\frac{n}{n_i+1})\]</span> <span class="math display">\[\mathbf{IAE} =
-log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})\]</span></p>
+<p><span class="math inline">\(where\ \mathbf{IDF} =
+log(1+sd(N_{i})*\frac{n}{n_i+1})\)</span> <span class="math inline">\(\mathbf{IAE} =
+log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})\)</span></p>
 <div class="section level3">
 <h3 id="score-samples-1">Score Samples<a class="anchor" aria-label="anchor" href="#score-samples-1"></a>
 </h3>
@@ -475,7 +475,7 @@ need for data pre-processing, which is quite convenient and fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.145   0.008   0.154</span></span>
+<span><span class="co">#&gt;   0.161   0.004   0.165</span></span>
 <span></span>
 <span><span class="co">## new score is saved and tf,idf,iae all updated</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
