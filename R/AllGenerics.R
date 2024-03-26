@@ -17,9 +17,9 @@
 #' @inheritParams cal_score_init
 #' @param data an expression object, can be matrix or SummarizedExperiment
 #' @param slot a character, specify which slot to use when data is se object,
-#'             optional, default 'counts'
+#'     optional, default 'counts'
 #' @param new.slot a character, specify the name of slot to save score in se object,
-#'                 optional, default 'score'
+#'     optional, default 'score'
 #'
 #' @return A list of matrices or se object containing combined score
 #'
@@ -57,7 +57,7 @@ setGeneric(
 #' @inheritParams top_markers_init
 #' @param data an expression object, can be matrix or SummarizedExperiment
 #' @param slot a character, specify which slot to use when data is se object,
-#'             optional, default 'score'
+#'     optional, default 'score'
 #'
 #' @return A tibble with top n feature names, group labels and ordered scores
 #'
@@ -93,9 +93,9 @@ setGeneric(
 #' @param data an expression object, can be matrix or SummarizedExperiment
 #' @param features vector or named list, feature names to compute score
 #' @param slot a character, specify which slot to use when data is se object,
-#'             optional, default 'score'
+#'     optional, default 'score'
 #' @param suffix a character, specify the name suffix to save score when
-#'               features is a named list
+#'     features is a named list
 #'
 #' @return A vector of overall score for each sample
 #'

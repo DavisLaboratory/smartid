@@ -8,9 +8,9 @@ NULL
 #' @param prob numeric, probability cutoff for 1st component classification
 #' @param k integer, number of components of mixtures
 #' @param ratio numeric, ratio cutoff of 1st component mu to 2nd component mu,
-#'              only when ratio > cutoff will return markers for the group
+#'     only when ratio > cutoff will return markers for the group
 #' @param dist can be one of "norm" and "gamma", specify if to use
-#'             [mixtools::normalmixEM()] or [mixtools::gammamixEM()]
+#'     [mixtools::normalmixEM()] or [mixtools::gammamixEM()]
 #' @param maxit integer, maximum number of iterations for EM
 #' @param plot logical, if to plot mixture density and hist
 #' @param ... other params for [mixtools::normalmixEM()] or [mixtools::gammamixEM()]
@@ -76,9 +76,9 @@ markers_mixmdl <- function(top_markers, column = ".dot",
 #'
 #' @inheritParams markers_mixmdl
 #' @param s_thres NULL or numeric, only features with score > threshold will be
-#'                returned, if NULL will use 2 * average probability as threshold
-#' @param method can be "max.one" or "remove.min", if to only keep features in 1st
-#'               component or return features not in the last component
+#'     returned, if NULL will use 2 * average probability as threshold
+#' @param method can be "max.one" or "remove.min", if to only keep features in
+#'     1st component or return features not in the last component
 #' @param ... other params for [mclust::densityMclust()]
 #'
 #' @return a list of markers for each group

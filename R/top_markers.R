@@ -3,7 +3,7 @@
 #' @inheritParams top_markers_abs
 #' @inheritParams top_markers_glm
 #' @param use.glm logical, if to use [stats::glm()] to compute group mean score,
-#'                if TRUE, also compute mean score difference as output
+#'     if TRUE, also compute mean score difference as output
 #' @param ... params for [top_markers_abs()] or [top_markers_glm()]
 #'
 #' @return a tibble with feature names, group labels and ordered processed scores
@@ -49,7 +49,7 @@ top_markers_init <- function(data, label, n = 10,
 #' @param label vector, group labels
 #' @param n integer, number of returned top genes for each group
 #' @param method character, specify metric to compute, can be one of "median",
-#'               "mad", "mean"
+#'     "mad", "mean"
 #' @param scale logical, if to scale data by row
 #' @param use.mgm logical, if to scale data using [scale_mgm()]
 #' @param softmax logical, if to apply softmax transformation on output

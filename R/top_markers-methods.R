@@ -63,7 +63,7 @@ setMethod(
     ## get expr
     expr <- SummarizedExperiment::assay(data, i = slot)
     ## get label
-    label <- data@colData[[label]]
+    label <- colData(data)[[label]]
 
     top_m <- top_markers(
       data = expr,

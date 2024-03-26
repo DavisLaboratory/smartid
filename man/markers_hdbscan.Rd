@@ -22,8 +22,8 @@ markers_hdbscan(
 \item{s_thres}{NULL or numeric, only features with score > threshold will be
 returned, if NULL will use 2 * average probability as threshold}
 
-\item{method}{can be "max.one" or "remove.min", if to only keep features in 1st
-component or return features not in the last component}
+\item{method}{can be "max.one" or "remove.min", if to only keep features in
+1st component or return features not in the last component}
 
 \item{minPts}{integer, minimum size of clusters for \code{\link[dbscan:hdbscan]{dbscan::hdbscan()}}}
 

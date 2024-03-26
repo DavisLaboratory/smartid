@@ -23,9 +23,9 @@ Collate:
     'gs_score-methods.R'
     'plot.R'
     'scale_mgm.R'
+    'smartid-package.R'
     'score-methods.R'
     'select_markers.R'
-    'smartid-package.R'
     'top_markers.R'
     'top_markers-methods.R'
 Depends: 

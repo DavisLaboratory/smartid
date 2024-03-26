@@ -1,4 +1,4 @@
-#' @include score.R
+#' @include score.R smartid-package.R
 NULL
 
 #' @rdname cal_score
@@ -42,10 +42,10 @@ setMethod(
     expr <- SummarizedExperiment::assay(data, i = slot)
     ## get label
     if (!is.null(par.idf) & !is.null(par.idf$label)) {
-      par.idf$label <- data@colData[[par.idf$label]]
+      par.idf$label <- colData(data)[[par.idf$label]]
     }
     if (!is.null(par.iae) & !is.null(par.iae$label)) {
-      par.iae$label <- data@colData[[par.iae$label]]
+      par.iae$label <- colData(data)[[par.iae$label]]
     }
 
     res <- cal_score(
@@ -58,9 +58,9 @@ setMethod(
     )
 
     SummarizedExperiment::assay(data, i = new.slot) <- res$score
-    data@metadata$tf <- res$tf
-    data@metadata$idf <- res$idf
-    data@metadata$iae <- res$iae
+    metadata(data)$tf <- res$tf
+    metadata(data)$idf <- res$idf
+    metadata(data)$iae <- res$iae
 
     return(data)
   }

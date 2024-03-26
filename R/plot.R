@@ -79,7 +79,7 @@ plot_mm_clust <- function(score, clust) {
 #' @param ref.group character, reference group name
 #' @param label vector, group labels
 #' @param method character, statistical test to use,
-#'               details in [ggpubr::stat_compare_means()]
+#'     details in [ggpubr::stat_compare_means()]
 #'
 #' @return faceted ggplot object
 #' @export

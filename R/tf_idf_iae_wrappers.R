@@ -131,7 +131,7 @@ idf_sd <- function(expr, features = NULL, thres = 0) {
 #'
 #' @inheritParams idf_rf
 #' @param minPts integer, minimum size of clusters, default 2.
-#'               Details in [dbscan::hdbscan()].
+#'     Details in [dbscan::hdbscan()].
 #' @param ... parameters for [dbscan::hdbscan()]
 #'
 #' @return a matrix of inverse cell frequency score
@@ -414,7 +414,7 @@ iae_sd <- function(expr, features = NULL, thres = 0) {
 #'
 #' @inheritParams idf_rf
 #' @param minPts integer, minimum size of clusters, default 2.
-#'               Details in [dbscan::hdbscan()].
+#'     Details in [dbscan::hdbscan()].
 #' @param ... parameters for [dbscan::hdbscan()]
 #'
 #' @return a matrix of inverse average expression score

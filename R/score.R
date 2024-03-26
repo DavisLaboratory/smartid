@@ -52,9 +52,9 @@ idf_iae_methods <- function() {
 #' @param expr a count matrix, features in row and cells in column
 #' @param tf a character, specify the TF method to use, can be "tf" or "logtf"
 #' @param idf a character, specify the IDF method to use. Available methods can
-#'            be accessed using [idf_iae_methods()]
+#'     be accessed using [idf_iae_methods()]
 #' @param iae a character, specify the IAE method to use. Available methods can
-#'            be accessed using [idf_iae_methods()]
+#'     be accessed using [idf_iae_methods()]
 #' @param par.idf other parameters for specified IDF methods
 #' @param par.iae other parameters for specified IAE methods
 #'
