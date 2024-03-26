@@ -166,8 +166,8 @@ as a negative control group.</p>
 <span><span class="va">up</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">cols</span>, \<span class="op">(</span><span class="va">id</span><span class="op">)</span></span>
 <span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">defac</span>, <span class="fu">if_all</span><span class="op">(</span><span class="op">-</span><span class="op">!</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/sym.html" class="external-link">sym</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">!</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/sym.html" class="external-link">sym</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span> <span class="op">/</span> <span class="va">x</span> <span class="op">&gt;</span> <span class="va">fc</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">data_sim</span><span class="op">@</span><span class="va">metadata</span><span class="op">$</span><span class="va">up_markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">up</span>, <span class="va">cols</span><span class="op">)</span></span>
-<span><span class="va">data_sim</span><span class="op">@</span><span class="va">metadata</span><span class="op">$</span><span class="va">up_markers</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/methods/slot.html" class="external-link">slot</a></span><span class="op">(</span><span class="va">data_sim</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">up_markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">up</span>, <span class="va">cols</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/methods/slot.html" class="external-link">slot</a></span><span class="op">(</span><span class="va">data_sim</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">up_markers</span></span>
 <span><span class="co">#&gt; $DEFacGroup1</span></span>
 <span><span class="co">#&gt;  [1] "Gene31"  "Gene42"  "Gene172" "Gene225" "Gene308" "Gene312" "Gene352"</span></span>
 <span><span class="co">#&gt;  [8] "Gene391" "Gene425" "Gene436" "Gene547" "Gene650" "Gene696" "Gene893"</span></span>
@@ -228,15 +228,16 @@ each function, e.g. <code>?smartid:::idf</code>.</p>
 <span><span class="co">#&gt;                   "null"                   "prob"                     "rf" </span></span>
 <span><span class="co">#&gt;               unlabel SD         unlabel standard </span></span>
 <span><span class="co">#&gt;                     "sd"               "standard"</span></span></code></pre></div>
-<p>The basic version of TF, IDF and IAE can be termed as: <span class="math inline">\(\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}\)</span>
+<p>The basic version of TF, IDF and IAE can be termed as:</p>
+<p><span class="math inline">\(\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}},\)</span>
 <span class="math inline">\(\mathbf{IDF_i} =
-log(1+\frac{n}{n_i+1})\)</span> <span class="math inline">\(\mathbf{IAE_i} = log(1+\frac{n}{\hat
+log(1+\frac{n}{n_i+1}),\)</span> <span class="math inline">\(\mathbf{IAE_i} = log(1+\frac{n}{\hat
 N_{i,j}+1})\)</span></p>
-<p><span class="math inline">\(where\ N_{i,j}\ is\ the\ counts\ of\
-feature\ i\ in\ cell\ j;\ \hat N_{i,j}\ is\ max(0,\ N_{i,j} -
-threshold);\)</span> <span class="math inline">\(\ n\ is\ total\ counts\
-of\ documents(cells);\ n_i\ is\ \sum_{j = 1}^{n} sign(N_{i,j} &gt;
-threshold)\)</span></p>
+<p><span class="math inline">\(\mathbf{where\ N_{i,j}\ is\ the\ counts\
+of\ feature\ i\ in\ cell\ j;\ \hat N_{i,j}\ is\ max(0,\ N_{i,j} -
+threshold)};\)</span> <span class="math inline">\(\mathbf{\ n\ is\
+total\ counts\ of\ documents(cells);\ n_i\ is\ \sum_{j = 1}^{n}
+sign(N_{i,j} &gt; threshold)}\)</span></p>
 <p>Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for
 marker identification.</p>
 <p><span class="math inline">\(\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}\)</span></p>
@@ -267,7 +268,7 @@ quite fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.198   0.008   0.206</span></span>
+<span><span class="co">#&gt;   0.202   0.008   0.210</span></span>
 <span></span>
 <span><span class="co">## score and tf,idf,iae all saved</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
@@ -320,7 +321,7 @@ provide more insights to help understand the data.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/score_barplot.html">score_barplot</a></span><span class="op">(</span></span>
 <span>  top_markers <span class="op">=</span> <span class="va">top_m</span>,</span>
 <span>  column <span class="op">=</span> <span class="st">".dot"</span>,</span>
-<span>  f_list <span class="op">=</span> <span class="va">data_sim</span><span class="op">@</span><span class="va">metadata</span><span class="op">$</span><span class="va">up_markers</span>,</span>
+<span>  f_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/methods/slot.html" class="external-link">slot</a></span><span class="op">(</span><span class="va">data_sim</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">up_markers</span>,</span>
 <span>  n <span class="op">=</span> <span class="fl">20</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="smartid_Demo_files/figure-html/unnamed-chunk-5-1.png" width="768"></p>
@@ -333,7 +334,7 @@ scale factor is higher in Group2, but the GeneMean is too small to be
 confident. Thus this gene won’t be selected by <code>smartid</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  <span class="st">"Gene76"</span> <span class="op">=</span> <span class="va">data_sim</span><span class="op">@</span><span class="va">metadata</span><span class="op">$</span><span class="va">tf</span><span class="op">[</span><span class="st">"Gene76"</span>, <span class="op">]</span>,</span>
+<span>  <span class="st">"Gene76"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/methods/slot.html" class="external-link">slot</a></span><span class="op">(</span><span class="va">data_sim</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">tf</span><span class="op">[</span><span class="st">"Gene76"</span>, <span class="op">]</span>,</span>
 <span>  Group <span class="op">=</span> <span class="va">data_sim</span><span class="op">$</span><span class="va">Group</span></span>
 <span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html" class="external-link">geom_violin</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Group</span>, y <span class="op">=</span> <span class="va">Gene76</span>, fill <span class="op">=</span> <span class="va">Group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -342,7 +343,7 @@ confident. Thus this gene won’t be selected by <code>smartid</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co">## sim gene info</span></span>
-<span><span class="va">data_sim</span><span class="op">@</span><span class="va">rowRanges</span><span class="op">@</span><span class="va">elementMetadata</span><span class="op">[</span><span class="fl">76</span>, <span class="op">]</span></span>
+<span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu">elementMetadata</span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span><span class="op">[</span><span class="fl">76</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt; DataFrame with 1 row and 8 columns</span></span>
 <span><span class="co">#&gt;          Gene BaseGeneMean OutlierFactor   GeneMean DEFacGroup1 DEFacGroup2</span></span>
 <span><span class="co">#&gt;   &lt;character&gt;    &lt;numeric&gt;     &lt;numeric&gt;  &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;</span></span>
@@ -414,7 +415,7 @@ cells, thus not confident enough to be selected as markers.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/hms-dbmi/UpSetR" class="external-link">UpSetR</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/UpSetR/man/upset.html" class="external-link">upset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/UpSetR/man/fromList.html" class="external-link">fromList</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">@</span><span class="va">metadata</span><span class="op">$</span><span class="va">up_markers</span>, <span class="va">marker_ls</span><span class="op">)</span><span class="op">)</span>, nsets <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/UpSetR/man/upset.html" class="external-link">upset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/UpSetR/man/fromList.html" class="external-link">fromList</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/methods/slot.html" class="external-link">slot</a></span><span class="op">(</span><span class="va">data_sim</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">up_markers</span>, <span class="va">marker_ls</span><span class="op">)</span><span class="op">)</span>, nsets <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
 <p><img src="smartid_Demo_files/figure-html/unnamed-chunk-8-1.png" width="768"></p>
 <p><code>smartid</code> also provides some other implementation of
 marker selection. Here is another example using <code>mclust</code>.
@@ -455,7 +456,7 @@ score methods with no need for label information.</p>
 use case.</p>
 <p><span class="math inline">\(\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}\)</span></p>
 <p><span class="math inline">\(where\ \mathbf{IDF} =
-log(1+sd(N_{i})*\frac{n}{n_i+1})\)</span> <span class="math inline">\(\mathbf{IAE} =
+log(1+sd(N_{i})*\frac{n}{n_i+1}),\)</span> <span class="math inline">\(\mathbf{IAE} =
 log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})\)</span></p>
 <div class="section level3">
 <h3 id="score-samples-1">Score Samples<a class="anchor" aria-label="anchor" href="#score-samples-1"></a>
@@ -475,7 +476,7 @@ need for data pre-processing, which is quite convenient and fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.161   0.004   0.165</span></span>
+<span><span class="co">#&gt;   0.149   0.007   0.157</span></span>
 <span></span>
 <span><span class="co">## new score is saved and tf,idf,iae all updated</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
@@ -501,7 +502,7 @@ gene-set list.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## saved score</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">@</span><span class="va">colData</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Cell"                 "Batch"                "Group"               </span></span>
 <span><span class="co">#&gt; [4] "ExpLibSize"           "Group1.score.unlabel" "Group2.score.unlabel"</span></span>
 <span><span class="co">#&gt; [7] "Group3.score.unlabel"</span></span></code></pre></div>
@@ -511,7 +512,7 @@ target group.</p>
 <p>It’s evident that the score can sufficiently separate the target
 group from all others.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">@</span><span class="va">colData</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span><span class="st">"Group1.score.unlabel"</span><span class="op">:</span><span class="st">"Group3.score.unlabel"</span>,</span>
 <span>    names_to <span class="op">=</span> <span class="st">"group markers"</span>,</span>
 <span>    values_to <span class="op">=</span> <span class="st">"score"</span></span>
@@ -574,7 +575,7 @@ group from all others.</p>
 <span><span class="co">#&gt;  [17] rmarkdown_2.26            ggbeeswarm_0.7.2         </span></span>
 <span><span class="co">#&gt;  [19] ragg_1.3.0                purrr_1.0.2              </span></span>
 <span><span class="co">#&gt;  [21] xfun_0.43                 zlibbioc_1.49.3          </span></span>
-<span><span class="co">#&gt;  [23] cachem_1.0.8              beachmat_2.19.1          </span></span>
+<span><span class="co">#&gt;  [23] cachem_1.0.8              beachmat_2.19.2          </span></span>
 <span><span class="co">#&gt;  [25] jsonlite_1.8.8            SnowballC_0.7.1          </span></span>
 <span><span class="co">#&gt;  [27] highr_0.10                DelayedArray_0.29.9      </span></span>
 <span><span class="co">#&gt;  [29] BiocParallel_1.37.1       irlba_2.3.5.1            </span></span>
