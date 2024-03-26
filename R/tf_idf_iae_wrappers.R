@@ -79,7 +79,6 @@ idf <- function(expr, features = NULL, thres = 0) {
 #' smartid:::idf_m(data)
 idf_m <- function(expr, features = NULL, thres = 0) {
   if (is.null(features)) features <- seq_len(nrow(expr))
-  n_obs <- ncol(expr) ## number of total obs
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr, probs = 0.25, na.rm = TRUE)
@@ -359,7 +358,6 @@ iae <- function(expr, features = NULL, thres = 0) {
 #' smartid:::iae_m(data)
 iae_m <- function(expr, features = NULL, thres = 0) {
   if (is.null(features)) features <- seq_len(nrow(expr))
-  n_obs <- ncol(expr) ## number of total obs
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr, probs = 0.25, na.rm = TRUE)

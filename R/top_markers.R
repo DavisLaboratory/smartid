@@ -65,9 +65,9 @@ top_markers_abs <- function(data, label, n = 10,
                             scale = TRUE, use.mgm = TRUE,
                             softmax = TRUE) {
   method <- match.arg(method)
-  if (scale & use.mgm) {
+  if (scale && use.mgm) {
     data <- scale_mgm(expr = data, label = label)
-  } else if (scale & !use.mgm) {
+  } else if (scale && !use.mgm) {
     ## scale scores on rows
     # mu_s <- sparseMatrixStats::rowMeans2(data, na.rm = TRUE)
     # sd_s <- sparseMatrixStats::rowSds(data, na.rm = TRUE)
@@ -126,7 +126,7 @@ top_markers_glm <- function(data, label, n = 10,
   label <- factor(label) # factorize label
 
   ## scale
-  if (scale & !use.mgm) {
+  if (scale && !use.mgm) {
     ## scale scores on rows
     # mu_s <- sparseMatrixStats::rowMeans2(data, na.rm = TRUE)
     # sd_s <- sparseMatrixStats::rowSds(data, na.rm = TRUE)
@@ -134,7 +134,7 @@ top_markers_glm <- function(data, label, n = 10,
 
     data <- t(scale(t(data)))
     data[is.na(data)] <- 0 # assign 0 to NA when sd = 0
-  } else if (scale & use.mgm) {
+  } else if (scale && use.mgm) {
     data <- scale_mgm(expr = data, label = label)
   }
 
