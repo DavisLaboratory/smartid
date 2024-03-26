@@ -2,7 +2,7 @@
 #' @import methods
 #' @import stats
 #' @import graphics
-#' @importFrom SummarizedExperiment SummarizedExperiment assay colData metadata
+#' @importFrom SummarizedExperiment SummarizedExperiment assay colData
 #' @importFrom utils globalVariables stack
 #' @importClassesFrom Matrix dgCMatrix
 NULL

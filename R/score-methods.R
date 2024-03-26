@@ -58,9 +58,9 @@ setMethod(
     )
 
     SummarizedExperiment::assay(data, i = new.slot) <- res$score
-    metadata(data)$tf <- res$tf
-    metadata(data)$idf <- res$idf
-    metadata(data)$iae <- res$iae
+    slot(data, "metadata")$tf <- res$tf
+    slot(data, "metadata")$idf <- res$idf
+    slot(data, "metadata")$iae <- res$iae
 
     return(data)
   }

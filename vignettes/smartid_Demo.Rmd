@@ -112,23 +112,23 @@ idf_iae_methods()
 ```
 
 The basic version of TF, IDF and IAE can be termed as:
-$$\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}$$
-$$\mathbf{IDF_i} = log(1+\frac{n}{n_i+1})$$
-$$\mathbf{IAE_i} = log(1+\frac{n}{\hat N_{i,j}+1})$$
+$\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}$
+$\mathbf{IDF_i} = log(1+\frac{n}{n_i+1})$
+$\mathbf{IAE_i} = log(1+\frac{n}{\hat N_{i,j}+1})$
 
-$$where\ N_{i,j}\ is\ the\ counts\ of\ feature\ i\ in\ cell\ j;\ \hat N_{i,j}\ is\ max(0,\ N_{i,j} - threshold);$$
-$$\ n\ is\ total\ counts\ of\ documents(cells);\ n_i\ is\ \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
+$where\ N_{i,j}\ is\ the\ counts\ of\ feature\ i\ in\ cell\ j;\ \hat N_{i,j}\ is\ max(0,\ N_{i,j} - threshold);$
+$\ n\ is\ total\ counts\ of\ documents(cells);\ n_i\ is\ \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$
 
 Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for marker identification.
 
 $\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}$
 
 The probability version of IDF can be termed as:
-$$\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})$$
+$\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})$
 
 And the probability version of IAE can be termed as:
-$$\mathbf{IAE_{i,j}} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))$$
-$$where\ D\ is\ the\ category\ of\ cell\ j;\ \hat D\ is\ the\ category\ other\ than\ D.$$
+$\mathbf{IAE_{i,j}} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))$
+$where\ D\ is\ the\ category\ of\ cell\ j;\ \hat D\ is\ the\ category\ other\ than\ D.$
 
 TF here stands for gene frequency, which is similar to CPM, while IDF represents the inverse cell/sample frequency for scRNA-seq data, and IAE is the inverse average expression of each gene across all cells or cells in each labeled group.
 
@@ -179,7 +179,7 @@ score_barplot(
 )
 ```
 
-As we can see, there is a UP DEG 'Gene76' not popping up in Group 2, we can check this gene's relative expression using violin plot. It is clear that this gene is not significantly highly expressed in Group 2 and the average expression is quite low across all cells.
+As we can see, there is an UP DEG 'Gene76' not popping up in Group 2, we can check the relative expression of this gene using violin plot. It is clear that this gene is not significantly highly expressed in Group 2 and the average expression is quite low across all cells.
 
 This can also be confirmed in data simulation information, where the scale factor is higher in Group2, but the GeneMean is too small to be confident. Thus this gene won't be selected by `smartid`.
 
@@ -258,8 +258,8 @@ Here we choose logTF * IDF_sd * IAE_sd for for gene-set scoring as a use case.
 
 $\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}$
 
-$$where\ \mathbf{IDF} = log(1+sd(N_{i})*\frac{n}{n_i+1})$$
-$$\mathbf{IAE} = log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})$$
+$where\ \mathbf{IDF} = log(1+sd(N_{i})*\frac{n}{n_i+1})$
+$\mathbf{IAE} = log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})$
 
 ## Score Samples
 
