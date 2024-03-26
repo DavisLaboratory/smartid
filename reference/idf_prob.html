@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">smartid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.3</span>
       </span>
     </div>
 
@@ -92,7 +92,11 @@
     <h2>Value</h2>
     
 
-<p>a matrix of IDF score</p>
+<p>a matrix of inverse cell frequency score</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>$$\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})$$</p>
     </div>
 
     <div id="ref-examples">

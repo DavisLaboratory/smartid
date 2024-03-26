@@ -12,11 +12,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Scoring and Marker Selection Method Based on Modified TF-IDF">
-<meta property="og:description" content="This package enables automated selection of group specific signature,
-    especially for rare population. The package is developed for generating
-    specifc lists of signature genes based on TF-IDF modified methods. It can
-    also be used as a new gene-set scoring method or data transformation method.
-    Multiple visualization functions are implemented in this package.">
+<meta property="og:description" content="This package enables automated selection of group specific
+    signature, especially for rare population. The package is developed for
+    generating specifc lists of signature genes based on Term Frequency-Inverse
+    Document Frequency (TF-IDF) modified methods. It can also be used as a new
+    gene-set scoring method or data transformation method. Multiple visualization
+    functions are implemented in this package.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -37,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">smartid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.3</span>
       </span>
     </div>
 
@@ -87,7 +88,7 @@
 <!-- badges: start -->
 
 <p>An R package for automatically identify group specific signature and score cells based on given gene sets on scRNA data.</p>
-<p>smartid is an R package designed for automated identification of signatures of interest. The package is developed for generating speicifc signature genes from multiple groups based on modified TF-IDF approach, which is good at finding markers for rare populations and pay more attention to the genes without high expression but with high variance across groups.</p>
+<p>smartid is an R package designed for automated identification of signatures of interest. The package is developed for generating specific signature genes from multiple groups based on modified TF-IDF approach, which is good at finding markers for rare populations and pay more attention to the genes without high expression but with high variance across groups.</p>
 <p>This package is particularly useful for the marker identification of novel or rare group populations in various biological and medical applications, including cancer research and developmental biology.</p>
 <p><a href="https://davislaboratory.github.io/smartid/articles/smartid_Demo.html" class="external-link"><strong>Check out the standard demonstration.</strong></a></p>
 <div class="section level2">
@@ -97,6 +98,12 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install from GitHub</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"DavisLaboratory/smartid"</span><span class="op">)</span></span></code></pre></div>
+<p>smartid can be installed from Bioconductor directly as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"smartid"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </div>
