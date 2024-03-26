@@ -12,11 +12,17 @@ test_that("marker selection works", {
   res <- markers_mixmdl(top_n, k = 3, dist = "gamma")
   expect_type(res, "list")
 
-  ## test mclust
+  ## test mclust max.one
   res <- markers_mclust(top_n)
   expect_type(res, "list")
+  ## test mclust remove.min
+  res <- markers_mclust(top_n, method = "remove.min")
+  expect_type(res, "list")
 
-  ## test hdbscan
+  ## test hdbscan max.one
   res <- markers_hdbscan(top_n, minPts = 2)
+  expect_type(res, "list")
+  ## test hdbscan remove.min
+  res <- markers_hdbscan(top_n, minPts = 2, method = "remove.min")
   expect_type(res, "list")
 })

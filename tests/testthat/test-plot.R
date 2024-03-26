@@ -42,7 +42,7 @@ test_that("plot works", {
   p <- plot_mm(mixmdl = mixmdl, dist = "gamma")
   expect_true(is.ggplot(p))
 
-  ## test plot_mm for gamma
+  ## test plot_mm_clust for gamma
   set.seed(123)
   p <- plot_mm_clust(score = rnorm(50), clust = rep(c("A","B"), 25))
   expect_true(is.ggplot(p))

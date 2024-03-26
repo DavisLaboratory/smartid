@@ -89,6 +89,7 @@ setGeneric(
 #'
 #' @inheritParams gs_score_init
 #' @param data an expression object, can be matrix or SummarizedExperiment
+#' @param features vector or named list, feature names to compute score
 #' @param slot a character, specify which slot to use when data is se object,
 #'             optional, default 'score'
 #' @param suffix a character, specify the name suffix to save score when

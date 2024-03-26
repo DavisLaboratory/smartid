@@ -18,7 +18,7 @@ gs_score(data, features = NULL, slot = "score", suffix = "score")
 \arguments{
 \item{data}{an expression object, can be matrix or SummarizedExperiment}
 
-\item{features}{vector, feature names to compute score}
+\item{features}{vector or named list, feature names to compute score}
 
 \item{slot}{a character, specify which slot to use when data is se object,
 optional, default 'score'}
