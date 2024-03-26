@@ -1,4 +1,4 @@
-#' @include score.R smartid-package.R
+#' @include score.R
 NULL
 
 #' @rdname gs_score
@@ -64,7 +64,10 @@ setMethod(
     ## compute score
     score <- gs_score(data = expr, features = features, suffix = suffix)
 
-    colData(data) <- cbind(colData(data), score)
+    SummarizedExperiment::colData(data) <- cbind(
+      SummarizedExperiment::colData(data),
+      score
+    )
 
     return(data)
   }
