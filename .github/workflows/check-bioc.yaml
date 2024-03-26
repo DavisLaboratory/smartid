@@ -54,12 +54,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # - { os: ubuntu-latest, r: 'devel', bioc: '3.19', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
+          - { os: ubuntu-latest, r: 'devel', bioc: 'devel', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
           # - { os: ubuntu-latest, r: '4.3.3', bioc: '3.19', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-          - { os: ubuntu-latest, r: 'devel', bioc: '3.18', cont: "bioconductor/bioconductor_docker:RELEASE_3_18", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
+          # - { os: ubuntu-latest, r: 'devel', bioc: '3.18', cont: "bioconductor/bioconductor_docker:RELEASE_3_18", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
           # - { os: ubuntu-latest, r: '4.3.3', bioc: '3.18', cont: "bioconductor/bioconductor_docker:RELEASE_3_18", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-          - { os: macOS-latest, r: '4.3.3', bioc: '3.18'}
-          - { os: windows-latest, r: '4.3.3', bioc: '3.18'}
+          - { os: macOS-latest, r: '4.4', bioc: '3.19'}
+          - { os: windows-latest, r: '4.4', bioc: '3.19'}
           ## Check https://github.com/r-lib/actions/tree/master/examples
           ## for examples using the http-user-agent
 
@@ -70,7 +70,7 @@ jobs:
       TZ: UTC
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      UPGRADE_PKGS: ${{ matrix.config.bioc >= '3.18' }}
+      UPGRADE_PKGS: ${{ matrix.config.bioc >= '3.19' }}
 
     steps:
       ## Set the R library to the directory matching the

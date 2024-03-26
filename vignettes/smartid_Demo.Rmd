@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 
 **smartid**
 
-`smartid` is a package that enables automated selection of group specific signature, especially for rare population. This package is developed for generating specifc lists of signature genes based on TF-IDF modified methods for labeled data. It can also be used as a new gene-set scoring method or data transformation method for un-labeled data. Multiple visualization functions are implemented in this package.
+`smartid` is a package that enables automated selection of group specific signature genes, especially for rare population. This package is developed for generating lists of specific signature genes based on **Term Frequency-Inverse Document Frequency** (TF-IDF)  modified methods and **expectation maximization** (EM) for labeled data. It can also be used as a new gene-set scoring method or data transformation method for un-labeled data. Multiple visualization functions are implemented in this package.
 
 # Installation
 
@@ -105,7 +105,12 @@ data_sim
 
 ## Score Samples
 
-The first step is to score all samples/cells by using specified approach. The score can be composed of 3 terms: TF (term/feature frequency), IDF (inverse document/cell frequency) and IAE (inverse average expression of features). Each term has a couple of available choices with different formats to suit labeled or un-labeled data.
+The first step is to score all samples/cells by using specified approach. The score can be composed of 3 terms: TF (term/feature frequency), IDF (inverse document/cell frequency) and IAE (inverse average expression of features). Each term has a couple of available choices with different formats to suit labeled or un-labeled data. Users can use function `idf_iae_methods()` to see available methods for IDF/IAE term. More details of each term can be seen in help page of each function, e.g. `?smartid:::idf`.
+
+```{r}
+## show available methods
+idf_iae_methods()
+```
 
 The basic version of TF, IDF and IAE can be termed as:
 $$\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}$$
