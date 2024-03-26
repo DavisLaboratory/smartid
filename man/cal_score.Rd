@@ -62,7 +62,9 @@ optional, default 'score'}
 A list of matrices or se object containing combined score
 }
 \description{
-compute TF, IDF, IAE and combine the score
+compute TF (term/feature frequency), IDF (inverse document/cell
+frequency), IAE (inverse average expression of features) and combine the
+the final score
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

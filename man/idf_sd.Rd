@@ -14,10 +14,13 @@ idf_sd(expr, features = NULL, thres = 0)
 \item{thres}{numeric, cell only counts when expr > threshold, default 0}
 }
 \value{
-a vector of idf score for each feature
+a vector of inverse cell frequency score for each feature
 }
 \description{
 inverse cell frequency using standard deviation (SD)
+}
+\details{
+\deqn{\mathbf{IDF_i} = log(1+sd(N_{i})*\frac{n}{n_i+1})}
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

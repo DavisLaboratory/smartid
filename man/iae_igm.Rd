@@ -2,7 +2,7 @@
 % Please edit documentation in R/tf_idf_iae_wrappers.R
 \name{iae_igm}
 \alias{iae_igm}
-\title{labeled inverse average expression IGM}
+\title{labeled inverse average expression: IGM}
 \usage{
 iae_igm(expr, features = NULL, label, lambda = 7, thres = 0)
 }
@@ -18,10 +18,13 @@ iae_igm(expr, features = NULL, label, lambda = 7, thres = 0)
 \item{thres}{numeric, cell only counts when expr > threshold, default 0}
 }
 \value{
-a vector of igm score for each feature
+a vector of inverse gravity moment score for each feature
 }
 \description{
-labeled inverse average expression IGM
+labeled inverse average expression: IGM
+}
+\details{
+\deqn{\mathbf{IGM_i} = log(1+\lambda\frac{max(mean(N_{i,j\in D})_{k})}{\sum_{k}^{K}(mean(N_{i,j\in D})_{k}*r_{k})+e^{-8}})}
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

@@ -9,3 +9,7 @@
 # smartid 0.99.2
 
 * Added test for `gs_score` function.
+
+# smartid 0.99.3
+
+* Bump R version dependency to >= 4.4 and add details for TF, IDF, IAE functions.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/tf_idf_iae_wrappers.R
 \name{tf}
 \alias{tf}
-\title{compute term/gene frequency within each cell}
+\title{compute term/feature frequency within each cell}
 \usage{
 tf(expr, log = FALSE)
 }
@@ -12,10 +12,13 @@ tf(expr, log = FALSE)
 \item{log}{logical, if to do log-transformation}
 }
 \value{
-a matrix of tf
+a matrix of term/gene frequency
 }
 \description{
-compute term/gene frequency within each cell
+compute term/feature frequency within each cell
+}
+\details{
+\deqn{\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}}
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

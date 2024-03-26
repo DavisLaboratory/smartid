@@ -18,10 +18,13 @@ idf_prob(expr, features = NULL, label, multi = TRUE, thres = 0)
 \item{thres}{numeric, cell only counts when expr > threshold, default 0}
 }
 \value{
-a matrix of IDF score
+a matrix of inverse cell frequency score
 }
 \description{
 labeled inverse cell frequency: probability based
+}
+\details{
+\deqn{\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})}
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

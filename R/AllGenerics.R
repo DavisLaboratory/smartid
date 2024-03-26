@@ -10,7 +10,9 @@
 ## ---------------------------------------------------------------------------
 #' @title calculate combined score
 #'
-#' @description compute TF, IDF, IAE and combine the score
+#' @description compute TF (term/feature frequency), IDF (inverse document/cell
+#'     frequency), IAE (inverse average expression of features) and combine the
+#'     the final score
 #'
 #' @inheritParams cal_score_init
 #' @param data an expression object, can be matrix or SummarizedExperiment

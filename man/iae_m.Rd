@@ -14,10 +14,13 @@ iae_m(expr, features = NULL, thres = 0)
 \item{thres}{numeric, cell only counts when expr > threshold, default 0}
 }
 \value{
-a vector of iae score for each feature
+a matrix of inverse average expression score for each feature
 }
 \description{
 inverse average expression: max
+}
+\details{
+\deqn{\mathbf{IAE_{i,j}} = log(1+\frac{max_{\{i^{'}\in j\}}(n_{i^{'}})}{\sum_{j = 1}^{n} sign(N_{i,j} > threshold)+1})}
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

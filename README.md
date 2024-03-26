@@ -24,4 +24,12 @@ You can install the development version of smartid like so:
 devtools::install("DavisLaboratory/smartid")
 ```
 
+smartid can be installed from Bioconductor directly as follows:
+
+``` r
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("smartid")
+```
 

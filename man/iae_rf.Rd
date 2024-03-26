@@ -18,10 +18,13 @@ iae_rf(expr, features = NULL, label, multi = TRUE, thres = 0)
 \item{thres}{numeric, cell only counts when expr > threshold, default 0}
 }
 \value{
-a matrix of IAE score
+a matrix of inverse average expression score
 }
 \description{
 labeled inverse average expression: relative frequency
+}
+\details{
+\deqn{\mathbf{IAE} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}})}
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 
 **smartid**
 
-smartid is a package that enables automated selection of group specific signature, especially for rare population. This package is developed for generating specifc lists of signature genes based on TF-IDF modified methods for labeled data. It can also be used as a new gene-set scoring method or data transformation method for un-labeled data. Multiple visualization functions are implemented in this package.
+`smartid` is a package that enables automated selection of group specific signature, especially for rare population. This package is developed for generating specifc lists of signature genes based on TF-IDF modified methods for labeled data. It can also be used as a new gene-set scoring method or data transformation method for un-labeled data. Multiple visualization functions are implemented in this package.
 
 # Installation
 
@@ -43,13 +43,6 @@ smartid is a package that enables automated selection of group specific signatur
 The most updated version of `smartid` is hosted on GitHub and can be installed using `devtools::install_github()` function provided by [devtools](https://cran.r-project.org/package=devtools).
 
 ```{r installation, eval=FALSE}
-# if (!requireNamespace("devtools", quietly = TRUE)) {
-#   install.packages("devtools")
-# }
-# if (!requireNamespace("smartid", quietly = TRUE)) {
-#   devtools::install_github("DavisLaboratory/smartid")
-# }
-
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
 }
@@ -62,7 +55,7 @@ if (!requireNamespace("smartid", quietly = TRUE)) {
 
 ------------------------------------------------------------------------
 
-To show a quick start guide of smartid, here we use package `splatter` to simulate a scRNA-seq data of 1000 genes * 3000 cells. This data consists of 4 groups, each has 2% DEGs except Group 4, which has no DEG as a negative control group.
+To show a quick start guide of `smartid`, here we use package `r BiocStyle::Biocpkg("splatter")` to simulate a scRNA-seq data of 1000 genes * 3000 cells. This data consists of 4 groups, each has 2% DEGs except Group 4, which has no DEG as a negative control group.
 
 ```{r set up, message=FALSE}
 library(smartid)
@@ -104,7 +97,7 @@ data_sim
 
 `smartid` can be easily used to accurately identify specific marker genes on labeled data. By adapting and modifying TF-IDF approach, `smartid` shows robust power in finding marker genes, especially for rare population which many methods fail in.
 
-**marker identification of smartid includes 3 key steps:**
+**marker identification of `smartid` includes 3 key steps:**
 
   step 1. score samples  
   step 2. scale and transform scores  
@@ -112,15 +105,30 @@ data_sim
 
 ## Score Samples
 
-The first step is to score all samples/cells by using specified approach. The score can be composed of 3 terms: TF (term frequency), IDF (inverse document frequency) and IAE (inverse average expression). Each term has a couple of available choices with different formats to suit labeled or un-labeled data.
+The first step is to score all samples/cells by using specified approach. The score can be composed of 3 terms: TF (term/feature frequency), IDF (inverse document/cell frequency) and IAE (inverse average expression of features). Each term has a couple of available choices with different formats to suit labeled or un-labeled data.
 
-TF here stands for gene frequency, which is similar to CPM, while IDF represents the inverse cell/sample frequency for scRNA-seq data, and IAE is the inverse average expression of each gene across all cells or cells in each labeled group.
+The basic version of TF, IDF and IAE can be termed as:
+$$\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}$$
+$$\mathbf{IDF_i} = log(1+\frac{n}{n_i+1})$$
+$$\mathbf{IAE_i} = log(1+\frac{n}{\hat N_{i,j}+1})$$
+
+$$where\ N_{i,j}\ is\ the\ counts\ of\ feature\ i\ in\ cell\ j;\ \hat N_{i,j}\ is\ max(0,\ N_{i,j} - threshold);$$
+$$\ n\ is\ total\ counts\ of\ documents(cells);\ n_i\ is\ \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
 
 Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for marker identification.
 
-$$\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}$$
+$\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}$
 
-Another advantage of smartid is that it can start with raw counts data, with no need for pre-processed data. And the scoring is quite fast.
+The probability version of IDF can be termed as:
+$$\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})$$
+
+And the probability version of IAE can be termed as:
+$$\mathbf{IAE_{i,j}} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))$$
+$$where\ D\ is\ the\ category\ of\ cell\ j;\ \hat D\ is\ the\ category\ other\ than\ D.$$
+
+TF here stands for gene frequency, which is similar to CPM, while IDF represents the inverse cell/sample frequency for scRNA-seq data, and IAE is the inverse average expression of each gene across all cells or cells in each labeled group.
+
+Another advantage of `smartid` is that it can start with raw counts data, with no need for pre-processed data. And the scoring is quite fast.
 
 ```{r}
 ## compute score
@@ -142,7 +150,7 @@ names(metadata(data_sim))
 
 ## Scale and Transform Score
 
-Scaling is needed to find the markers specific to the group, however, standard scaling might fail due to the rare populations. Here smartid uses a special scaling strategy `scale_mgm`, which can scale im-balanced data by given group labels.
+Scaling is needed to find the markers specific to the group, however, standard scaling might fail due to the rare populations. Here `smartid` uses a special scaling strategy `scale_mgm()`, which can scale im-balanced data by given group labels.
 
 The score will be transformed using softmax before passing to EM algorithm.
 
@@ -185,9 +193,9 @@ data_sim@rowRanges@elementMetadata[76,]
 
 As we can see from above, there is a distinctly different distribution of feature score between group with DEGs and without DEGs. And there is a clear separation (break point) between the real DEGs and non-DEGs.
 
-To help automatically select real markers for each group, smartid used an expectation maximization (EM) approach to identify which genes fall into the real DEGs distribution and which are not.
+To help automatically select real markers for each group, `smartid` used an expectation maximization (EM) approach to identify which genes fall into the real DEGs distribution and which are not.
 
-Regarding the distribution of scores as a mixture model, here we can choose function `markers_mixmdl` in smartid to separate features. There are 2 available mixture model to choose: normal (Gaussian) or gamma. We choose "norm" here as it runs faster.
+Regarding the distribution of scores as a mixture model, here we can choose function `markers_mixmdl()` in `smartid` to separate features. There are 2 available mixture model to choose: normal (Gaussian) or gamma. We choose "norm" here as it runs faster.
 
 `smartid` also allows to plot the mixture distribution plot after EM. It's obvious that the top 2 components of Group 4 share quite similar distribution, thus no markers will be selected for this group.
 
@@ -203,7 +211,7 @@ marker_ls <- markers_mixmdl(
 marker_ls
 ```
 
-We can also compare our selected markers with real DEGs. As there is no markers or DEG in group 4, only show overlap from Group1-3. It's clear that all the markers identified by smartid are real DEGs, with a couple of missing genes in Group 1 and 2. But as what we showed above, those genes only exhibit low mean expression across all cells, thus not confident enough to be selected as markers.
+We can also compare our selected markers with real DEGs. As there is no markers or DEG in group 4, only show overlap from Group1-3. It's clear that all the markers identified by `smartid` are real DEGs, with a couple of missing genes in Group 1 and 2. But as what we showed above, those genes only exhibit low mean expression across all cells, thus not confident enough to be selected as markers.
 
 ```{r}
 library(UpSetR)
@@ -211,7 +219,7 @@ library(UpSetR)
 upset(fromList(c(data_sim@metadata$up_markers, marker_ls)), nsets = 6)
 ```
 
-`smartid` also provides some other implementation of marker selection. Here is another example using `mclust`. Different from `markers_mixmdl`, `markers_mclust` doesn't need a pre-defined number of components (which is 3 in `markers_mixmdl`), instead, it will select the number of components by searching a series of potential numbers. This method is sometimes more robust than `markers_mixmdl`.
+`smartid` also provides some other implementation of marker selection. Here is another example using `mclust`. Different from `markers_mixmdl()`, `markers_mclust()` doesn't need a pre-defined number of components (which is 3 in `markers_mixmdl()`), instead, it will select the number of components by searching a series of potential numbers. This method is sometimes more robust than `markers_mixmdl()`.
 
 Similary, this method also allows to plot the mixture distribution for each component, but separately.
 
@@ -221,7 +229,7 @@ set.seed(123)
 marker_ls_new <- markers_mclust(
   top_markers = top_m,
   column = ".dot",
-  dist = "norm",
+  method = "max.one",
   plot = TRUE
 )
 names(marker_ls_new) <- paste(names(marker_ls_new), "new")
@@ -242,11 +250,14 @@ While for the unlabeled data, `smartid` also provides the score methods with no 
 
 Here we choose logTF * IDF_sd * IAE_sd for for gene-set scoring as a use case.
 
-$$\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}$$
+$\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}$
+
+$$where\ \mathbf{IDF} = log(1+sd(N_{i})*\frac{n}{n_i+1})$$
+$$\mathbf{IAE} = log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})$$
 
 ## Score Samples
 
-Similary, the first step is to score samples/cells using the specified method. This step also starts with raw counts data, without need for data pre-processing, which is quite convenient and fast.
+Similarly, the first step is to score samples/cells using the specified method. This step also starts with raw counts data, without need for data pre-processing, which is quite convenient and fast.
 
 ```{r}
 ## compute score without label
@@ -267,7 +278,7 @@ names(metadata(data_sim))
 
 ## Compute Overall Score for Gene-set
 
-To compare overall score of the given gene-set, we don't need to scale and tranform score this time. Using `gs_score` can easily compute the overall score for each cell based on the given gene-set list.
+To compare overall score of the given gene-set, we don't need to scale and tranform score this time. Using `gs_score()` can easily compute the overall score for each cell based on the given gene-set list.
 
 ```{r}
 ## compute score for each group marker list

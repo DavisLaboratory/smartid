@@ -14,10 +14,13 @@ iae_sd(expr, features = NULL, thres = 0)
 \item{thres}{numeric, cell only counts when expr > threshold, default 0}
 }
 \value{
-a vector of iae score for each feature
+a vector of inverse average expression score for each feature
 }
 \description{
 inverse average expression using standard deviation (SD)
+}
+\details{
+\deqn{\mathbf{IAE} = log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})}
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

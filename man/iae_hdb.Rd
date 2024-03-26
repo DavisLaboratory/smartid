@@ -21,10 +21,13 @@ Details in \code{\link[dbscan:hdbscan]{dbscan::hdbscan()}}.}
 \item{...}{parameters for \code{\link[dbscan:hdbscan]{dbscan::hdbscan()}}}
 }
 \value{
-a matrix of IAE score
+a matrix of inverse average expression score
 }
 \description{
 inverse average expression using hdbscan cluster as label
+}
+\details{
+Details as \code{\link[smartid:::iae_prob]{smartid::::iae_prob()}}.
 }
 \examples{
 set.seed(123)

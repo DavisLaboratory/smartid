@@ -2,13 +2,18 @@
 #-----------------TF variants------------------#
 #################################################
 
+### $$\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}$$
+
 ## term frequency
-#' compute term/gene frequency within each cell
+#' compute term/feature frequency within each cell
+#'
+#' @details
+#' \deqn{\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}}
 #'
 #' @param expr a count matrix, features in row and cells in column
 #' @param log logical, if to do log-transformation
 #'
-#' @return a matrix of tf
+#' @return a matrix of term/gene frequency
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -34,9 +39,12 @@ tf <- function(expr, log = FALSE) {
 
 #' standard inverse cell frequency
 #'
+#' @details
+#' \deqn{\mathbf{IDF_i} = log(1+\frac{n}{n_i+1})}
+#'
 #' @inheritParams idf_rf
 #'
-#' @return a vector of idf score for each feature
+#' @return a vector of inverse cell frequency score for each feature
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -54,14 +62,17 @@ idf <- function(expr, features = NULL, thres = 0) {
 }
 
 ## inverse document frequency max
-### $$\mathbf{IDF_{i,d}} = log(\frac{max_{\{i^{'}\in d\}}(n_{i^{'}})}{n_i+1})$$
+### $$\mathbf{IDF_{i,j}} = log(\frac{max_{\{i^{'}\in j\}}(n_{i^{'}})}{n_i+1})$$
 ### $$n: total\ counts\ of\ documents;\ n_i: \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
 
-#' inverse document frequency: max
+#' inverse cell frequency: max
+#'
+#' @details
+#' \deqn{\mathbf{IDF_{i,j}} = log(\frac{max_{\{i^{'}\in j\}}(n_{i^{'}})}{n_i+1})}
 #'
 #' @inheritParams idf_rf
 #'
-#' @return a vector of idf score for each feature
+#' @return a matrix of inverse cell frequency score for each feature
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -84,14 +95,17 @@ idf_m <- function(expr, features = NULL, thres = 0) {
 }
 
 ## inverse document frequency sd
-### $$\mathbf{IDF} = log(1+sd(N_{i})*\frac{n}{n_i+1})$$
+### $$\mathbf{IDF_i} = log(1+sd(N_{i})*\frac{n}{n_i+1})$$
 ### $$n: total\ counts\ of\ documents;\ n_i: \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
 
 #' inverse cell frequency using standard deviation (SD)
 #'
+#' @details
+#' \deqn{\mathbf{IDF_i} = log(1+sd(N_{i})*\frac{n}{n_i+1})}
+#'
 #' @inheritParams idf_rf
 #'
-#' @return a vector of idf score for each feature
+#' @return a vector of inverse cell frequency score for each feature
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -110,14 +124,17 @@ idf_sd <- function(expr, features = NULL, thres = 0) {
 }
 
 ## inverse document frequency using hdbscan cluster as label
-#' Title
+#' inverse document frequency using hdbscan cluster as label
+#'
+#' @details
+#' Details as [smartid:::idf_prob()].
 #'
 #' @inheritParams idf_rf
 #' @param minPts integer, minimum size of clusters, default 2.
 #'               Details in [dbscan::hdbscan()].
 #' @param ... parameters for [dbscan::hdbscan()]
 #'
-#' @return a matrix of IDF score
+#' @return a matrix of inverse cell frequency score
 #'
 #' @examples
 #' set.seed(123)
@@ -137,9 +154,9 @@ idf_hdb <- function(expr, features = NULL, multi = TRUE,
   ## factor cluster
   cluster <- factor(cluster)
 
-  idf <- idf_rf(expr = expr, features = features,
-                label = cluster, multi = multi,
-                thres = thres)
+  idf <- idf_prob(expr = expr, features = features,
+                  label = cluster, multi = multi,
+                  thres = thres)
   return(idf)
 }
 
@@ -150,13 +167,16 @@ idf_hdb <- function(expr, features = NULL, multi = TRUE,
 
 #' labeled inverse cell frequency: relative frequency
 #'
+#' @details
+#' \deqn{\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}})}
+#'
 #' @param expr a matrix, features in row and cells in column
 #' @param features vector, feature names or indexes to compute
 #' @param label vector, group label of each cell
 #' @param multi logical, if to compute based on binary (FALSE) or multi-class (TRUE)
 #' @param thres numeric, cell only counts when expr > threshold, default 0
 #'
-#' @return a matrix of IDF score
+#' @return a matrix of inverse cell frequency score
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -197,9 +217,12 @@ idf_rf <- function(expr, features = NULL, label,
 
 #' labeled inverse cell frequency: probability based
 #'
+#' @details
+#' \deqn{\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})}
+#'
 #' @inheritParams idf_rf
 #'
-#' @return a matrix of IDF score
+#' @return a matrix of inverse cell frequency score
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -234,16 +257,19 @@ idf_prob <- function(expr, features = NULL, label,
 }
 
 ## labeled inverse document frequency IGM
-### $$\mathbf{IGM} = log(1+\lambda\frac{max(n_{i,j\in D})_{k}}{\sum_{k}^{K}((n_{i,j\in D})_{k}*r_{k})+e^{-8}})$$
+### $$\mathbf{IGM_i} = log(1+\lambda\frac{max(n_{i,j\in D})_{k}}{\sum_{k}^{K}((n_{i,j\in D})_{k}*r_{k})+e^{-8}})$$
 ### $$\mathbf{k}: type\ in\ total\ group\ K$$
 ### $$\mathbf{r_{k}}: rank\ of\ n_{i,j\in D})_{k}\ in\ total\ group\ K$$
 
-#' labeled inverse document frequency IGM
+#' labeled inverse cell frequency: IGM
+#'
+#' @details
+#' \deqn{\mathbf{IGM_i} = log(1+\lambda\frac{max(n_{i,j\in D})_{k}}{\sum_{k}^{K}((n_{i,j\in D})_{k}*r_{k})+e^{-8}})}
 #'
 #' @inheritParams idf_rf
 #' @param lambda numeric, hyperparameter for IGM
 #'
-#' @return a vector of igm score for each feature
+#' @return a vector of inverse gravity moment score for each feature
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -274,14 +300,17 @@ idf_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
 ##-----------------unlabeled-------------------##
 
 ## inverse average expression
-### $$\mathbf{IAE_i} = log(1+\frac{n}{\hat N_{i,j}+1})$$
+### $$\mathbf{IAE_i} = log(1+\frac{n}{\sum_j^n\hat N_{i,j}+1})$$
 ### $$n: total\ counts\ of\ documents;\ \hat N_{i,j}: max(0, N_{i,j} - threshold)$$
 
 #' standard inverse average expression
 #'
+#' @details
+#' \deqn{\mathbf{IAE_i} = log(1+\frac{n}{\hat N_{i,j}+1})}
+#'
 #' @inheritParams idf_rf
 #'
-#' @return a vector of iae score for each feature
+#' @return a vector of inverse average expression score for each feature
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -301,14 +330,17 @@ iae <- function(expr, features = NULL, thres = 0) {
 }
 
 ## inverse average expression max
-### $$\mathbf{IAE_i} = log(1+\frac{max_{\{i^{'}\in d\}}(n_{i^{'}})}{n_i+1})$$
+### $$\mathbf{IAE_{i,d}} = log(1+\frac{max_{\{i^{'}\in d\}}(n_{i^{'}})}{n_i+1})$$
 ### $$n: total\ counts\ of\ documents;\ n_i: \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
 
 #' inverse average expression: max
 #'
+#' @details
+#' \deqn{\mathbf{IAE_{i,j}} = log(1+\frac{max_{\{i^{'}\in j\}}(n_{i^{'}})}{\sum_{j = 1}^{n} sign(N_{i,j} > threshold)+1})}
+#'
 #' @inheritParams idf_rf
 #'
-#' @return a vector of iae score for each feature
+#' @return a matrix of inverse average expression score for each feature
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -337,9 +369,12 @@ iae_m <- function(expr, features = NULL, thres = 0) {
 
 #' inverse average expression using standard deviation (SD)
 #'
+#' @details
+#' \deqn{\mathbf{IAE} = log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})}
+#'
 #' @inheritParams idf_rf
 #'
-#' @return a vector of iae score for each feature
+#' @return a vector of inverse average expression score for each feature
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -362,12 +397,15 @@ iae_sd <- function(expr, features = NULL, thres = 0) {
 ## inverse average expression using hdbscan cluster as label
 #' inverse average expression using hdbscan cluster as label
 #'
+#' @details
+#' Details as [smartid:::iae_prob()].
+#'
 #' @inheritParams idf_rf
 #' @param minPts integer, minimum size of clusters, default 2.
 #'               Details in [dbscan::hdbscan()].
 #' @param ... parameters for [dbscan::hdbscan()]
 #'
-#' @return a matrix of IAE score
+#' @return a matrix of inverse average expression score
 #'
 #' @examples
 #' set.seed(123)
@@ -401,9 +439,9 @@ iae_hdb <- function(expr, features = NULL, multi = TRUE,
   #
   # iae <- log1p((mean_row_in/(mean_row_notin+0.01))[, cluster])  ## IDF scores
 
-  iae <- iae_rf(expr = expr, features = features,
-                label = cluster, multi = multi,
-                thres = thres)
+  iae <- iae_prob(expr = expr, features = features,
+                  label = cluster, multi = multi,
+                  thres = thres)
   return(iae)
 }
 
@@ -416,9 +454,12 @@ iae_hdb <- function(expr, features = NULL, multi = TRUE,
 
 #' labeled inverse average expression: relative frequency
 #'
+#' @details
+#' \deqn{\mathbf{IAE} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}})}
+#'
 #' @inheritParams idf_rf
 #'
-#' @return a matrix of IAE score
+#' @return a matrix of inverse average expression score
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -452,16 +493,19 @@ iae_rf <- function(expr, features = NULL, label,
 }
 
 ## labeled inverse average expression: probability based
-### $$\mathbf{IAE} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))$$
+### $$\mathbf{IAE_{i,j}} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))$$
 ### modified from
 ### $$\mathbf{IDF_{i,j}} = log(1+\frac{A}{max(B)+1}*\frac{A}{C+1})$$
 ### A denotes the number of cells belonging to category D where the gene i occurs at least once; B denotes the number of cells not belonging to category D where the gene i occurs at least once; C denotes the number of cells belonging to category D where the gene i does not occur; D denotes the number of cells not belonging to category D where the gene i does not occur.
 
 #' labeled inverse average expression: probability based
 #'
+#' @details
+#' \deqn{\mathbf{IAE_{i,j}} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))}
+#'
 #' @inheritParams idf_rf
 #'
-#' @return a matrix of IAE score
+#' @return a matrix of inverse average expression score
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -495,16 +539,19 @@ iae_prob <- function(expr, features = NULL, label,
 }
 
 ## labeled inverse average expression IGM
-### $$\mathbf{IGM} = log(1+\lambda\frac{max(mean(N_{i,j\in D})_{k})}{\sum_{k}^{K}(mean(N_{i,j\in D})_{k}*r_{k})+e^{-8}})$$
+### $$\mathbf{IGM_i} = log(1+\lambda\frac{max(mean(N_{i,j\in D})_{k})}{\sum_{k}^{K}(mean(N_{i,j\in D})_{k}*r_{k})+e^{-8}})$$
 ### $$\mathbf{k}: type\ in\ total\ group\ K$$
 ### $$\mathbf{r_{k}}: rank\ of\ mean(N_{i,j\in D})_{k}\ in\ total\ group\ K$$
 
-#' labeled inverse average expression IGM
+#' labeled inverse average expression: IGM
+#'
+#' @details
+#' \deqn{\mathbf{IGM_i} = log(1+\lambda\frac{max(mean(N_{i,j\in D})_{k})}{\sum_{k}^{K}(mean(N_{i,j\in D})_{k}*r_{k})+e^{-8}})}
 #'
 #' @inheritParams idf_rf
 #' @param lambda numeric, hyperparameter for IGM
 #'
-#' @return a vector of igm score for each feature
+#' @return a vector of inverse gravity moment score for each feature
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

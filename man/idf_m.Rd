@@ -2,7 +2,7 @@
 % Please edit documentation in R/tf_idf_iae_wrappers.R
 \name{idf_m}
 \alias{idf_m}
-\title{inverse document frequency: max}
+\title{inverse cell frequency: max}
 \usage{
 idf_m(expr, features = NULL, thres = 0)
 }
@@ -14,10 +14,13 @@ idf_m(expr, features = NULL, thres = 0)
 \item{thres}{numeric, cell only counts when expr > threshold, default 0}
 }
 \value{
-a vector of idf score for each feature
+a matrix of inverse cell frequency score for each feature
 }
 \description{
-inverse document frequency: max
+inverse cell frequency: max
+}
+\details{
+\deqn{\mathbf{IDF_{i,j}} = log(\frac{max_{\{i^{'}\in j\}}(n_{i^{'}})}{n_i+1})}
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

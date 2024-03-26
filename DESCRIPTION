@@ -1,25 +1,26 @@
 Package: smartid
 Title: Scoring and Marker Selection Method Based on Modified TF-IDF
-Version: 0.99.2
+Version: 0.99.3
 Authors@R: 
     person("Jinjin", "Chen", email = "chen.j@wehi.edu.au", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7923-5723"))
-Description: This package enables automated selection of group specific signature,
-    especially for rare population. The package is developed for generating
-    specifc lists of signature genes based on TF-IDF modified methods. It can
-    also be used as a new gene-set scoring method or data transformation method.
-    Multiple visualization functions are implemented in this package.
+Description: This package enables automated selection of group specific
+    signature, especially for rare population. The package is developed for
+    generating specifc lists of signature genes based on Term Frequency-Inverse
+    Document Frequency (TF-IDF) modified methods. It can also be used as a new
+    gene-set scoring method or data transformation method. Multiple visualization
+    functions are implemented in this package.
 biocViews: Software, GeneExpression, Transcriptomics
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Collate: 
+    'AllClasses.R'
     'tf_idf_iae_wrappers.R'
     'score.R'
     'AllGenerics.R'
     'gs_score-methods.R'
-    'objects.R'
     'plot.R'
     'scale_mgm.R'
     'score-methods.R'
@@ -28,7 +29,7 @@ Collate:
     'top_markers.R'
     'top_markers-methods.R'
 Depends: 
-    R (>= 4.3)
+    R (>= 4.4)
 Imports: 
     dplyr,
     ggplot2,
@@ -57,4 +58,4 @@ URL: https://davislaboratory.github.io/smartid
 BugReports: https://github.com/DavisLaboratory/smartid/issues
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-LazyData: true
+LazyData: false

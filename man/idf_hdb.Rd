@@ -2,7 +2,7 @@
 % Please edit documentation in R/tf_idf_iae_wrappers.R
 \name{idf_hdb}
 \alias{idf_hdb}
-\title{Title}
+\title{inverse document frequency using hdbscan cluster as label}
 \usage{
 idf_hdb(expr, features = NULL, multi = TRUE, thres = 0, minPts = 2, ...)
 }
@@ -21,10 +21,13 @@ Details in \code{\link[dbscan:hdbscan]{dbscan::hdbscan()}}.}
 \item{...}{parameters for \code{\link[dbscan:hdbscan]{dbscan::hdbscan()}}}
 }
 \value{
-a matrix of IDF score
+a matrix of inverse cell frequency score
 }
 \description{
-Title
+inverse document frequency using hdbscan cluster as label
+}
+\details{
+Details as \code{\link[smartid:::idf_prob]{smartid::::idf_prob()}}.
 }
 \examples{
 set.seed(123)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/tf_idf_iae_wrappers.R
 \name{idf_igm}
 \alias{idf_igm}
-\title{labeled inverse document frequency IGM}
+\title{labeled inverse cell frequency: IGM}
 \usage{
 idf_igm(expr, features = NULL, label, lambda = 7, thres = 0)
 }
@@ -18,10 +18,13 @@ idf_igm(expr, features = NULL, label, lambda = 7, thres = 0)
 \item{thres}{numeric, cell only counts when expr > threshold, default 0}
 }
 \value{
-a vector of igm score for each feature
+a vector of inverse gravity moment score for each feature
 }
 \description{
-labeled inverse document frequency IGM
+labeled inverse cell frequency: IGM
+}
+\details{
+\deqn{\mathbf{IGM_i} = log(1+\lambda\frac{max(n_{i,j\in D})_{k}}{\sum_{k}^{K}((n_{i,j\in D})_{k}*r_{k})+e^{-8}})}
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
