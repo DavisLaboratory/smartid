@@ -34,21 +34,22 @@ markers_mixmdl <- function(top_markers, column = ".dot",
     "Please provide a valid column name!" = column %in% colnames(top_markers)
   )
   ## split tibble into list
-  top_markers <- top_markers |> dplyr::group_by(!!ggplot2::sym(column)) |>
+  top_markers <- top_markers |>
+    dplyr::group_by(!!ggplot2::sym(column)) |>
     dplyr::group_split() |>
     setNames(unique(top_markers[[column]]) |> sort())
 
   markers_list <- lapply(top_markers, function(m) {
-    if(dist == "norm") {
+    if (dist == "norm") {
       mixmdl <- mixtools::normalmixEM(m$Scores, k = k, maxit = maxit, ...)
-    }else {
+    } else {
       mixmdl <- mixtools::gammamixEM(m$Scores, k = k, maxit = maxit, ...)
       ## compute mu
-      mixmdl$mu <- mixmdl$gamma.pars[1,] * mixmdl$gamma.pars[2,] # alpha * beta
+      mixmdl$mu <- mixmdl$gamma.pars[1, ] * mixmdl$gamma.pars[2, ] # alpha * beta
     }
 
 
-    if(plot == TRUE) {
+    if (plot == TRUE) {
       # # base R plot, easy
       # print(plot(mixmdl, which = 2))
       # abline(v = mixmdl$mu, col = seq_along(mixmdl$mu) + 1)
@@ -60,7 +61,9 @@ markers_mixmdl <- function(top_markers, column = ".dot",
     ## get order of mu
     ord <- order(mixmdl$mu, decreasing = TRUE)
     ## return null if ratio of 1st highest and 2nd highest mu is < thres
-    if(mixmdl$mu[ord[1]] / mixmdl$mu[ord[2]] < ratio) return(NULL)
+    if (mixmdl$mu[ord[1]] / mixmdl$mu[ord[2]] < ratio) {
+      return(NULL)
+    }
 
     idx <- which(mixmdl$posterior[, ord[1]] > prob)
     m$Genes[idx]
@@ -92,16 +95,17 @@ markers_mclust <- function(top_markers,
                            method = c("max.one", "remove.min"),
                            plot = FALSE,
                            ...) {
-
   method <- match.arg(method)
-  if(is.null(s_thres))
+  if (is.null(s_thres)) {
     s_thres <- 2 / table(top_markers[[column]])[1]
+  }
 
   stopifnot(
     "Please provide a valid column name!" = column %in% colnames(top_markers)
   )
   ## split tibble into list
-  top_markers <- top_markers |> dplyr::group_by(!!ggplot2::sym(column)) |>
+  top_markers <- top_markers |>
+    dplyr::group_by(!!ggplot2::sym(column)) |>
     dplyr::group_split() |>
     setNames(unique(top_markers[[column]]) |> sort())
 
@@ -112,7 +116,7 @@ markers_mclust <- function(top_markers,
     ## cluster cell types based on each gene profile
     cl <- mclust::densityMclust(s, plot = FALSE, ...)
 
-    if(plot == TRUE) {
+    if (plot == TRUE) {
       ## bootstrap
       boot <- mclust::MclustBootstrap(cl)
       ## set plot par
@@ -129,13 +133,15 @@ markers_mclust <- function(top_markers,
     # plot(cbind(s, s), col=alpha(cl$classification, 0.4), pch=20)
 
     if (method == "max.one") {
-      flag <- max(cl$classification)  ## which cluster has the max expression
+      flag <- max(cl$classification) ## which cluster has the max expression
       m$Genes[cl$classification == flag & s > s_thres & cl$z[, flag] > prob]
     } else {
-      flag <- min(cl$classification)  ## which cluster has the min expression
+      flag <- min(cl$classification) ## which cluster has the min expression
       if (length(unique(cl$classification)) == 1 && min(s, na.rm = TRUE) > s_thres) {
         m$Genes
-      } else m$Genes[cl$classification != flag & s > s_thres]
+      } else {
+        m$Genes[cl$classification != flag & s > s_thres]
+      }
     }
   }) |>
     setNames(names(top_markers))
@@ -163,16 +169,17 @@ markers_hdbscan <- function(top_markers,
                             minPts = 5,
                             plot = FALSE,
                             ...) {
-
   method <- match.arg(method)
-  if(is.null(s_thres))
+  if (is.null(s_thres)) {
     s_thres <- 2 / table(top_markers[[column]])[1]
+  }
 
   stopifnot(
     "Please provide a valid column name!" = column %in% colnames(top_markers)
   )
   ## split tibble into list
-  top_markers <- top_markers |> dplyr::group_by(!!sym(column)) |>
+  top_markers <- top_markers |>
+    dplyr::group_by(!!sym(column)) |>
     dplyr::group_split() |>
     setNames(unique(top_markers[[column]]) |> sort())
 
@@ -182,7 +189,7 @@ markers_hdbscan <- function(top_markers,
     ## cluster cell types based on each gene profile
     cl <- dbscan::hdbscan(cbind(s, s), minPts = minPts, ...)
 
-    if(plot == TRUE) {
+    if (plot == TRUE) {
       ## plot hist and density with mu
       print(plot_mm_clust(s, cl$cluster))
       ## plot hc with stable clusters
@@ -191,13 +198,15 @@ markers_hdbscan <- function(top_markers,
     # plot(cbind(s, s), col=alpha(cl$cluster+1, 0.4), pch=20)
 
     if (method == "max.one") {
-      flag <- cl$cluster[which.max(s)]  ## which cluster has the max expression
+      flag <- cl$cluster[which.max(s)] ## which cluster has the max expression
       m$Genes[cl$cluster == flag & s > s_thres]
     } else {
-      flag <- cl$cluster[which.min(s)]  ## which cluster has the min expression
+      flag <- cl$cluster[which.min(s)] ## which cluster has the min expression
       if (length(unique(cl$cluster)) == 1 && min(s, na.rm = TRUE) > s_thres) {
         m$Genes
-      } else m$Genes[cl$cluster != flag & s > s_thres]
+      } else {
+        m$Genes[cl$cluster != flag & s > s_thres]
+      }
     }
   })
 

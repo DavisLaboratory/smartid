@@ -18,7 +18,7 @@ top_markers_init <- function(data, label, n = 10,
                              use.mgm = TRUE,
                              softmax = TRUE,
                              ...) {
-  if(use.glm == TRUE) {
+  if (use.glm == TRUE) {
     data <- top_markers_glm(
       data = data,
       label = label,
@@ -28,7 +28,7 @@ top_markers_init <- function(data, label, n = 10,
       softmax = softmax,
       ...
     )
-  }else {
+  } else {
     data <- top_markers_abs(
       data = data,
       label = label,
@@ -65,9 +65,9 @@ top_markers_abs <- function(data, label, n = 10,
                             scale = TRUE, use.mgm = TRUE,
                             softmax = TRUE) {
   method <- match.arg(method)
-  if(scale & use.mgm) {
+  if (scale & use.mgm) {
     data <- scale_mgm(expr = data, label = label)
-  }else if(scale & !use.mgm) {
+  } else if (scale & !use.mgm) {
     ## scale scores on rows
     # mu_s <- sparseMatrixStats::rowMeans2(data, na.rm = TRUE)
     # sd_s <- sparseMatrixStats::rowSds(data, na.rm = TRUE)
@@ -77,13 +77,15 @@ top_markers_abs <- function(data, label, n = 10,
     data[is.na(data)] <- 0 # assign 0 to NA when sd = 0
   }
 
-  data <- data |> t() |> as.data.frame() |>
+  data <- data |>
+    t() |>
+    as.data.frame() |>
     dplyr::group_by(.dot = label) |> ## group by label
     dplyr::summarise_all(method, na.rm = TRUE) |> ## aggregate scores
     tidyr::gather("Genes", "Scores", -`.dot`) |> ## transform into long data
     dplyr::group_by(`.dot`) ## group by label again
 
-  if(softmax == TRUE) {
+  if (softmax == TRUE) {
     data <- data |>
       # dplyr::mutate(Scores = Scores / sd(Scores, na.rm = TRUE)) |> # norm by sd
       # dplyr::mutate(Scores = sigmoid(Scores)) |> # sigmoid
@@ -124,7 +126,7 @@ top_markers_glm <- function(data, label, n = 10,
   label <- factor(label) # factorize label
 
   ## scale
-  if(scale & !use.mgm) {
+  if (scale & !use.mgm) {
     ## scale scores on rows
     # mu_s <- sparseMatrixStats::rowMeans2(data, na.rm = TRUE)
     # sd_s <- sparseMatrixStats::rowSds(data, na.rm = TRUE)
@@ -132,7 +134,7 @@ top_markers_glm <- function(data, label, n = 10,
 
     data <- t(scale(t(data)))
     data[is.na(data)] <- 0 # assign 0 to NA when sd = 0
-  }else if(scale & use.mgm) {
+  } else if (scale & use.mgm) {
     data <- scale_mgm(expr = data, label = label)
   }
 
@@ -150,7 +152,7 @@ top_markers_glm <- function(data, label, n = 10,
 
   ## compute logFC (1 vs max excluding self) for each group
   betas <- sapply(seq_len(nrow(betas)), \(i)
-                  betas[i, ] - sparseMatrixStats::colMaxs(matrix(betas[-i, ], ncol = ncol(betas)))) |>
+  betas[i, ] - sparseMatrixStats::colMaxs(matrix(betas[-i, ], ncol = ncol(betas)))) |>
     t()
   rownames(betas) <- levels(label)
 
@@ -158,7 +160,7 @@ top_markers_glm <- function(data, label, n = 10,
     tidyr::pivot_longer(-`.dot`, names_to = "Genes", values_to = "Scores") |>
     dplyr::group_by(`.dot`) ## group by label again
 
-  if(softmax == TRUE) {
+  if (softmax == TRUE) {
     data <- data |>
       # dplyr::mutate(Scores = Scores / sd(Scores, na.rm = TRUE)) |> # norm by sd
       # dplyr::mutate(Scores = sigmoid(Scores)) |> # sigmoid
@@ -183,11 +185,11 @@ sigmoid <- function(x) {
 
 ## softmax: [0, 1], one-label, multi-class, sum to 1
 softmax <- function(x, tau = 1) {
-  x <- x/tau
+  x <- x / tau
   exp(x) / sum(exp(x), na.rm = TRUE)
 }
 
 ## tanh: [-1, 1], similar to sigmoid, no need to sum 1
-tanh <- function(x) 2 / (1 + exp(-2*x)) - 1
+tanh <- function(x) 2 / (1 + exp(-2 * x)) - 1
 
 utils::globalVariables(c(".dot", "Scores"))

@@ -6,15 +6,17 @@ plot_mm <- function(mixmdl, dist = c("norm", "gamma")) {
 
   p <- ggplot(data.frame(x = mixmdl$x), aes(x = x)) +
     geom_histogram()
-  if(dist == "norm") {
+  if (dist == "norm") {
     p <- p +
-      mapply(function(mean, sd, lambda, col) {
-        stat_function(
-          fun = function(x) {
-            (dnorm(x, mean = mean, sd = sd)) * lambda
-          },
-          col = col
-        )},
+      mapply(
+        function(mean, sd, lambda, col) {
+          stat_function(
+            fun = function(x) {
+              (dnorm(x, mean = mean, sd = sd)) * lambda
+            },
+            col = col
+          )
+        },
         mean = mixmdl$mu,
         sd = mixmdl$sigma,
         lambda = mixmdl$lambda,
@@ -23,18 +25,20 @@ plot_mm <- function(mixmdl, dist = c("norm", "gamma")) {
       geom_vline(xintercept = mixmdl$mu, col = seq_along(mixmdl$mu) + 1) +
       labs(x = "score", y = "density") +
       theme_bw()
-  }else {
+  } else {
     ## compute mu
-    mixmdl$mu <- mixmdl$gamma.pars[1,] * mixmdl$gamma.pars[2,] # alpha * beta
+    mixmdl$mu <- mixmdl$gamma.pars[1, ] * mixmdl$gamma.pars[2, ] # alpha * beta
 
     p <- p +
-      mapply(function(mean, alpha, beta, lambda, col) {
-        stat_function(
-          fun = function(x) {
-            (dgamma(x, shape = alpha, rate = beta)) * lambda
-          },
-          col = col
-        )},
+      mapply(
+        function(mean, alpha, beta, lambda, col) {
+          stat_function(
+            fun = function(x) {
+              (dgamma(x, shape = alpha, rate = beta)) * lambda
+            },
+            col = col
+          )
+        },
         mean = mixmdl$mu,
         alpha = mixmdl$gamma.pars["alpha", ],
         beta = mixmdl$gamma.pars["beta", ],
@@ -86,8 +90,10 @@ plot_mm_clust <- function(score, clust) {
 sin_score_boxplot <- function(data, features = NULL,
                               ref.group, label,
                               method = "t.test") {
-  if(is.null(features)) features <- rownames(data)
-  data[features,] |> as.matrix() |> as.data.frame() |>
+  if (is.null(features)) features <- rownames(data)
+  data[features, ] |>
+    as.matrix() |>
+    as.data.frame() |>
     dplyr::add_rownames("Gene") |>
     setNames(c("Gene", as.character(label))) |>
     tidyr::pivot_longer(-"Gene", names_to = "Type", values_to = "Score") |>
@@ -97,8 +103,10 @@ sin_score_boxplot <- function(data, features = NULL,
     geom_violin() +
     stat_summary(fun = median, geom = "crossbar") +
     facet_wrap(~Gene, scales = "free") +
-    ggpubr::stat_compare_means(label = "p.signif", method = method,
-                               ref.group = ref.group, label.y.npc = 1) +
+    ggpubr::stat_compare_means(
+      label = "p.signif", method = method,
+      ref.group = ref.group, label.y.npc = 1
+    ) +
     theme_classic() +
     theme(axis.text.x = element_blank())
 }
@@ -116,13 +124,17 @@ sin_score_boxplot <- function(data, features = NULL,
 ova_score_boxplot <- function(data, features,
                               ref.group, label,
                               method = "t.test") {
-  data.frame(Score = gs_score_init(data, features = features),
-             Group = label) |>
+  data.frame(
+    Score = gs_score_init(data, features = features),
+    Group = label
+  ) |>
     ggplot(aes(x = Group, y = Score, col = Group)) +
     geom_boxplot() +
     # geom_jitter(aes(col = Group), alpha = 0.2) +
-    ggpubr::stat_compare_means(label = "p.signif", method = method,
-                               ref.group = ref.group, label.y.npc = 1) +
+    ggpubr::stat_compare_means(
+      label = "p.signif", method = method,
+      ref.group = ref.group, label.y.npc = 1
+    ) +
     theme_classic() +
     theme(axis.text.x = element_blank())
 }
@@ -143,8 +155,9 @@ ova_score_boxplot <- function(data, features,
 #' score_barplot(top_n)
 score_barplot <- function(top_markers, column = ".dot", f_list, n = 30) {
   ## set f_list as features label for color
-  if(missing(f_list))
+  if (missing(f_list)) {
     f_list <- list(Features = top_markers$Genes)
+  }
 
   # ## get top n markers
   # top_markers <- top_markers(
@@ -158,16 +171,20 @@ score_barplot <- function(top_markers, column = ".dot", f_list, n = 30) {
   top_markers <- dplyr::slice_max(top_markers, Scores, n = n)
 
   ## add markers type
-  top_markers <- merge(top_markers, stack(f_list), by.x = "Genes",
-                       by.y = "values", all.x = TRUE)
+  top_markers <- merge(top_markers, stack(f_list),
+    by.x = "Genes",
+    by.y = "values", all.x = TRUE
+  )
 
   ## plot
-  ggplot(top_markers,
-         aes(
-           y = tidytext::reorder_within(Genes, Scores, !!ggplot2::sym(column)),
-           x = Scores,
-           fill = ind
-         )) +
+  ggplot(
+    top_markers,
+    aes(
+      y = tidytext::reorder_within(Genes, Scores, !!ggplot2::sym(column)),
+      x = Scores,
+      fill = ind
+    )
+  ) +
     geom_bar(stat = "identity") +
     facet_wrap(ggplot2::sym(column), scales = "free") +
     labs(y = "Genes", fill = "Markers Type") +
@@ -175,5 +192,7 @@ score_barplot <- function(top_markers, column = ".dot", f_list, n = 30) {
     theme_classic()
 }
 
-utils::globalVariables(c("Group", "Score", "x", "Scores", "Comp", "Genes",
-                         "..density..", "stack", "values", "ind", "Type"))
+utils::globalVariables(c(
+  "Group", "Score", "x", "Scores", "Comp", "Genes",
+  "..density..", "stack", "values", "ind", "Type"
+))

@@ -20,7 +20,9 @@ test_that("gs_score works", {
   expect_type(res$score, "double")
 
   ## test se, feature list
-  res <- gs_score(se, features = list(a = seq_len(3), b = seq_len(5)),
-                  slot = "counts")
+  res <- gs_score(se,
+    features = list(a = seq_len(3), b = seq_len(5)),
+    slot = "counts"
+  )
   expect_type(colnames(res@colData), "character")
 })

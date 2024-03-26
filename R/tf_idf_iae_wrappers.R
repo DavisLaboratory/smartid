@@ -20,7 +20,7 @@
 #' smartid:::tf(data)
 tf <- function(expr, log = FALSE) {
   t.f <- sweep(expr, 2, colSums(expr, na.rm = TRUE) + 0.01, FUN = "/")
-  if(log) {
+  if (log) {
     t.f <- log1p(t.f)
   }
 
@@ -31,7 +31,7 @@ tf <- function(expr, log = FALSE) {
 #-----------------IDF variants------------------#
 #################################################
 
-##-----------------unlabeled-------------------##
+## -----------------unlabeled-------------------##
 
 ## inverse document frequency
 ### $$\mathbf{IDF_i} = log(1+\frac{n}{n_i+1})$$
@@ -50,14 +50,14 @@ tf <- function(expr, log = FALSE) {
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' smartid:::idf(data)
 idf <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
-  n_obs <- ncol(expr)  ## number of total obs
+  if (is.null(features)) features <- seq_len(nrow(expr))
+  n_obs <- ncol(expr) ## number of total obs
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
   n_sub <- rowSums(expr[features, ] > thres) ## num of obs contain feature i > thres
 
-  idf <- log1p(n_obs/(n_sub + 1))
+  idf <- log1p(n_obs / (n_sub + 1))
   return(idf)
 }
 
@@ -78,8 +78,8 @@ idf <- function(expr, features = NULL, thres = 0) {
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' smartid:::idf_m(data)
 idf_m <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
-  n_obs <- ncol(expr)  ## number of total obs
+  if (is.null(features)) features <- seq_len(nrow(expr))
+  n_obs <- ncol(expr) ## number of total obs
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr, probs = 0.25, na.rm = TRUE)
@@ -87,7 +87,7 @@ idf_m <- function(expr, features = NULL, thres = 0) {
 
   n_max <- ifelse(expr > thres, n_sub, 0) |> sparseMatrixStats::colMaxs()
 
-  idf <- matrix(1/(1 + n_sub), ncol = 1) %*% matrix(n_max, nrow = 1)
+  idf <- matrix(1 / (1 + n_sub), ncol = 1) %*% matrix(n_max, nrow = 1)
   dimnames(idf) <- dimnames(expr)
 
   idf <- log(idf[features, ])
@@ -111,15 +111,15 @@ idf_m <- function(expr, features = NULL, thres = 0) {
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' smartid:::idf_sd(data)
 idf_sd <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
-  n_obs <- ncol(expr)  ## number of total obs
+  if (is.null(features)) features <- seq_len(nrow(expr))
+  n_obs <- ncol(expr) ## number of total obs
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
   n_sub <- rowSums(expr[features, ] > thres) ## num of obs contain feature i > thres
-  sd_row <- sparseMatrixStats::rowSds(expr[features,], na.rm = TRUE)
+  sd_row <- sparseMatrixStats::rowSds(expr[features, ], na.rm = TRUE)
 
-  idf <- log1p(sd_row*n_obs/(n_sub + 1))
+  idf <- log1p(sd_row * n_obs / (n_sub + 1))
   return(idf)
 }
 
@@ -127,7 +127,7 @@ idf_sd <- function(expr, features = NULL, thres = 0) {
 #' inverse document frequency using hdbscan cluster as label
 #'
 #' @details
-#' Details as [smartid:::idf_prob()].
+#' Details as [smartid::idf_prob()].
 #'
 #' @inheritParams idf_rf
 #' @param minPts integer, minimum size of clusters, default 2.
@@ -142,25 +142,27 @@ idf_sd <- function(expr, features = NULL, thres = 0) {
 #' smartid:::idf_hdb(data)
 idf_hdb <- function(expr, features = NULL, multi = TRUE,
                     thres = 0, minPts = 2, ...) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
+  if (is.null(features)) features <- seq_len(nrow(expr))
 
   ## initially compute naive tf-idf
   # tf <- (edgeR::cpm(expr)/1e6)[features, ]
   tf <- sweep(expr, 2, colSums(expr, na.rm = TRUE), "/")[features, ]
-  tfidf <- tf*idf(expr, features = features, thres = thres)
+  tfidf <- tf * idf(expr, features = features, thres = thres)
 
   ## cluster obs based on given features
   cluster <- dbscan::hdbscan(t(tfidf), minPts = minPts, ...)$cluster
   ## factor cluster
   cluster <- factor(cluster)
 
-  idf <- idf_prob(expr = expr, features = features,
-                  label = cluster, multi = multi,
-                  thres = thres)
+  idf <- idf_prob(
+    expr = expr, features = features,
+    label = cluster, multi = multi,
+    thres = thres
+  )
   return(idf)
 }
 
-##------------------labeled--------------------##
+## ------------------labeled--------------------##
 
 ## labeled inverse document frequency: relative frequency
 ### $$\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}})$$
@@ -183,7 +185,7 @@ idf_hdb <- function(expr, features = NULL, multi = TRUE,
 #' smartid:::idf_rf(data, label = sample(c("A", "B"), 10, replace = TRUE))
 idf_rf <- function(expr, features = NULL, label,
                    multi = TRUE, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
+  if (is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -193,18 +195,18 @@ idf_rf <- function(expr, features = NULL, label,
   label <- as.character(label)
   mean_row_in <- sapply(unique(label), function(type) {
     sparseMatrixStats::rowMeans2(df_n[, label == type], na.rm = TRUE)
-  })  ## mean counts for each gene in the group
-  if(multi == TRUE) {
+  }) ## mean counts for each gene in the group
+  if (multi == TRUE) {
     mean_row_notin <- sapply(colnames(mean_row_in), function(type) {
       apply(mean_row_in, 1, function(x) max(x[names(x) != type]))
-    })  ## doc freq for each gene not in group for multi-class: max(mean(N in Gi))
-  }else {
+    }) ## doc freq for each gene not in group for multi-class: max(mean(N in Gi))
+  } else {
     mean_row_notin <- sapply(unique(label), function(type) {
       sparseMatrixStats::rowMeans2(df_n[, label != type], na.rm = TRUE)
-    })  ## doc freq for each gene not in group for bi-class
+    }) ## doc freq for each gene not in group for bi-class
   }
 
-  idf <- log1p((mean_row_in/(mean_row_notin+1e-8))[,label])  ## IDF scores
+  idf <- log1p((mean_row_in / (mean_row_notin + 1e-8))[, label]) ## IDF scores
 
   return(idf)
 }
@@ -229,7 +231,7 @@ idf_rf <- function(expr, features = NULL, label,
 #' smartid:::idf_prob(data, label = sample(c("A", "B"), 10, replace = TRUE))
 idf_prob <- function(expr, features = NULL, label,
                      multi = TRUE, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
+  if (is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -240,18 +242,18 @@ idf_prob <- function(expr, features = NULL, label,
   label <- as.character(label)
   mean_row_in <- sapply(unique(label), function(type) {
     sparseMatrixStats::rowMeans2(df_n[, label == type], na.rm = TRUE)
-  })  ## mean counts for each gene in the group
-  if(multi == TRUE) {
+  }) ## mean counts for each gene in the group
+  if (multi == TRUE) {
     mean_row_notin <- sapply(colnames(mean_row_in), function(type) {
       apply(mean_row_in, 1, function(x) max(x[names(x) != type]))
-    })  ## doc freq for each gene not in group for multi-class: max(mean(N in Gi))
-  }else {
+    }) ## doc freq for each gene not in group for multi-class: max(mean(N in Gi))
+  } else {
     mean_row_notin <- sapply(unique(label), function(type) {
       sparseMatrixStats::rowMeans2(df_n[, label != type], na.rm = TRUE)
-    })  ## doc freq for each gene not in group for bi-class
+    }) ## doc freq for each gene not in group for bi-class
   }
 
-  idf <- log1p((mean_row_in^2/(mean_row_notin+1e-8))[,label])  ## IDF scores
+  idf <- log1p((mean_row_in^2 / (mean_row_notin + 1e-8))[, label]) ## IDF scores
 
   return(idf)
 }
@@ -275,7 +277,7 @@ idf_prob <- function(expr, features = NULL, label,
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' smartid:::idf_igm(data, label = sample(c("A", "B"), 10, replace = TRUE))
 idf_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
+  if (is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -283,13 +285,13 @@ idf_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
 
   mean_row_in <- sapply(unique(label), function(type) {
     sparseMatrixStats::rowMeans2(df_n[, label == type], na.rm = TRUE)
-  })  ## mean counts for each gene in the group
+  }) ## mean counts for each gene in the group
   ## calculate igm for each gene
   igm <- apply(mean_row_in, 1, function(x) {
-    max(x)/(sum(x*rank(-x), na.rm = TRUE)+1e-8)
+    max(x) / (sum(x * rank(-x), na.rm = TRUE) + 1e-8)
   })
 
-  idf <- log1p(lambda*igm)  ## TF-IDF scores
+  idf <- log1p(lambda * igm) ## TF-IDF scores
   return(idf)
 }
 
@@ -297,7 +299,7 @@ idf_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
 #-----------------IAE variants------------------#
 #################################################
 
-##-----------------unlabeled-------------------##
+## -----------------unlabeled-------------------##
 
 ## inverse average expression
 ### $$\mathbf{IAE_i} = log(1+\frac{n}{\sum_j^n\hat N_{i,j}+1})$$
@@ -316,8 +318,8 @@ idf_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' smartid:::iae(data)
 iae <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
-  n_obs <- ncol(expr)  ## number of total obs
+  if (is.null(features)) features <- seq_len(nrow(expr))
+  n_obs <- ncol(expr) ## number of total obs
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -325,7 +327,7 @@ iae <- function(expr, features = NULL, thres = 0) {
   expr_offset[expr_offset < 0] <- 0
   s_row <- rowSums(expr_offset) ## total counts of feature i across all cells
 
-  iae <- log1p(n_obs/(s_row + 1))
+  iae <- log1p(n_obs / (s_row + 1))
   return(iae)
 }
 
@@ -346,8 +348,8 @@ iae <- function(expr, features = NULL, thres = 0) {
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' smartid:::iae_m(data)
 iae_m <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
-  n_obs <- ncol(expr)  ## number of total obs
+  if (is.null(features)) features <- seq_len(nrow(expr))
+  n_obs <- ncol(expr) ## number of total obs
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr, probs = 0.25, na.rm = TRUE)
@@ -357,7 +359,7 @@ iae_m <- function(expr, features = NULL, thres = 0) {
 
   s_max <- ifelse(expr_offset > 0, s_row, 0) |> sparseMatrixStats::colMaxs()
 
-  iae <- matrix(1/(1 + s_row), ncol = 1) %*% matrix(s_max, nrow = 1)
+  iae <- matrix(1 / (1 + s_row), ncol = 1) %*% matrix(s_max, nrow = 1)
   dimnames(iae) <- dimnames(expr)
   iae <- log1p(iae[features, ])
   return(iae)
@@ -380,17 +382,17 @@ iae_m <- function(expr, features = NULL, thres = 0) {
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' smartid:::iae_sd(data)
 iae_sd <- function(expr, features = NULL, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
-  n_obs <- ncol(expr)  ## number of obs
+  if (is.null(features)) features <- seq_len(nrow(expr))
+  n_obs <- ncol(expr) ## number of obs
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
   expr_offset <- expr[features, ] - thres ## subtract offset
   expr_offset[expr_offset < 0] <- 0
-  s_row <- sparseMatrixStats::rowSums2(expr_offset, na.rm = TRUE)  ## summed counts for each gene
+  s_row <- sparseMatrixStats::rowSums2(expr_offset, na.rm = TRUE) ## summed counts for each gene
   sd_row <- sparseMatrixStats::rowSds(expr_offset, na.rm = TRUE)
 
-  iae <- log1p(sd_row*n_obs/(s_row + 1))  ## IDF scores
+  iae <- log1p(sd_row * n_obs / (s_row + 1)) ## IDF scores
   return(iae)
 }
 
@@ -398,7 +400,7 @@ iae_sd <- function(expr, features = NULL, thres = 0) {
 #' inverse average expression using hdbscan cluster as label
 #'
 #' @details
-#' Details as [smartid:::iae_prob()].
+#' Details as [smartid::iae_prob()].
 #'
 #' @inheritParams idf_rf
 #' @param minPts integer, minimum size of clusters, default 2.
@@ -413,12 +415,12 @@ iae_sd <- function(expr, features = NULL, thres = 0) {
 #' smartid:::iae_hdb(data)
 iae_hdb <- function(expr, features = NULL, multi = TRUE,
                     thres = 0, minPts = 2, ...) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
+  if (is.null(features)) features <- seq_len(nrow(expr))
 
   ## initially compute naive tf-idf
   # tf <- (edgeR::cpm(expr)/1e6)[features, ]
   tf <- sweep(expr, 2, colSums(expr, na.rm = TRUE), "/")[features, ]
-  tfidf <- tf*iae(expr, features = features, thres = thres)
+  tfidf <- tf * iae(expr, features = features, thres = thres)
 
   ## cluster obs based on given features
   cluster <- dbscan::hdbscan(t(tfidf), minPts = minPts, ...)$cluster
@@ -439,13 +441,15 @@ iae_hdb <- function(expr, features = NULL, multi = TRUE,
   #
   # iae <- log1p((mean_row_in/(mean_row_notin+0.01))[, cluster])  ## IDF scores
 
-  iae <- iae_prob(expr = expr, features = features,
-                  label = cluster, multi = multi,
-                  thres = thres)
+  iae <- iae_prob(
+    expr = expr, features = features,
+    label = cluster, multi = multi,
+    thres = thres
+  )
   return(iae)
 }
 
-##------------------labeled--------------------##
+## ------------------labeled--------------------##
 
 ## labeled inverse average expression: relative frequency
 ### $$\mathbf{IAE} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}})$$
@@ -466,7 +470,7 @@ iae_hdb <- function(expr, features = NULL, multi = TRUE,
 #' smartid:::iae_rf(data, label = sample(c("A", "B"), 10, replace = TRUE))
 iae_rf <- function(expr, features = NULL, label,
                    multi = TRUE, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
+  if (is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -477,18 +481,18 @@ iae_rf <- function(expr, features = NULL, label,
   label <- as.character(label)
   mean_row_in <- sapply(unique(label), function(type) {
     sparseMatrixStats::rowMeans2(expr_offset[, label == type], na.rm = TRUE)
-  })  ## mean counts for each gene in the group
-  if(multi == TRUE) {
+  }) ## mean counts for each gene in the group
+  if (multi == TRUE) {
     mean_row_notin <- sapply(colnames(mean_row_in), function(type) {
       apply(mean_row_in, 1, function(x) max(x[names(x) != type]))
-    })  ## mean counts for each gene not in group for multi-class: max(mean(N in Gi))
-  }else {
+    }) ## mean counts for each gene not in group for multi-class: max(mean(N in Gi))
+  } else {
     mean_row_notin <- sapply(unique(label), function(type) {
       sparseMatrixStats::rowMeans2(expr_offset[, label != type], na.rm = TRUE)
-    })  ## mean counts for each gene not in group for bi-class
+    }) ## mean counts for each gene not in group for bi-class
   }
 
-  iae <- log1p((mean_row_in/(mean_row_notin+1e-8))[,label])  ## IDF scores
+  iae <- log1p((mean_row_in / (mean_row_notin + 1e-8))[, label]) ## IDF scores
   return(iae)
 }
 
@@ -512,7 +516,7 @@ iae_rf <- function(expr, features = NULL, label,
 #' smartid:::iae_prob(data, label = sample(c("A", "B"), 10, replace = TRUE))
 iae_prob <- function(expr, features = NULL, label,
                      multi = TRUE, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
+  if (is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -523,18 +527,18 @@ iae_prob <- function(expr, features = NULL, label,
   label <- as.character(label)
   mean_row_in <- sapply(unique(label), function(type) {
     sparseMatrixStats::rowMeans2(expr_offset[, label == type], na.rm = TRUE)
-  })  ## mean counts for each gene in the group
-  if(multi == TRUE) {
+  }) ## mean counts for each gene in the group
+  if (multi == TRUE) {
     mean_row_notin <- sapply(colnames(mean_row_in), function(type) {
       apply(mean_row_in, 1, function(x) max(x[names(x) != type]))
-    })  ## mean counts for each gene not in group for multi-class: max(mean(N in Gi))
-  }else {
+    }) ## mean counts for each gene not in group for multi-class: max(mean(N in Gi))
+  } else {
     mean_row_notin <- sapply(unique(label), function(type) {
       sparseMatrixStats::rowMeans2(expr_offset[, label != type], na.rm = TRUE)
-    })  ## mean counts for each gene not in group for bi-class
+    }) ## mean counts for each gene not in group for bi-class
   }
 
-  iae <- log1p((mean_row_in^2/(mean_row_notin+1e-8))[,label])  ## IDF scores
+  iae <- log1p((mean_row_in^2 / (mean_row_notin + 1e-8))[, label]) ## IDF scores
   return(iae)
 }
 
@@ -557,7 +561,7 @@ iae_prob <- function(expr, features = NULL, label,
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' smartid:::iae_igm(data, label = sample(c("A", "B"), 10, replace = TRUE))
 iae_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
-  if(is.null(features)) features <- seq_len(nrow(expr))
+  if (is.null(features)) features <- seq_len(nrow(expr))
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, ], probs = 0.25, na.rm = TRUE)
@@ -566,13 +570,12 @@ iae_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
 
   mean_row_in <- sapply(unique(label), function(type) {
     sparseMatrixStats::rowMeans2(expr_offset[, label == type], na.rm = TRUE)
-  })  ## mean counts for each gene in the group
+  }) ## mean counts for each gene in the group
   ## calculate igm for each gene
   igm <- apply(mean_row_in, 1, function(x) {
-    max(x)/(sum(x*rank(-x), na.rm = TRUE)+1e-8)
+    max(x) / (sum(x * rank(-x), na.rm = TRUE) + 1e-8)
   })
 
-  iae <- log1p(lambda*igm)  ## TF-IDF scores
+  iae <- log1p(lambda * igm) ## TF-IDF scores
   return(iae)
 }
-

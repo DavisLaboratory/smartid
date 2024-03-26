@@ -83,9 +83,8 @@ fc <- 1
 cols <- paste0("DEFacGroup", seq_along(unique(data_sim$Group)))
 defac <- as.data.frame(rowData(data_sim)[, cols])
 up <- lapply(cols, \(id)
-             dplyr::filter(defac, if_all(-!!sym(id), \(x) !!sym(id)/x > fc)) |> 
-                   rownames()
-                 )
+dplyr::filter(defac, if_all(-!!sym(id), \(x) !!sym(id) / x > fc)) |>
+  rownames())
 data_sim@metadata$up_markers <- setNames(up, cols)
 data_sim@metadata$up_markers
 data_sim
@@ -101,7 +100,7 @@ data_sim
 
   step 1. score samples  
   step 2. scale and transform scores  
-  step 3. identify markers using expectatiion maximization (EM)  
+  step 3. identify markers using expectation maximization (EM)  
 
 ## Score Samples
 
@@ -155,7 +154,7 @@ names(metadata(data_sim))
 
 ## Scale and Transform Score
 
-Scaling is needed to find the markers specific to the group, however, standard scaling might fail due to the rare populations. Here `smartid` uses a special scaling strategy `scale_mgm()`, which can scale im-balanced data by given group labels.
+Scaling is needed to find the markers specific to the group, however, standard scaling might fail due to the rare populations. Here `smartid` uses a special scaling strategy `scale_mgm()`, which can scale imbalanced data by given group labels.
 
 The score will be transformed using softmax before passing to EM algorithm.
 
@@ -185,13 +184,15 @@ As we can see, there is a UP DEG 'Gene76' not popping up in Group 2, we can chec
 This can also be confirmed in data simulation information, where the scale factor is higher in Group2, but the GeneMean is too small to be confident. Thus this gene won't be selected by `smartid`.
 
 ```{r}
-ggplot(data.frame("Gene76" = data_sim@metadata$tf["Gene76",],
-                  Group = data_sim$Group)) +
+ggplot(data.frame(
+  "Gene76" = data_sim@metadata$tf["Gene76", ],
+  Group = data_sim$Group
+)) +
   geom_violin(aes(x = Group, y = Gene76, fill = Group)) +
   theme_bw()
 
 ## sim gene info
-data_sim@rowRanges@elementMetadata[76,]
+data_sim@rowRanges@elementMetadata[76, ]
 ```
 
 ## Marker Selection
@@ -226,7 +227,7 @@ upset(fromList(c(data_sim@metadata$up_markers, marker_ls)), nsets = 6)
 
 `smartid` also provides some other implementation of marker selection. Here is another example using `mclust`. Different from `markers_mixmdl()`, `markers_mclust()` doesn't need a pre-defined number of components (which is 3 in `markers_mixmdl()`), instead, it will select the number of components by searching a series of potential numbers. This method is sometimes more robust than `markers_mixmdl()`.
 
-Similary, this method also allows to plot the mixture distribution for each component, but separately.
+Similarly, this method also allows to plot the mixture distribution for each component, but separately.
 
 
 ```{r}
@@ -283,7 +284,7 @@ names(metadata(data_sim))
 
 ## Compute Overall Score for Gene-set
 
-To compare overall score of the given gene-set, we don't need to scale and tranform score this time. Using `gs_score()` can easily compute the overall score for each cell based on the given gene-set list.
+To compare overall score of the given gene-set, we don't need to scale and transform score this time. Using `gs_score()` can easily compute the overall score for each cell based on the given gene-set list.
 
 ```{r}
 ## compute score for each group marker list
@@ -305,9 +306,10 @@ It's evident that the score can sufficiently separate the target group from all 
 ```{r, fig.width=10, fig.height=3}
 as.data.frame(data_sim@colData) |>
   tidyr::pivot_longer("Group1.score.unlabel":"Group3.score.unlabel",
-                      names_to = "group markers",
-                      values_to = "score") |> 
-  ggplot(aes(x = Group, y =score, fill = Group)) +
+    names_to = "group markers",
+    values_to = "score"
+  ) |>
+  ggplot(aes(x = Group, y = score, fill = Group)) +
   geom_boxplot() +
   facet_wrap(~`group markers`, scales = "free") +
   theme_bw()

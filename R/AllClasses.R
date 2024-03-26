@@ -1,2 +1,2 @@
 ## Class definitions
-setClassUnion(name = 'AnyMatrix', members = c("matrix", "dgCMatrix"))
+setClassUnion(name = "AnyMatrix", members = c("matrix", "dgCMatrix"))

@@ -8,7 +8,6 @@ setMethod(
   ),
   function(data,
            features = NULL) {
-
     ## compute overall score
     score <- gs_score_init(score = data, features = features)
 
@@ -32,7 +31,7 @@ setMethod(
 
     ## compute overall score
     score <- sapply(names(features), \(i)
-                    gs_score(data = data, features = features[[i]])) |>
+    gs_score(data = data, features = features[[i]])) |>
       data.frame()
     ## set colnames
     colnames(score) <- paste(names(features), suffix, sep = ".")

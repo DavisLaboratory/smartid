@@ -12,7 +12,6 @@ setMethod(
            iae = "prob",
            par.idf = NULL,
            par.iae = NULL) {
-
     score <- cal_score_init(
       expr = data,
       tf = tf,
@@ -42,10 +41,10 @@ setMethod(
     ## get expr
     expr <- SummarizedExperiment::assay(data, i = slot)
     ## get label
-    if(!is.null(par.idf) & !is.null(par.idf$label)) {
+    if (!is.null(par.idf) & !is.null(par.idf$label)) {
       par.idf$label <- data@colData[[par.idf$label]]
     }
-    if(!is.null(par.iae) & !is.null(par.iae$label)) {
+    if (!is.null(par.iae) & !is.null(par.iae$label)) {
       par.iae$label <- data@colData[[par.iae$label]]
     }
 

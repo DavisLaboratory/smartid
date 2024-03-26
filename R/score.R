@@ -13,12 +13,15 @@ NULL
 #' data <- matrix(rnorm(100), 10, dimnames = list(1:10))
 #' gs_score_init(data, 1:5)
 gs_score_init <- function(score, features = NULL) {
-  if(is.null(features)) features <- rownames(score)
+  if (is.null(features)) features <- rownames(score)
 
   ## check features
-  if(!all(features %in% rownames(score)))
-    warning(sprintf("Feature %s is not in score!\n",
-                    setdiff(features, rownames(score))))
+  if (!all(features %in% rownames(score))) {
+    warning(sprintf(
+      "Feature %s is not in score!\n",
+      setdiff(features, rownames(score))
+    ))
+  }
   features <- intersect(rownames(score), features)
   stopifnot("less than 2 features are in score rows!" = length(features) > 1)
 
@@ -36,10 +39,12 @@ gs_score_init <- function(score, features = NULL) {
 #' @examples
 #' idf_iae_methods()
 idf_iae_methods <- function() {
-  return(sort(c("label probability" = 'prob', "label relative frequency" = 'rf',
-                "label IGM" = 'igm', "null" = 'null',
-                "unlabel max" = 'm', "unlabel SD" = 'sd',
-                "unlabel HDBSCAN" = "hdb", "unlabel standard" = 'standard')))
+  return(sort(c(
+    "label probability" = "prob", "label relative frequency" = "rf",
+    "label IGM" = "igm", "null" = "null",
+    "unlabel max" = "m", "unlabel SD" = "sd",
+    "unlabel HDBSCAN" = "hdb", "unlabel standard" = "standard"
+  )))
 }
 
 #' Calculate score for each feature in each cell
@@ -58,8 +63,10 @@ idf_iae_methods <- function() {
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' label <- sample(c("A", "B"), 10, replace = TRUE)
-#' smartid:::cal_score_init(data, par.idf = list(label = label),
-#'                          par.iae = list(label = label))
+#' smartid:::cal_score_init(data,
+#'   par.idf = list(label = label),
+#'   par.iae = list(label = label)
+#' )
 cal_score_init <- function(expr, tf = c("logtf", "tf"),
                            idf = "prob", iae = "prob",
                            par.idf = NULL, par.iae = NULL) {
@@ -76,17 +83,17 @@ cal_score_init <- function(expr, tf = c("logtf", "tf"),
   tf <- tf(expr, log = (tf == "logtf"))
 
   ## compute idf
-  if(idf == "null") {
+  if (idf == "null") {
     idf <- 1
-  }else {
+  } else {
     idf <- ifelse(idf == "standard", "idf", paste0("idf_", idf))
     idf <- do.call(idf, c(list(expr = expr), par.idf))
   }
 
   ## compute iae
-  if(iae == "null") {
+  if (iae == "null") {
     iae <- 1
-  }else {
+  } else {
     iae <- ifelse(iae == "standard", "iae", paste0("iae_", iae))
     iae <- do.call(iae, c(list(expr = expr), par.iae))
   }

@@ -2,7 +2,7 @@ test_that("wrappers work", {
   ## sim data
   set.seed(123)
   expr <- matrix(rpois(100, 2), 10, dimnames = list(1:10, letters[1:10]))
-  label = sample(c("A", "B"), 10, replace = TRUE)
+  label <- sample(c("A", "B"), 10, replace = TRUE)
 
   # test TF
   #--------------

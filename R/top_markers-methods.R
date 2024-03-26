@@ -55,8 +55,10 @@ setMethod(
            slot = "score",
            ...) {
     ## check
-    stopifnot("label must be a single character for se object" =
-                is.character(label) & length(label) == 1)
+    stopifnot(
+      "label must be a single character for se object" =
+        is.character(label) & length(label) == 1
+    )
 
     ## get expr
     expr <- SummarizedExperiment::assay(data, i = slot)
