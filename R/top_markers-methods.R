@@ -1,4 +1,4 @@
-#' @include top_markers.R
+#' @include top_markers.R smartid-package.R
 NULL
 
 #' @rdname top_markers
@@ -63,7 +63,7 @@ setMethod(
     ## get expr
     expr <- SummarizedExperiment::assay(data, i = slot)
     ## get label
-    label <- colData(data)[[label]]
+    label <- SummarizedExperiment::colData(data)[[label]]
 
     top_m <- top_markers(
       data = expr,

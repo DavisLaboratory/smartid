@@ -1,4 +1,4 @@
-#' @include score.R
+#' @include score.R smartid-package.R
 NULL
 
 #' @rdname gs_score

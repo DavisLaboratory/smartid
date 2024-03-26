@@ -42,10 +42,10 @@ setMethod(
     expr <- SummarizedExperiment::assay(data, i = slot)
     ## get label
     if (!is.null(par.idf) & !is.null(par.idf$label)) {
-      par.idf$label <- colData(data)[[par.idf$label]]
+      par.idf$label <- SummarizedExperiment::colData(data)[[par.idf$label]]
     }
     if (!is.null(par.iae) & !is.null(par.iae$label)) {
-      par.iae$label <- colData(data)[[par.iae$label]]
+      par.iae$label <- SummarizedExperiment::colData(data)[[par.iae$label]]
     }
 
     res <- cal_score(
