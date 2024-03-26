@@ -435,20 +435,6 @@ iae_hdb <- function(expr, features = NULL, multi = TRUE,
   ## factor cluster
   cluster <- factor(cluster)
 
-  # # thres <- 0
-  # # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
-  # expr_offset <- expr[features, , drop = FALSE] - thres ## subtract offset
-  # expr_offset[expr_offset < 0] <- 0
-  #
-  # mean_row_in <- sapply(levels(cluster), function(type) {
-  #   rowMeans(expr_offset[, cluster == type, drop = FALSE], na.rm = TRUE)
-  # }) |> setNames(levels(cluster))  ## mean counts for each gene in the group
-  # mean_row_notin <- sapply(levels(cluster), function(type) {
-  #   apply(mean_row_in, 1, function(x) max(x[names(x) != type]))
-  # }) |> setNames(levels(cluster))  ## mean counts for each gene not in group
-  #
-  # iae <- log1p((mean_row_in/(mean_row_notin+0.01))[, cluster, drop = FALSE])  ## IDF scores
-
   iae <- iae_prob(
     expr = expr, features = features,
     label = cluster, multi = multi,

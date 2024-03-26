@@ -85,8 +85,8 @@ defac <- as.data.frame(rowData(data_sim)[, cols])
 up <- lapply(cols, \(id)
 dplyr::filter(defac, if_all(-!!sym(id), \(x) !!sym(id) / x > fc)) |>
   rownames())
-data_sim@metadata$up_markers <- setNames(up, cols)
-data_sim@metadata$up_markers
+slot(data_sim, "metadata")$up_markers <- setNames(up, cols)
+slot(data_sim, "metadata")$up_markers
 data_sim
 ```
 
@@ -112,12 +112,13 @@ idf_iae_methods()
 ```
 
 The basic version of TF, IDF and IAE can be termed as:
-$\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}$
-$\mathbf{IDF_i} = log(1+\frac{n}{n_i+1})$
+
+$\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}},$
+$\mathbf{IDF_i} = log(1+\frac{n}{n_i+1}),$
 $\mathbf{IAE_i} = log(1+\frac{n}{\hat N_{i,j}+1})$
 
-$where\ N_{i,j}\ is\ the\ counts\ of\ feature\ i\ in\ cell\ j;\ \hat N_{i,j}\ is\ max(0,\ N_{i,j} - threshold);$
-$\ n\ is\ total\ counts\ of\ documents(cells);\ n_i\ is\ \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$
+$\mathbf{where\ N_{i,j}\ is\ the\ counts\ of\ feature\ i\ in\ cell\ j;\ \hat N_{i,j}\ is\ max(0,\ N_{i,j} - threshold)};$
+$\mathbf{\ n\ is\ total\ counts\ of\ documents(cells);\ n_i\ is\ \sum_{j = 1}^{n} sign(N_{i,j} > threshold)}$
 
 Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for marker identification.
 
@@ -174,7 +175,7 @@ It's clear that the real UP DEGs are popping up to the top n features. And for t
 score_barplot(
   top_markers = top_m,
   column = ".dot",
-  f_list = data_sim@metadata$up_markers,
+  f_list = slot(data_sim, "metadata")$up_markers,
   n = 20
 )
 ```
@@ -185,14 +186,14 @@ This can also be confirmed in data simulation information, where the scale facto
 
 ```{r}
 ggplot(data.frame(
-  "Gene76" = data_sim@metadata$tf["Gene76", ],
+  "Gene76" = slot(data_sim, "metadata")$tf["Gene76", ],
   Group = data_sim$Group
 )) +
   geom_violin(aes(x = Group, y = Gene76, fill = Group)) +
   theme_bw()
 
 ## sim gene info
-data_sim@rowRanges@elementMetadata[76, ]
+SummarizedExperiment::elementMetadata(data_sim)[76, ]
 ```
 
 ## Marker Selection
@@ -222,7 +223,7 @@ We can also compare our selected markers with real DEGs. As there is no markers 
 ```{r}
 library(UpSetR)
 
-upset(fromList(c(data_sim@metadata$up_markers, marker_ls)), nsets = 6)
+upset(fromList(c(slot(data_sim, "metadata")$up_markers, marker_ls)), nsets = 6)
 ```
 
 `smartid` also provides some other implementation of marker selection. Here is another example using `mclust`. Different from `markers_mixmdl()`, `markers_mclust()` doesn't need a pre-defined number of components (which is 3 in `markers_mixmdl()`), instead, it will select the number of components by searching a series of potential numbers. This method is sometimes more robust than `markers_mixmdl()`.
@@ -258,7 +259,7 @@ Here we choose logTF * IDF_sd * IAE_sd for for gene-set scoring as a use case.
 
 $\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}$
 
-$where\ \mathbf{IDF} = log(1+sd(N_{i})*\frac{n}{n_i+1})$
+$where\ \mathbf{IDF} = log(1+sd(N_{i})*\frac{n}{n_i+1}),$
 $\mathbf{IAE} = log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})$
 
 ## Score Samples
@@ -296,7 +297,7 @@ data_sim <- gs_score(
 )
 
 ## saved score
-colnames(data_sim@colData)
+colnames(colData(data_sim))
 ```
 
 Now we get 3 columns of score for each group markers. We can then visualize the score across groups, see how well it can discern the target group.
@@ -304,7 +305,7 @@ Now we get 3 columns of score for each group markers. We can then visualize the 
 It's evident that the score can sufficiently separate the target group from all others.
 
 ```{r, fig.width=10, fig.height=3}
-as.data.frame(data_sim@colData) |>
+as.data.frame(colData(data_sim)) |>
   tidyr::pivot_longer("Group1.score.unlabel":"Group3.score.unlabel",
     names_to = "group markers",
     values_to = "score"

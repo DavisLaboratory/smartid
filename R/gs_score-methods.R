@@ -64,7 +64,7 @@ setMethod(
     ## compute score
     score <- gs_score(data = expr, features = features, suffix = suffix)
 
-    data@colData <- cbind(data@colData, score)
+    colData(data) <- cbind(colData(data), score)
 
     return(data)
   }
