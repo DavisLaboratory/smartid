@@ -127,7 +127,7 @@ idf_sd <- function(expr, features = NULL, thres = 0) {
 #' inverse document frequency using hdbscan cluster as label
 #'
 #' @details
-#' Details as [smartid::idf_prob()].
+#' Details as [idf_prob()].
 #'
 #' @inheritParams idf_rf
 #' @param minPts integer, minimum size of clusters, default 2.
@@ -400,7 +400,7 @@ iae_sd <- function(expr, features = NULL, thres = 0) {
 #' inverse average expression using hdbscan cluster as label
 #'
 #' @details
-#' Details as [smartid::iae_prob()].
+#' Details as [iae_prob()].
 #'
 #' @inheritParams idf_rf
 #' @param minPts integer, minimum size of clusters, default 2.

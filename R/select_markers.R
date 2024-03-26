@@ -51,12 +51,12 @@ markers_mixmdl <- function(top_markers, column = ".dot",
 
     if (plot == TRUE) {
       # # base R plot, easy
-      # print(plot(mixmdl, which = 2))
+      # show(plot(mixmdl, which = 2))
       # abline(v = mixmdl$mu, col = seq_along(mixmdl$mu) + 1)
 
       ## ggplot
       p <- plot_mm(mixmdl, dist = dist)
-      print(p)
+      show(p)
     }
     ## get order of mu
     ord <- order(mixmdl$mu, decreasing = TRUE)
@@ -128,7 +128,7 @@ markers_mclust <- function(top_markers,
       # reset plot par
       par(mfrow = c(1, 1))
 
-      # print(plot_mm_clust(cl$data, cl$classification))
+      # show(plot_mm_clust(cl$data, cl$classification))
     }
     # plot(cbind(s, s), col=alpha(cl$classification, 0.4), pch=20)
 
@@ -191,7 +191,7 @@ markers_hdbscan <- function(top_markers,
 
     if (plot == TRUE) {
       ## plot hist and density with mu
-      print(plot_mm_clust(s, cl$cluster))
+      show(plot_mm_clust(s, cl$cluster))
       ## plot hc with stable clusters
       plot(cl, show_flat = TRUE)
     }
