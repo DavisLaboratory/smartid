@@ -231,7 +231,7 @@ each function, e.g. <code>?smartid:::idf</code>.</p>
 <p>The basic version of TF, IDF and IAE can be termed as:</p>
 <p><span class="math inline">\(\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}},\)</span>
 <span class="math inline">\(\mathbf{IDF_i} =
-log(1+\frac{n}{n_i+1}),\)</span> <span class="math inline">\(\mathbf{IAE_i} = log(1+\frac{n}{\hat
+log(1+\frac{n}{n_i+1}),\)</span> <span class="math inline">\(\mathbf{IAE_i} = log(1+\frac{n}{\sum_j^n\hat
 N_{i,j}+1})\)</span></p>
 <p>Where <span class="math inline">\(N_{i,j}\)</span> is the counts of
 feature <span class="math inline">\(i\)</span> in cell <span class="math inline">\(j\)</span>; <span class="math inline">\(\hat
@@ -239,13 +239,14 @@ N_{i,j}\)</span> is <span class="math inline">\(max(0,N_{i,j}-threshold)\)</span
 documents(cells); <span class="math inline">\(n_i\)</span> is <span class="math inline">\(\sum_{j = 1}^{n} sign(N_{i,j} &gt;
 threshold)\)</span>.</p>
 <p>Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for
-marker identification: <span class="math inline">\(\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}\)</span></p>
+marker identification: <span class="math display">\[\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}\]</span></p>
 <p>The probability version of IDF can be termed as: <span class="math inline">\(\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in
 D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+
 e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})\)</span></p>
 <p>And the probability version of IAE can be termed as: <span class="math inline">\(\mathbf{IAE_{i,j}} = log(1+\frac{mean(N_{i,j\in
-D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))\)</span>
-Where <span class="math inline">\(D\)</span> is the category of cell
+D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in
+D}))\)</span></p>
+<p>Where <span class="math inline">\(D\)</span> is the category of cell
 <span class="math inline">\(j\)</span>; <span class="math inline">\(\hat
 D\)</span> is the category other than <span class="math inline">\(D\)</span>.</p>
 <p>TF here stands for gene frequency, which is similar to CPM, while IDF
@@ -268,7 +269,7 @@ quite fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.195   0.008   0.204</span></span>
+<span><span class="co">#&gt;   0.202   0.000   0.203</span></span>
 <span></span>
 <span><span class="co">## score and tf,idf,iae all saved</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
@@ -453,7 +454,7 @@ group.</p>
 <p>While for the unlabeled data, <code>smartid</code> also provides the
 score methods with no need for label information.</p>
 <p>Here we choose logTF * IDF_sd * IAE_sd for for gene-set scoring as a
-use case: <span class="math inline">\(\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}\)</span></p>
+use case: <span class="math display">\[\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}\]</span></p>
 <p>Where <span class="math inline">\(\mathbf{IDF_i} =
 log(1+SD(TF_{i})*\frac{n}{n_i+1})\)</span>, <span class="math inline">\(\mathbf{IAE_i} =
 log(1+SD(TF_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})\)</span></p>
@@ -475,7 +476,7 @@ need for data pre-processing, which is quite convenient and fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.181   0.016   0.197</span></span>
+<span><span class="co">#&gt;   0.172   0.027   0.200</span></span>
 <span></span>
 <span><span class="co">## new score is saved and tf,idf,iae all updated</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
