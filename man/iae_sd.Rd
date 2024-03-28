@@ -4,12 +4,14 @@
 \alias{iae_sd}
 \title{inverse average expression using standard deviation (SD)}
 \usage{
-iae_sd(expr, features = NULL, thres = 0)
+iae_sd(expr, features = NULL, log = FALSE, thres = 0)
 }
 \arguments{
 \item{expr}{a matrix, features in row and cells in column}
 
 \item{features}{vector, feature names or indexes to compute}
+
+\item{log}{logical, if to do log-transformation}
 
 \item{thres}{numeric, cell only counts when expr > threshold, default 0}
 }
@@ -20,7 +22,10 @@ a vector of inverse average expression score for each feature
 inverse average expression using standard deviation (SD)
 }
 \details{
-\deqn{\mathbf{IAE} = log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})}
+\deqn{\mathbf{IAE} = log(1+sd(tf_{i})*\frac{n}{\sum_{j=1}^{n}max(0,N_{i,j})+1})}
+where \eqn{tf_i} is the term frequency of feature \eqn{i}, see details in
+\code{\link[=tf]{tf()}}, \eqn{n} is the total number of cells and \eqn{N_{i,j}} is the counts
+of feature \eqn{i} in cell \eqn{j}.
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

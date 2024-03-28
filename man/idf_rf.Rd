@@ -25,6 +25,9 @@ labeled inverse cell frequency: relative frequency
 }
 \details{
 \deqn{\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}})}
+where \eqn{n_{i,j\in D}} is the number of cells containing feature \eqn{i} in
+class \eqn{D}, \eqn{n_{j\in D}} is the total number of cells in class \eqn{D},
+\eqn{\hat D} is the class except \eqn{D}.
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

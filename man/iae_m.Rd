@@ -20,7 +20,10 @@ a matrix of inverse average expression score for each feature
 inverse average expression: max
 }
 \details{
-\deqn{\mathbf{IAE_{i,j}} = log(1+\frac{max_{\{i^{'}\in j\}}(n_{i^{'}})}{\sum_{j = 1}^{n} sign(N_{i,j} > threshold)+1})}
+\deqn{\mathbf{IAE_{i,j}} = log(1+\frac{max_{\{i^{'}\in j\}}(n_{i^{'}})}{\sum_{j = 1}^{n} max(0, N_{i,j} - threshold)+1})}
+where \eqn{i} is the feature \eqn{i} and \eqn{i^{'}} is the feature except
+\eqn{i}, \eqn{N_{i,j}} is the counts of feature \eqn{i} in cell \eqn{j}, and
+\eqn{n_{i^{'}}} is \eqn{\sum_{j = 1}^{n} sign(N_{i,j} > threshold)}.
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

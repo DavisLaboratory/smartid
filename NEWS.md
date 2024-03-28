@@ -13,3 +13,7 @@
 # smartid 0.99.3
 
 * Bump R version dependency to >= 4.4 and add details for TF, IDF, IAE functions.
+
+# smartid 0.99.4
+
+* Add details for TF, IDF, IAE functions.

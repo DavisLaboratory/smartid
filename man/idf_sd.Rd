@@ -4,12 +4,14 @@
 \alias{idf_sd}
 \title{inverse cell frequency using standard deviation (SD)}
 \usage{
-idf_sd(expr, features = NULL, thres = 0)
+idf_sd(expr, features = NULL, log = FALSE, thres = 0)
 }
 \arguments{
 \item{expr}{a matrix, features in row and cells in column}
 
 \item{features}{vector, feature names or indexes to compute}
+
+\item{log}{logical, if to do log-transformation}
 
 \item{thres}{numeric, cell only counts when expr > threshold, default 0}
 }
@@ -20,7 +22,10 @@ a vector of inverse cell frequency score for each feature
 inverse cell frequency using standard deviation (SD)
 }
 \details{
-\deqn{\mathbf{IDF_i} = log(1+sd(N_{i})*\frac{n}{n_i+1})}
+\deqn{\mathbf{IDF_i} = log(1+sd(tf_{i})*\frac{n}{n_i+1})}
+where \eqn{tf_i} is the term frequency of feature \eqn{i}, see details in
+\code{\link[=tf]{tf()}}, \eqn{n} is the total number of cells and \eqn{n_i} is the number of
+cells containing feature \eqn{i}.
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

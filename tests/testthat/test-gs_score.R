@@ -24,5 +24,5 @@ test_that("gs_score works", {
     features = list(a = seq_len(3), b = seq_len(5)),
     slot = "counts"
   )
-  expect_type(colnames(res@colData), "character")
+  expect_type(colnames(SummarizedExperiment::colData(res)), "character")
 })

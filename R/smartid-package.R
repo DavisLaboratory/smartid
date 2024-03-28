@@ -15,7 +15,7 @@ NULL
 #'     can also be used as a new gene-set scoring method or data transformation
 #'     method. Multiple visualization functions are implemented in this package.
 #'
-#' @author Jinjin Chen \email{chen.j@@wehi.edu.au}
+#' @author Jinjin Chen \email{chen.j@wehi.edu.au}
 #' @name smartid_Package
 #' @docType package
 #' @aliases smartid smartid_Package

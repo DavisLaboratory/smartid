@@ -21,6 +21,8 @@ standard inverse cell frequency
 }
 \details{
 \deqn{\mathbf{IDF_i} = log(1+\frac{n}{n_i+1})}
+where \eqn{n} is the total number of cells, \eqn{n_i} is the number of cells
+containing feature i.
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

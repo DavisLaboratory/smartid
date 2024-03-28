@@ -25,6 +25,9 @@ labeled inverse cell frequency: IGM
 }
 \details{
 \deqn{\mathbf{IGM_i} = log(1+\lambda\frac{max(n_{i,j\in D})_{k}}{\sum_{k}^{K}((n_{i,j\in D})_{k}*r_{k})+e^{-8}})}
+where \eqn{\lambda} is the hyper parameter, \eqn{n_{i,j\in D}} is the number
+of cells containing feature \eqn{i} in class \eqn{D}, \eqn{r_k} is the rank
+of \eqn{n_{i,j\in D}}.
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

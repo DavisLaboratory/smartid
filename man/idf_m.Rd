@@ -21,6 +21,9 @@ inverse cell frequency: max
 }
 \details{
 \deqn{\mathbf{IDF_{i,j}} = log(\frac{max_{\{i^{'}\in j\}}(n_{i^{'}})}{n_i+1})}
+where \eqn{i} is the feature \eqn{i} and \eqn{i^{'}} is the feature except
+\eqn{i}, \eqn{n_i} is the number of cells containing feature i, and
+\eqn{n_{i^{'}}} is the number of cells containing feature \eqn{i^{'}}.
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

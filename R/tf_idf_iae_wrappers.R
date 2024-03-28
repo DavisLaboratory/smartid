@@ -9,6 +9,7 @@
 #'
 #' @details
 #' \deqn{\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}}
+#' where \eqn{N_{i,j}} is the counts of feature i in cell j.
 #'
 #' @param expr a count matrix, features in row and cells in column
 #' @param log logical, if to do log-transformation
@@ -41,6 +42,8 @@ tf <- function(expr, log = FALSE) {
 #'
 #' @details
 #' \deqn{\mathbf{IDF_i} = log(1+\frac{n}{n_i+1})}
+#' where \eqn{n} is the total number of cells, \eqn{n_i} is the number of cells
+#' containing feature i.
 #'
 #' @inheritParams idf_rf
 #'
@@ -69,6 +72,9 @@ idf <- function(expr, features = NULL, thres = 0) {
 #'
 #' @details
 #' \deqn{\mathbf{IDF_{i,j}} = log(\frac{max_{\{i^{'}\in j\}}(n_{i^{'}})}{n_i+1})}
+#' where \eqn{i} is the feature \eqn{i} and \eqn{i^{'}} is the feature except
+#' \eqn{i}, \eqn{n_i} is the number of cells containing feature i, and
+#' \eqn{n_{i^{'}}} is the number of cells containing feature \eqn{i^{'}}.
 #'
 #' @inheritParams idf_rf
 #'
@@ -94,29 +100,35 @@ idf_m <- function(expr, features = NULL, thres = 0) {
 }
 
 ## inverse document frequency sd
-### $$\mathbf{IDF_i} = log(1+sd(N_{i})*\frac{n}{n_i+1})$$
+### $$\mathbf{IDF_i} = log(1+sd(tf_{i})*\frac{n}{n_i+1})$$
 ### $$n: total\ counts\ of\ documents;\ n_i: \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
 
 #' inverse cell frequency using standard deviation (SD)
 #'
 #' @details
-#' \deqn{\mathbf{IDF_i} = log(1+sd(N_{i})*\frac{n}{n_i+1})}
+#' \deqn{\mathbf{IDF_i} = log(1+sd(tf_{i})*\frac{n}{n_i+1})}
+#' where \eqn{tf_i} is the term frequency of feature \eqn{i}, see details in
+#' [tf()], \eqn{n} is the total number of cells and \eqn{n_i} is the number of
+#' cells containing feature \eqn{i}.
 #'
 #' @inheritParams idf_rf
+#' @inheritParams tf
 #'
 #' @return a vector of inverse cell frequency score for each feature
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' smartid:::idf_sd(data)
-idf_sd <- function(expr, features = NULL, thres = 0) {
+idf_sd <- function(expr, features = NULL, log = FALSE, thres = 0) {
   if (is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr) ## number of total obs
+
+  tfs <- tf(expr, log = log)
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
   n_sub <- rowSums(expr[features, , drop = FALSE] > thres) ## num of obs contain feature i > thres
-  sd_row <- sparseMatrixStats::rowSds(expr[features, , drop = FALSE], na.rm = TRUE)
+  sd_row <- sparseMatrixStats::rowSds(tf[features, , drop = FALSE], na.rm = TRUE)
 
   idf <- log1p(sd_row * n_obs / (n_sub + 1))
   return(idf)
@@ -170,6 +182,9 @@ idf_hdb <- function(expr, features = NULL, multi = TRUE,
 #'
 #' @details
 #' \deqn{\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}})}
+#' where \eqn{n_{i,j\in D}} is the number of cells containing feature \eqn{i} in
+#' class \eqn{D}, \eqn{n_{j\in D}} is the total number of cells in class \eqn{D},
+#' \eqn{\hat D} is the class except \eqn{D}.
 #'
 #' @param expr a matrix, features in row and cells in column
 #' @param features vector, feature names or indexes to compute
@@ -224,6 +239,9 @@ idf_rf <- function(expr, features = NULL, label,
 #'
 #' @details
 #' \deqn{\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})}
+#' where \eqn{n_{i,j\in D}} is the number of cells containing feature \eqn{i} in
+#' class \eqn{D}, \eqn{n_{j\in D}} is the total number of cells in class \eqn{D},
+#' \eqn{\hat D} is the class except \eqn{D}.
 #'
 #' @inheritParams idf_rf
 #'
@@ -274,6 +292,9 @@ idf_prob <- function(expr, features = NULL, label,
 #'
 #' @details
 #' \deqn{\mathbf{IGM_i} = log(1+\lambda\frac{max(n_{i,j\in D})_{k}}{\sum_{k}^{K}((n_{i,j\in D})_{k}*r_{k})+e^{-8}})}
+#' where \eqn{\lambda} is the hyper parameter, \eqn{n_{i,j\in D}} is the number
+#' of cells containing feature \eqn{i} in class \eqn{D}, \eqn{r_k} is the rank
+#' of \eqn{n_{i,j\in D}}.
 #'
 #' @inheritParams idf_rf
 #' @param lambda numeric, hyperparameter for IGM
@@ -318,6 +339,8 @@ idf_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
 #'
 #' @details
 #' \deqn{\mathbf{IAE_i} = log(1+\frac{n}{\hat N_{i,j}+1})}
+#' where \eqn{n} is the total number of cells, \eqn{N_{i,j}} is the counts of
+#' feature \eqn{i} in cell \eqn{j}.
 #'
 #' @inheritParams idf_rf
 #'
@@ -347,7 +370,10 @@ iae <- function(expr, features = NULL, thres = 0) {
 #' inverse average expression: max
 #'
 #' @details
-#' \deqn{\mathbf{IAE_{i,j}} = log(1+\frac{max_{\{i^{'}\in j\}}(n_{i^{'}})}{\sum_{j = 1}^{n} sign(N_{i,j} > threshold)+1})}
+#' \deqn{\mathbf{IAE_{i,j}} = log(1+\frac{max_{\{i^{'}\in j\}}(n_{i^{'}})}{\sum_{j = 1}^{n} max(0, N_{i,j} - threshold)+1})}
+#' where \eqn{i} is the feature \eqn{i} and \eqn{i^{'}} is the feature except
+#' \eqn{i}, \eqn{N_{i,j}} is the counts of feature \eqn{i} in cell \eqn{j}, and
+#' \eqn{n_{i^{'}}} is \eqn{\sum_{j = 1}^{n} sign(N_{i,j} > threshold)}.
 #'
 #' @inheritParams idf_rf
 #'
@@ -374,31 +400,37 @@ iae_m <- function(expr, features = NULL, thres = 0) {
 }
 
 ## inverse average expression sd
-### $$\mathbf{IAE} = log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})$$
+### $$\mathbf{IAE} = log(1+sd(tf_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})$$
 ### $$n: total\ counts\ of\ documents;\ n_i: \sum_{j = 1}^{n} sign(N_{i,j} > threshold)$$
 
 #' inverse average expression using standard deviation (SD)
 #'
 #' @details
-#' \deqn{\mathbf{IAE} = log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})}
+#' \deqn{\mathbf{IAE} = log(1+sd(tf_{i})*\frac{n}{\sum_{j=1}^{n}max(0,N_{i,j})+1})}
+#' where \eqn{tf_i} is the term frequency of feature \eqn{i}, see details in
+#' [tf()], \eqn{n} is the total number of cells and \eqn{N_{i,j}} is the counts
+#' of feature \eqn{i} in cell \eqn{j}.
 #'
 #' @inheritParams idf_rf
+#' @inheritParams tf
 #'
 #' @return a vector of inverse average expression score for each feature
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' smartid:::iae_sd(data)
-iae_sd <- function(expr, features = NULL, thres = 0) {
+iae_sd <- function(expr, features = NULL, log = FALSE, thres = 0) {
   if (is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr) ## number of obs
+
+  tfs <- tf(expr, log = log)
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
   expr_offset <- expr[features, , drop = FALSE] - thres ## subtract offset
   expr_offset[expr_offset < 0] <- 0
   s_row <- sparseMatrixStats::rowSums2(expr_offset, na.rm = TRUE) ## summed counts for each gene
-  sd_row <- sparseMatrixStats::rowSds(expr_offset, na.rm = TRUE)
+  sd_row <- sparseMatrixStats::rowSds(tfs, na.rm = TRUE)
 
   iae <- log1p(sd_row * n_obs / (s_row + 1)) ## IDF scores
   return(iae)
@@ -454,6 +486,8 @@ iae_hdb <- function(expr, features = NULL, multi = TRUE,
 #'
 #' @details
 #' \deqn{\mathbf{IAE} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}})}
+#' where \eqn{N_{i,j\in D}} is the counts of feature \eqn{i} in cell \eqn{j}
+#' within class \eqn{D}, and \eqn{\hat D} is the class except \eqn{D}.
 #'
 #' @inheritParams idf_rf
 #'
@@ -504,6 +538,8 @@ iae_rf <- function(expr, features = NULL, label,
 #'
 #' @details
 #' \deqn{\mathbf{IAE_{i,j}} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))}
+#' where \eqn{N_{i,j\in D}} is the counts of feature \eqn{i} in cell \eqn{j}
+#' within class \eqn{D}, and \eqn{\hat D} is the class except \eqn{D}.
 #'
 #' @inheritParams idf_rf
 #'
@@ -553,6 +589,9 @@ iae_prob <- function(expr, features = NULL, label,
 #'
 #' @details
 #' \deqn{\mathbf{IGM_i} = log(1+\lambda\frac{max(mean(N_{i,j\in D})_{k})}{\sum_{k}^{K}(mean(N_{i,j\in D})_{k}*r_{k})+e^{-8}})}
+#' where \eqn{\lambda} is the hyper parameter, \eqn{N_{i,j\in D}} is the counts
+#' of feature \eqn{i} in cell \eqn{j} within class \eqn{D}, and \eqn{r_k} is the
+#' rank of \eqn{mean(N_{i,j\in D})}.
 #'
 #' @inheritParams idf_rf
 #' @param lambda numeric, hyperparameter for IGM

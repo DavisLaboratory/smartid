@@ -25,6 +25,8 @@ labeled inverse average expression: relative frequency
 }
 \details{
 \deqn{\mathbf{IAE} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}})}
+where \eqn{N_{i,j\in D}} is the counts of feature \eqn{i} in cell \eqn{j}
+within class \eqn{D}, and \eqn{\hat D} is the class except \eqn{D}.
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

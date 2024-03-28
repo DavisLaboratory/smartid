@@ -25,6 +25,9 @@ labeled inverse average expression: IGM
 }
 \details{
 \deqn{\mathbf{IGM_i} = log(1+\lambda\frac{max(mean(N_{i,j\in D})_{k})}{\sum_{k}^{K}(mean(N_{i,j\in D})_{k}*r_{k})+e^{-8}})}
+where \eqn{\lambda} is the hyper parameter, \eqn{N_{i,j\in D}} is the counts
+of feature \eqn{i} in cell \eqn{j} within class \eqn{D}, and \eqn{r_k} is the
+rank of \eqn{mean(N_{i,j\in D})}.
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

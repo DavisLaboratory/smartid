@@ -19,6 +19,7 @@ compute term/feature frequency within each cell
 }
 \details{
 \deqn{\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}}}
+where \eqn{N_{i,j}} is the counts of feature i in cell j.
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))

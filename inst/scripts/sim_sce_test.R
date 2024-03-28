@@ -22,7 +22,7 @@ defac <- as.data.frame(SummarizedExperiment::rowData(sim_sce_test)[, cols])
 up <- lapply(cols, \(id)
              dplyr::filter(defac, if_all(-!!sym(id), \(x) !!sym(id)/x > fc)) |>
                rownames())
-sim_sce_test@metadata$up_markers <- setNames(up, cols)
+SummarizedExperiment::metadata(sim_sce_test)$up_markers <- setNames(up, cols)
 
 ### save data
 usethis::use_data(sim_sce_test, overwrite = TRUE)

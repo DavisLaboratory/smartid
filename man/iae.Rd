@@ -21,6 +21,8 @@ standard inverse average expression
 }
 \details{
 \deqn{\mathbf{IAE_i} = log(1+\frac{n}{\hat N_{i,j}+1})}
+where \eqn{n} is the total number of cells, \eqn{N_{i,j}} is the counts of
+feature \eqn{i} in cell \eqn{j}.
 }
 \examples{
 data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
