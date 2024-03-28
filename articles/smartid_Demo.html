@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">smartid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.4</span>
       </span>
     </div>
 
@@ -239,8 +239,7 @@ N_{i,j}\)</span> is <span class="math inline">\(max(0,N_{i,j}-threshold)\)</span
 documents(cells); <span class="math inline">\(n_i\)</span> is <span class="math inline">\(\sum_{j = 1}^{n} sign(N_{i,j} &gt;
 threshold)\)</span>.</p>
 <p>Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for
-marker identification.</p>
-<p><span class="math display">\[\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}\]</span></p>
+marker identification: <span class="math inline">\(\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}\)</span></p>
 <p>The probability version of IDF can be termed as: <span class="math inline">\(\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in
 D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+
 e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})\)</span></p>
@@ -269,7 +268,7 @@ quite fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.197   0.004   0.201</span></span>
+<span><span class="co">#&gt;   0.195   0.008   0.204</span></span>
 <span></span>
 <span><span class="co">## score and tf,idf,iae all saved</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
@@ -454,8 +453,7 @@ group.</p>
 <p>While for the unlabeled data, <code>smartid</code> also provides the
 score methods with no need for label information.</p>
 <p>Here we choose logTF * IDF_sd * IAE_sd for for gene-set scoring as a
-use case.</p>
-<p><span class="math display">\[\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}\]</span></p>
+use case: <span class="math inline">\(\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}\)</span></p>
 <p>Where <span class="math inline">\(\mathbf{IDF_i} =
 log(1+SD(TF_{i})*\frac{n}{n_i+1})\)</span>, <span class="math inline">\(\mathbf{IAE_i} =
 log(1+SD(TF_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})\)</span></p>
@@ -561,7 +559,7 @@ group from all others.</p>
 <span><span class="co">#&gt;  [9] GenomicRanges_1.55.4        GenomeInfoDb_1.39.9        </span></span>
 <span><span class="co">#&gt; [11] IRanges_2.37.1              S4Vectors_0.41.5           </span></span>
 <span><span class="co">#&gt; [13] BiocGenerics_0.49.1         MatrixGenerics_1.15.0      </span></span>
-<span><span class="co">#&gt; [15] matrixStats_1.2.0           smartid_0.99.3             </span></span>
+<span><span class="co">#&gt; [15] matrixStats_1.2.0           smartid_0.99.4             </span></span>
 <span><span class="co">#&gt; [17] BiocStyle_2.31.0           </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
