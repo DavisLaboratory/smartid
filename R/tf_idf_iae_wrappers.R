@@ -128,7 +128,7 @@ idf_sd <- function(expr, features = NULL, log = FALSE, thres = 0) {
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
   n_sub <- rowSums(expr[features, , drop = FALSE] > thres) ## num of obs contain feature i > thres
-  sd_row <- sparseMatrixStats::rowSds(tf[features, , drop = FALSE], na.rm = TRUE)
+  sd_row <- sparseMatrixStats::rowSds(tfs[features, , drop = FALSE], na.rm = TRUE)
 
   idf <- log1p(sd_row * n_obs / (n_sub + 1))
   return(idf)
