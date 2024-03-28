@@ -96,7 +96,9 @@
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>$$\mathbf{IAE_{i,j}} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))$$</p>
+    <p>$$\mathbf{IAE_{i,j}} = log(1+\frac{mean(N_{i,j\in D})}{max(mean(N_{i,j\in \hat D}))+ e^{-8}}*mean(N_{i,j\in D}))$$
+where \(N_{i,j\in D}\) is the counts of feature \(i\) in cell \(j\)
+within class \(D\), and \(\hat D\) is the class except \(D\).</p>
     </div>
 
     <div id="ref-examples">

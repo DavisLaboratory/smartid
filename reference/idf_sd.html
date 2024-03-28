@@ -63,7 +63,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">idf_sd</span><span class="op">(</span><span class="va">expr</span>, features <span class="op">=</span> <span class="cn">NULL</span>, thres <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">idf_sd</span><span class="op">(</span><span class="va">expr</span>, features <span class="op">=</span> <span class="cn">NULL</span>, log <span class="op">=</span> <span class="cn">FALSE</span>, thres <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -74,6 +74,10 @@
 
 <dt>features</dt>
 <dd><p>vector, feature names or indexes to compute</p></dd>
+
+
+<dt>log</dt>
+<dd><p>logical, if to do log-transformation</p></dd>
 
 
 <dt>thres</dt>
@@ -88,17 +92,20 @@
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>$$\mathbf{IDF_i} = log(1+sd(N_{i})*\frac{n}{n_i+1})$$</p>
+    <p>$$\mathbf{IDF_i} = log(1+sd(tf_{i})*\frac{n}{n_i+1})$$
+where \(tf_i\) is the term frequency of feature \(i\), see details in
+<code><a href="tf.html">tf()</a></code>, \(n\) is the total number of cells and \(n_i\) is the number of
+cells containing feature \(i\).</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fl">10</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">smartid</span><span class="fu">:::</span><span class="fu">idf_sd</span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         1         2         3         4         5         6         7         8 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.8829972 1.1597035 0.8543715 1.0387709 1.1509044 0.7598136 0.7324272 0.7223904 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         9        10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.8580582 0.9308210 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          1          2          3          4          5          6          7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.06191538 0.10035735 0.06957992 0.07781064 0.08512022 0.05712326 0.04502422 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          8          9         10 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.05292170 0.05366416 0.06581973 </span>
 </code></pre></div>
     </div>
   </div>

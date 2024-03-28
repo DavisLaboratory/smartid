@@ -63,7 +63,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">iae_sd</span><span class="op">(</span><span class="va">expr</span>, features <span class="op">=</span> <span class="cn">NULL</span>, thres <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">iae_sd</span><span class="op">(</span><span class="va">expr</span>, features <span class="op">=</span> <span class="cn">NULL</span>, log <span class="op">=</span> <span class="cn">FALSE</span>, thres <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -74,6 +74,10 @@
 
 <dt>features</dt>
 <dd><p>vector, feature names or indexes to compute</p></dd>
+
+
+<dt>log</dt>
+<dd><p>logical, if to do log-transformation</p></dd>
 
 
 <dt>thres</dt>
@@ -88,17 +92,20 @@
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>$$\mathbf{IAE} = log(1+sd(N_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})$$</p>
+    <p>$$\mathbf{IAE} = log(1+sd(tf_{i})*\frac{n}{\sum_{j=1}^{n}max(0,N_{i,j})+1})$$
+where \(tf_i\) is the term frequency of feature \(i\), see details in
+<code><a href="tf.html">tf()</a></code>, \(n\) is the total number of cells and \(N_{i,j}\) is the counts
+of feature \(i\) in cell \(j\).</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fl">10</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">smartid</span><span class="fu">:::</span><span class="fu">iae_sd</span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         1         2         3         4         5         6         7         8 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.4642937 0.5661016 0.4317557 0.6256180 0.6229501 0.3695086 0.5158592 0.3656119 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         9        10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.4277004 0.6655675 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          1          2          3          4          5          6          7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.02626549 0.03606052 0.02841552 0.03780853 0.03492224 0.02283198 0.02837679 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          8          9         10 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.02239204 0.02142708 0.04101447 </span>
 </code></pre></div>
     </div>
   </div>

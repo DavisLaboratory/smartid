@@ -96,7 +96,10 @@
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>$$\mathbf{IGM_i} = log(1+\lambda\frac{max(mean(N_{i,j\in D})_{k})}{\sum_{k}^{K}(mean(N_{i,j\in D})_{k}*r_{k})+e^{-8}})$$</p>
+    <p>$$\mathbf{IGM_i} = log(1+\lambda\frac{max(mean(N_{i,j\in D})_{k})}{\sum_{k}^{K}(mean(N_{i,j\in D})_{k}*r_{k})+e^{-8}})$$
+where \(\lambda\) is the hyper parameter, \(N_{i,j\in D}\) is the counts
+of feature \(i\) in cell \(j\) within class \(D\), and \(r_k\) is the
+rank of \(mean(N_{i,j\in D})\).</p>
     </div>
 
     <div id="ref-examples">
