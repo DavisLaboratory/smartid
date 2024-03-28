@@ -120,9 +120,8 @@ $\mathbf{IAE_i} = log(1+\frac{n}{\hat N_{i,j}+1})$
 Where $N_{i,j}$ is the counts of feature $i$ in cell $j$; $\hat N_{i,j}$ is $max(0,N_{i,j}-threshold)$;
 $n$ is the total number of documents(cells); $n_i$ is $\sum_{j = 1}^{n} sign(N_{i,j} > threshold)$.
 
-Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for marker identification.
-
-$$\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}$$
+Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for marker identification:
+$\mathbf{score}=logTF*IDF_{prob}*IAE_{prob}$
 
 The probability version of IDF can be termed as:
 $\mathbf{IDF_{i,j}} = log(1+\frac{\frac{n_{i,j\in D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+ e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})$
@@ -255,9 +254,8 @@ upset(fromList(c(marker_ls, marker_ls_new)), nsets = 6)
 
 While for the unlabeled data, `smartid` also provides the score methods with no need for label information.
 
-Here we choose logTF * IDF_sd * IAE_sd for for gene-set scoring as a use case.
-
-$$\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}$$
+Here we choose logTF * IDF_sd * IAE_sd for for gene-set scoring as a use case:
+$\mathbf{score}=logTF*IDF_{sd}*IAE_{sd}$
 
 Where $\mathbf{IDF_i} = log(1+SD(TF_{i})*\frac{n}{n_i+1})$,
 $\mathbf{IAE_i} = log(1+SD(TF_{i})*\frac{n}{\sum_{j=1}^{n}N_{i,j}+1})$
