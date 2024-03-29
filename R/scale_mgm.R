@@ -1,8 +1,11 @@
 #' scale by mean of group mean for imbalanced data
 #'
 #' @details
-#' \deqn{z=\frac{x-\frac{\sum_k^{n_D}(\mu_k)}{n_D}}{s_{pooled}}}
-#' where \eqn{s_{pooled}=\sqrt{\frac{\sum_k^{n_D}{(n_k-1){s_k}^2}}{\sum_k^{n_D}{n_k}-k}}}
+#' \deqn{z=\frac{x-\frac{\sum_k^{n_D}(\mu_k)}{n_D}}{s}}
+#' where \eqn{\mu_k} is the mean of x in \eqn{k^{th}} class, and \eqn{n_D} is
+#' the number of classes, \eqn{s} is the standard deviation of x,
+#' when `pooled.sd` is set to be TRUE, \eqn{s} will be replaced with
+#' \eqn{s_{pooled}}, \eqn{s_{pooled}=\sqrt{\frac{\sum_k^{n_D}{(n_k-1){s_k}^2}}{\sum_k^{n_D}{n_k}-k}}}
 #'
 #' @param expr matrix
 #' @param label a vector of group label
@@ -16,16 +19,7 @@
 scale_mgm <- function(expr, label, pooled.sd = FALSE) {
   if (pooled.sd) {
     ## compute pooled sds
-    sds <- vapply(
-      unique(label), \(i)
-      sparseMatrixStats::rowVars(expr[, label == i, drop = FALSE],
-        na.rm = TRUE
-      ),
-      rep(1, nrow(expr))
-    ) # get vars of each group
-    ng <- table(label)[unique(label)] # get group sizes in the same order
-    sds <- sds %*% cbind(ng - 1)
-    sds <- as.numeric(sqrt(sds / sum(ng - 1)))
+    sds <- row_pool_sds(expr, label)
   } else {
     ## compute overall sds
     sds <- sparseMatrixStats::rowSds(expr, na.rm = TRUE)
@@ -55,4 +49,19 @@ scale_mgm <- function(expr, label, pooled.sd = FALSE) {
   # expr[is.na(expr)] <- 0 # assign 0 to NA when sd = 0
 
   return(expr)
+}
+
+
+## row-wise pooled SDs
+row_pool_sds <- function(expr, label) {
+  sds <- vapply(
+    unique(label), \(i)
+    sparseMatrixStats::rowVars(expr[, label == i, drop = FALSE], na.rm = TRUE),
+    rep(1, nrow(expr))
+  ) # get vars of each group
+  ng <- table(label)[unique(label)] # get group sizes in the same order
+  sds <- sds %*% cbind(ng - 1)
+  sds <- as.numeric(sqrt(sds / sum(ng - 1)))
+
+  return(sds)
 }

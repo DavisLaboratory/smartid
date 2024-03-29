@@ -20,4 +20,4 @@
 
 # smartid 0.99.5
 
-* Update `scale_mgm()` function using pooled SD, add details for scale function.
+* Update `scale_mgm()` function adding pooled SD option, add details for scale function.

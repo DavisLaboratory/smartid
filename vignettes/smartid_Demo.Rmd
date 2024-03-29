@@ -189,12 +189,12 @@ As we can see, there is an UP DEG 'Gene76' not popping up in Group 2, we can che
 This can also be confirmed in data simulation information, where the scale factor is higher in Group2, but the GeneMean is too small to be confident. Thus this gene won't be selected by `smartid`.
 
 ```{r}
-ggplot(data.frame(
-  "Gene76" = slot(data_sim, "metadata")$tf["Gene76", ],
-  Group = data_sim$Group
-)) +
-  geom_violin(aes(x = Group, y = Gene76, fill = Group)) +
-  theme_bw()
+sin_score_boxplot(
+  metadata(data_sim)$tf,
+  features = "Gene76",
+  ref.group = "Group2",
+  label = data_sim$Group
+)
 
 ## sim gene info
 SummarizedExperiment::elementMetadata(data_sim)[76, ]
@@ -230,7 +230,7 @@ library(UpSetR)
 upset(fromList(c(slot(data_sim, "metadata")$up_markers, marker_ls)), nsets = 6)
 ```
 
-`smartid` also provides some other implementation of marker selection. Here is another example using `mclust`. Different from `markers_mixmdl()`, `markers_mclust()` doesn't need a pre-defined number of components (which is 3 in `markers_mixmdl()`), instead, it will select the number of components by searching a series of potential numbers. This method is sometimes more robust than `markers_mixmdl()`.
+`smartid` also provides some other implementation of marker selection. Here is another example using `mclust`. Different from `markers_mixmdl()`, `markers_mclust()` doesn't need a pre-defined number of components (which is default 3 in `markers_mixmdl()`), instead, it will select the number of components by searching a series of potential numbers. This method is sometimes more robust than `markers_mixmdl()` but will also take longer running time.
 
 Similarly, this method also allows to plot the mixture distribution for each component, but separately.
 

@@ -20,8 +20,11 @@ scaled matrix
 scale by mean of group mean for imbalanced data
 }
 \details{
-\deqn{z=\frac{x-\frac{\sum_k^{n_D}(\mu_k)}{n_D}}{s_{pooled}}}
-where \eqn{s_{pooled}=\sqrt{\frac{\sum_k^{n_D}{(n_k-1){s_k}^2}}{\sum_k^{n_D}{n_k}-k}}}
+\deqn{z=\frac{x-\frac{\sum_k^{n_D}(\mu_k)}{n_D}}{s}}
+where \eqn{\mu_k} is the mean of x in \eqn{k^{th}} class, and \eqn{n_D} is
+the number of classes, \eqn{s} is the standard deviation of x,
+when \code{pooled.sd} is set to be TRUE, \eqn{s} will be replaced with
+\eqn{s_{pooled}}, \eqn{s_{pooled}=\sqrt{\frac{\sum_k^{n_D}{(n_k-1){s_k}^2}}{\sum_k^{n_D}{n_k}-k}}}
 }
 \examples{
 scale_mgm(matrix(rnorm(100), 10), label = rep(letters[1:2], 5))
