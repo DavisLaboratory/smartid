@@ -45,8 +45,8 @@ top_markers_init <- function(data, label, n = 10,
 
 #' calculate group median, MAD or mean score and order genes based on scores
 #'
+#' @inheritParams scale_mgm
 #' @param data matrix, features in row and samples in column
-#' @param label vector, group labels
 #' @param n integer, number of returned top genes for each group
 #' @param method character, specify metric to compute, can be one of "median",
 #'     "mad", "mean"
@@ -61,12 +61,13 @@ top_markers_init <- function(data, label, n = 10,
 #' data <- matrix(rgamma(100, 2), 10, dimnames = list(1:10))
 #' top_markers_abs(data, label = rep(c("A", "B"), 5))
 top_markers_abs <- function(data, label, n = 10,
+                            pooled.sd = FALSE,
                             method = c("median", "mad", "mean"),
                             scale = TRUE, use.mgm = TRUE,
                             softmax = TRUE) {
   method <- match.arg(method)
   if (scale && use.mgm) {
-    data <- scale_mgm(expr = data, label = label)
+    data <- scale_mgm(expr = data, label = label, pooled.sd = pooled.sd)
   } else if (scale && !use.mgm) {
     ## scale scores on rows
     # mu_s <- sparseMatrixStats::rowMeans2(data, na.rm = TRUE)
@@ -104,8 +105,8 @@ top_markers_abs <- function(data, label, n = 10,
 
 #' calculate group mean score using glm and order genes based on scores difference
 #'
+#' @inheritParams scale_mgm
 #' @param data matrix, features in row and samples in column
-#' @param label vector, group labels
 #' @param n integer, number of returned top genes for each group
 #' @param family family for glm, details in [stats::glm()]
 #' @param scale logical, if to scale data by row
@@ -121,6 +122,7 @@ top_markers_abs <- function(data, label, n = 10,
 top_markers_glm <- function(data, label, n = 10,
                             family = gaussian(), # score are continuous non-negative, can use gamma or inverse.gaussian, if continuous and unbounded use gaussian, if discrete use poisson, if binary or proportions between [0,1] or binary freq counts use binomial
                             scale = TRUE, use.mgm = TRUE,
+                            pooled.sd = FALSE,
                             # log = TRUE,
                             softmax = TRUE) {
   label <- factor(label) # factorize label
@@ -135,7 +137,7 @@ top_markers_glm <- function(data, label, n = 10,
     data <- t(scale(t(data)))
     data[is.na(data)] <- 0 # assign 0 to NA when sd = 0
   } else if (scale && use.mgm) {
-    data <- scale_mgm(expr = data, label = label)
+    data <- scale_mgm(expr = data, label = label, pooled.sd = pooled.sd)
   }
 
   # ## log score

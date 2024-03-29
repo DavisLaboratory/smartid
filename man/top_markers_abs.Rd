@@ -8,6 +8,7 @@ top_markers_abs(
   data,
   label,
   n = 10,
+  pooled.sd = FALSE,
   method = c("median", "mad", "mean"),
   scale = TRUE,
   use.mgm = TRUE,
@@ -17,9 +18,11 @@ top_markers_abs(
 \arguments{
 \item{data}{matrix, features in row and samples in column}
 
-\item{label}{vector, group labels}
+\item{label}{a vector of group label}
 
 \item{n}{integer, number of returned top genes for each group}
+
+\item{pooled.sd}{logical, if to use pooled SD for scaling}
 
 \item{method}{character, specify metric to compute, can be one of "median",
 "mad", "mean"}

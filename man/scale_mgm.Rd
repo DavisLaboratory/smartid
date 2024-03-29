@@ -4,12 +4,14 @@
 \alias{scale_mgm}
 \title{scale by mean of group mean for imbalanced data}
 \usage{
-scale_mgm(expr, label)
+scale_mgm(expr, label, pooled.sd = FALSE)
 }
 \arguments{
 \item{expr}{matrix}
 
 \item{label}{a vector of group label}
+
+\item{pooled.sd}{logical, if to use pooled SD for scaling}
 }
 \value{
 scaled matrix

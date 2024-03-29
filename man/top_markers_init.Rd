@@ -18,7 +18,7 @@ top_markers_init(
 \arguments{
 \item{data}{matrix, features in row and samples in column}
 
-\item{label}{vector, group labels}
+\item{label}{a vector of group label}
 
 \item{n}{integer, number of returned top genes for each group}
 

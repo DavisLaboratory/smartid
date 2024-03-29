@@ -11,13 +11,14 @@ top_markers_glm(
   family = gaussian(),
   scale = TRUE,
   use.mgm = TRUE,
+  pooled.sd = FALSE,
   softmax = TRUE
 )
 }
 \arguments{
 \item{data}{matrix, features in row and samples in column}
 
-\item{label}{vector, group labels}
+\item{label}{a vector of group label}
 
 \item{n}{integer, number of returned top genes for each group}
 
@@ -26,6 +27,8 @@ top_markers_glm(
 \item{scale}{logical, if to scale data by row}
 
 \item{use.mgm}{logical, if to scale data using \code{\link[=scale_mgm]{scale_mgm()}}}
+
+\item{pooled.sd}{logical, if to use pooled SD for scaling}
 
 \item{softmax}{logical, if to apply softmax transformation on output}
 }

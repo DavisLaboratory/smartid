@@ -45,7 +45,7 @@ top_markers(
 \arguments{
 \item{data}{an expression object, can be matrix or SummarizedExperiment}
 
-\item{label}{vector, group labels}
+\item{label}{a vector of group label}
 
 \item{n}{integer, number of returned top genes for each group}
 

@@ -6,35 +6,38 @@
 #'
 #' @param expr matrix
 #' @param label a vector of group label
+#' @param pooled.sd logical, if to use pooled SD for scaling
 #'
 #' @return scaled matrix
 #' @export
 #'
 #' @examples
 #' scale_mgm(matrix(rnorm(100), 10), label = rep(letters[1:2], 5))
-scale_mgm <- function(expr, label) {
-  # ## compute overall sds
-  # sds <- sparseMatrixStats::rowSds(expr, na.rm = TRUE)
+scale_mgm <- function(expr, label, pooled.sd = FALSE) {
+  if (pooled.sd) {
+    ## compute pooled sds
+    sds <- vapply(
+      unique(label), \(i)
+      sparseMatrixStats::rowVars(expr[, label == i, drop = FALSE],
+        na.rm = TRUE
+      ),
+      rep(1, nrow(expr))
+    ) # get vars of each group
+    ng <- table(label)[unique(label)] # get group sizes in the same order
+    sds <- sds %*% cbind(ng - 1)
+    sds <- as.numeric(sqrt(sds / sum(ng - 1)))
+  } else {
+    ## compute overall sds
+    sds <- sparseMatrixStats::rowSds(expr, na.rm = TRUE)
 
-  # ## compute group sds
-  # sds <- vapply(unique(label), \(i)
-  #               sparseMatrixStats::rowSds(expr[, label == i, drop = FALSE],
-  #                                         na.rm = TRUE),
-  #               rep(1, nrow(expr))
-  #        ) # get sds of each group
-  # sds <- sparseMatrixStats::rowMeans2(sds)
-
-  ## compute pooled sds
-  sds <- vapply(
-    unique(label), \(i)
-    sparseMatrixStats::rowVars(expr[, label == i, drop = FALSE],
-      na.rm = TRUE
-    ),
-    rep(1, nrow(expr))
-  ) # get vars of each group
-  ng <- table(label)[unique(label)] # get group sizes in the same order
-  sds <- sds %*% cbind(ng - 1)
-  sds <- as.numeric(sqrt(sds / sum(ng - 1)))
+    # ## compute group sds
+    # sds <- vapply(unique(label), \(i)
+    #               sparseMatrixStats::rowSds(expr[, label == i, drop = FALSE],
+    #                                         na.rm = TRUE),
+    #               rep(1, nrow(expr))
+    #        ) # get sds of each group
+    # sds <- sparseMatrixStats::rowMeans2(sds)
+  }
 
   ## compute group means
   mgm <- vapply(
