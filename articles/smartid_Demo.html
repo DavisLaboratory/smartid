@@ -235,7 +235,7 @@ each function, e.g. <code><a href="../reference/idf.html">?idf</a></code>.</p>
 N_{i,j}+1})\)</span></p>
 <p>Where <span class="math inline">\(N_{i,j}\)</span> is the counts of
 feature <span class="math inline">\(i\)</span> in cell <span class="math inline">\(j\)</span>; <span class="math inline">\(\hat
-N_{i,j}\)</span> is <span class="math inline">\(\max(0,N_{i,j}-threshold)\)</span>; <span class="math inline">\(n\)</span> is the total number of
+N_{i,j}\)</span> is <span class="math inline">\(\max(0,N_{i,j}-\mathrm{threshold})\)</span>; <span class="math inline">\(n\)</span> is the total number of
 documents(cells); <span class="math inline">\(n_i\)</span> is <span class="math inline">\(\sum_{j = 1}^{n} \mathrm{sign}(N_{i,j} &gt;
 \mathrm{threshold})\)</span>.</p>
 <p>Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for
@@ -271,7 +271,7 @@ quite fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.194   0.004   0.198</span></span>
+<span><span class="co">#&gt;   0.201   0.004   0.205</span></span>
 <span></span>
 <span><span class="co">## score and tf,idf,iae all saved</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
@@ -492,7 +492,7 @@ need for data pre-processing, which is quite convenient and fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.189   0.008   0.197</span></span>
+<span><span class="co">#&gt;   0.167   0.032   0.200</span></span>
 <span></span>
 <span><span class="co">## new score is saved and tf,idf,iae all updated</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
