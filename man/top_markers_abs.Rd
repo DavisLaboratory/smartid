@@ -12,7 +12,8 @@ top_markers_abs(
   method = c("median", "mad", "mean"),
   scale = TRUE,
   use.mgm = TRUE,
-  softmax = TRUE
+  softmax = TRUE,
+  tau = 1
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ top_markers_abs(
 \item{use.mgm}{logical, if to scale data using \code{\link[=scale_mgm]{scale_mgm()}}}
 
 \item{softmax}{logical, if to apply softmax transformation on output}
+
+\item{tau}{numeric, hyper parameter for softmax}
 }
 \value{
 a tibble with feature names, group labels and ordered processed scores

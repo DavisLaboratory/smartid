@@ -12,7 +12,8 @@ top_markers_glm(
   scale = TRUE,
   use.mgm = TRUE,
   pooled.sd = FALSE,
-  softmax = TRUE
+  softmax = TRUE,
+  tau = 1
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ top_markers_glm(
 \item{pooled.sd}{logical, if to use pooled SD for scaling}
 
 \item{softmax}{logical, if to apply softmax transformation on output}
+
+\item{tau}{numeric, hyper parameter for softmax}
 }
 \value{
 a tibble with feature names, group labels and ordered processed scores

@@ -117,7 +117,7 @@ $\mathbf{TF_{i,j}}=\frac{N_{i,j}}{\sum_j{N_{i,j}}},$
 $\mathbf{IDF_i} = \log(1+\frac{n}{n_i+1}),$
 $\mathbf{IAE_i} = \log(1+\frac{n}{\sum_j^n\hat N_{i,j}+1})$
 
-Where $N_{i,j}$ is the counts of feature $i$ in cell $j$; $\hat N_{i,j}$ is $\max(0,N_{i,j}-threshold)$;
+Where $N_{i,j}$ is the counts of feature $i$ in cell $j$; $\hat N_{i,j}$ is $\max(0,N_{i,j}-\mathrm{threshold})$;
 $n$ is the total number of documents(cells); $n_i$ is $\sum_{j = 1}^{n} \mathrm{sign}(N_{i,j} > \mathrm{threshold})$.
 
 Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for marker identification:

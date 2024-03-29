@@ -46,13 +46,9 @@ top_markers_init <- function(data, label, n = 10,
 #' calculate group median, MAD or mean score and order genes based on scores
 #'
 #' @inheritParams scale_mgm
-#' @param data matrix, features in row and samples in column
-#' @param n integer, number of returned top genes for each group
+#' @inheritParams top_markers_glm
 #' @param method character, specify metric to compute, can be one of "median",
 #'     "mad", "mean"
-#' @param scale logical, if to scale data by row
-#' @param use.mgm logical, if to scale data using [scale_mgm()]
-#' @param softmax logical, if to apply softmax transformation on output
 #'
 #' @return a tibble with feature names, group labels and ordered processed scores
 #' @export
@@ -64,7 +60,8 @@ top_markers_abs <- function(data, label, n = 10,
                             pooled.sd = FALSE,
                             method = c("median", "mad", "mean"),
                             scale = TRUE, use.mgm = TRUE,
-                            softmax = TRUE) {
+                            softmax = TRUE,
+                            tau = 1) {
   method <- match.arg(method)
   if (scale && use.mgm) {
     data <- scale_mgm(expr = data, label = label, pooled.sd = pooled.sd)
@@ -91,14 +88,14 @@ top_markers_abs <- function(data, label, n = 10,
       # dplyr::mutate(Scores = Scores / sd(Scores, na.rm = TRUE)) |> # norm by sd
       # dplyr::mutate(Scores = sigmoid(Scores)) |> # sigmoid
       # dplyr::mutate(Scores = tanh(Scores)) |> # tanh
-      dplyr::mutate(Scores = softmax(Scores)) # softmax
+      dplyr::mutate(Scores = softmax(Scores, tau = tau)) # softmax
   }
 
   data <- dplyr::slice_max(data, Scores, n = n) ## extract top n markers
 
   # ## softmax
   # if(softmax == TRUE)
-  #   data <- dplyr::mutate(data, Scores = softmax(Scores))
+  #   data <- dplyr::mutate(data, Scores = softmax(Scores, tau = tau))
 
   return(data)
 }
@@ -112,6 +109,7 @@ top_markers_abs <- function(data, label, n = 10,
 #' @param scale logical, if to scale data by row
 #' @param use.mgm logical, if to scale data using [scale_mgm()]
 #' @param softmax logical, if to apply softmax transformation on output
+#' @param tau numeric, hyper parameter for softmax
 #'
 #' @return a tibble with feature names, group labels and ordered processed scores
 #' @export
@@ -124,7 +122,8 @@ top_markers_glm <- function(data, label, n = 10,
                             scale = TRUE, use.mgm = TRUE,
                             pooled.sd = FALSE,
                             # log = TRUE,
-                            softmax = TRUE) {
+                            softmax = TRUE,
+                            tau = 1) {
   label <- factor(label) # factorize label
 
   ## scale
@@ -170,14 +169,14 @@ top_markers_glm <- function(data, label, n = 10,
       # dplyr::mutate(Scores = Scores / sd(Scores, na.rm = TRUE)) |> # norm by sd
       # dplyr::mutate(Scores = sigmoid(Scores)) |> # sigmoid
       # dplyr::mutate(Scores = tanh(Scores)) |> # tanh
-      dplyr::mutate(Scores = softmax(Scores)) # softmax
+      dplyr::mutate(Scores = softmax(Scores, tau = tau)) # softmax
   }
 
   data <- dplyr::slice_max(data, Scores, n = n) ## extract top n markers
 
   # ## softmax
   # if(softmax == TRUE)
-  #   data <- dplyr::mutate(data, Scores = softmax(Scores))
+  #   data <- dplyr::mutate(data, Scores = softmax(Scores, tau = tau))
 
   return(data)
 }
