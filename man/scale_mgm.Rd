@@ -2,7 +2,7 @@
 % Please edit documentation in R/scale_mgm.R
 \name{scale_mgm}
 \alias{scale_mgm}
-\title{scale by mean of group mean in case extreme unbalanced data}
+\title{scale by mean of group mean for imbalanced data}
 \usage{
 scale_mgm(expr, label)
 }
@@ -15,7 +15,11 @@ scale_mgm(expr, label)
 scaled matrix
 }
 \description{
-scale by mean of group mean in case extreme unbalanced data
+scale by mean of group mean for imbalanced data
+}
+\details{
+\deqn{z=\frac{x-\frac{\sum_k^{n_D}(\mu_k)}{n_D}}{s_{pooled}}}
+where \eqn{s_{pooled}=\sqrt{\frac{\sum_k^{n_D}{(n_k-1){s_k}^2}}{\sum_k^{n_D}{n_k}-k}}}
 }
 \examples{
 scale_mgm(matrix(rnorm(100), 10), label = rep(letters[1:2], 5))

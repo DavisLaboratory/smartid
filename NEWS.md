@@ -8,7 +8,7 @@
 
 # smartid 0.99.2
 
-* Added test for `gs_score` function.
+* Added test for `gs_score()` function.
 
 # smartid 0.99.3
 
@@ -17,3 +17,7 @@
 # smartid 0.99.4
 
 * Add details for TF, IDF, IAE functions.
+
+# smartid 0.99.5
+
+* Update `scale_mgm()` function, using pooled SD.
