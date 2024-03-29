@@ -218,7 +218,7 @@ average expression of features). Each term has a couple of available
 choices with different formats to suit labeled or un-labeled data. Users
 can use function <code><a href="../reference/idf_iae_methods.html">idf_iae_methods()</a></code> to see available methods
 for IDF/IAE term. More details of each term can be seen in help page of
-each function, e.g. <code>?smartid:::idf</code>.</p>
+each function, e.g. <code><a href="../reference/idf.html">?idf</a></code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## show available methods</span></span>
 <span><span class="fu"><a href="../reference/idf_iae_methods.html">idf_iae_methods</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -235,18 +235,19 @@ each function, e.g. <code>?smartid:::idf</code>.</p>
 N_{i,j}+1})\)</span></p>
 <p>Where <span class="math inline">\(N_{i,j}\)</span> is the counts of
 feature <span class="math inline">\(i\)</span> in cell <span class="math inline">\(j\)</span>; <span class="math inline">\(\hat
-N_{i,j}\)</span> is <span class="math inline">\(max(0,N_{i,j}-threshold)\)</span>; <span class="math inline">\(n\)</span> is the total number of
-documents(cells); <span class="math inline">\(n_i\)</span> is <span class="math inline">\(\sum_{j = 1}^{n} sign(N_{i,j} &gt;
-threshold)\)</span>.</p>
+N_{i,j}\)</span> is <span class="math inline">\(\max(0,N_{i,j}-threshold)\)</span>; <span class="math inline">\(n\)</span> is the total number of
+documents(cells); <span class="math inline">\(n_i\)</span> is <span class="math inline">\(\sum_{j = 1}^{n} \mathrm{sign}(N_{i,j} &gt;
+\mathrm{threshold})\)</span>.</p>
 <p>Here for labeled data, we can choose logTF * IDF_prob * IAE_prob for
 marker identification: <span class="math display">\[\mathbf{score}=\log
 \mathbf{TF}*\mathbf{IDF}_{prob}*\mathbf{IAE}_{prob}\]</span></p>
 <p>The probability version of IDF can be termed as: <span class="math display">\[\mathbf{IDF_{i,j}} = \log(1+\frac{\frac{n_{i,j\in
-D}}{n_{j\in D}}}{max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+
+D}}{n_{j\in D}}}{\max(\frac{n_{i,j\in \hat D}}{n_{j\in \hat D}})+
 e^{-8}}\frac{n_{i,j\in D}}{n_{j\in D}})\]</span></p>
-<p>And the probability version of IAE can be termed as: <span class="math display">\[\mathbf{IAE_{i,j}} = \log(1+\frac{mean(\hat
-N_{i,j\in D})}{max(mean(\hat N_{i,j\in \hat D}))+ e^{-8}}*mean(\hat
-N_{i,j\in D}))\]</span></p>
+<p>And the probability version of IAE can be termed as: <span class="math display">\[\mathbf{IAE_{i,j}} =
+\log(1+\frac{\mathrm{mean}(\hat N_{i,j\in D})}{\max(\mathrm{mean}(\hat
+N_{i,j\in \hat D}))+ e^{-8}}*\mathrm{mean}(\hat N_{i,j\in
+D}))\]</span></p>
 <p>Where <span class="math inline">\(D\)</span> is the category of cell
 <span class="math inline">\(j\)</span>; <span class="math inline">\(\hat
 D\)</span> is the category other than <span class="math inline">\(D\)</span>.</p>
@@ -270,7 +271,7 @@ quite fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.197   0.008   0.205</span></span>
+<span><span class="co">#&gt;   0.194   0.004   0.198</span></span>
 <span></span>
 <span><span class="co">## score and tf,idf,iae all saved</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
@@ -470,8 +471,8 @@ score methods with no need for label information.</p>
 use case: <span class="math display">\[\mathbf{score}=\log
 \mathbf{TF}*\mathbf{IDF}_{sd}*\mathbf{IAE}_{sd}\]</span></p>
 <p>Where IDF and IAE can be termed as: <span class="math display">\[\mathbf{IDF_i} =
-\log(1+SD(\mathbf{TF}_{i})*\frac{n}{n_i+1})\]</span> <span class="math display">\[\mathbf{IAE_i} =
-\log(1+SD(\mathbf{TF}_{i})*\frac{n}{\sum_{j=1}^{n}\hat
+\log(1+\mathrm{SD}(\mathbf{TF}_{i})*\frac{n}{n_i+1})\]</span> <span class="math display">\[\mathbf{IAE_i} =
+\log(1+\mathrm{SD}(\mathbf{TF}_{i})*\frac{n}{\sum_{j=1}^{n}\hat
 N_{i,j}+1})\]</span></p>
 <div class="section level3">
 <h3 id="score-samples-1">Score Samples<a class="anchor" aria-label="anchor" href="#score-samples-1"></a>
@@ -491,7 +492,7 @@ need for data pre-processing, which is quite convenient and fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.178   0.020   0.198</span></span>
+<span><span class="co">#&gt;   0.189   0.008   0.197</span></span>
 <span></span>
 <span><span class="co">## new score is saved and tf,idf,iae all updated</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
