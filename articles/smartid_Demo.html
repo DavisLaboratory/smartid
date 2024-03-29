@@ -270,7 +270,7 @@ quite fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.196   0.008   0.204</span></span>
+<span><span class="co">#&gt;   0.197   0.008   0.205</span></span>
 <span></span>
 <span><span class="co">## score and tf,idf,iae all saved</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
@@ -338,12 +338,20 @@ and the average expression is quite low across all cells.</p>
 scale factor is higher in Group2, but the GeneMean is too small to be
 confident. Thus this gene won’t be selected by <code>smartid</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  <span class="st">"Gene76"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/methods/slot.html" class="external-link">slot</a></span><span class="op">(</span><span class="va">data_sim</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">tf</span><span class="op">[</span><span class="st">"Gene76"</span>, <span class="op">]</span>,</span>
-<span>  Group <span class="op">=</span> <span class="va">data_sim</span><span class="op">$</span><span class="va">Group</span></span>
-<span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html" class="external-link">geom_violin</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Group</span>, y <span class="op">=</span> <span class="va">Gene76</span>, fill <span class="op">=</span> <span class="va">Group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/sin_score_boxplot.html">sin_score_boxplot</a></span><span class="op">(</span></span>
+<span>  <span class="fu">metadata</span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span><span class="op">$</span><span class="va">tf</span>,</span>
+<span>  features <span class="op">=</span> <span class="st">"Gene76"</span>,</span>
+<span>  ref.group <span class="op">=</span> <span class="st">"Group2"</span>,</span>
+<span>  label <span class="op">=</span> <span class="va">data_sim</span><span class="op">$</span><span class="va">Group</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: `add_rownames()` was deprecated in dplyr 1.0.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `tibble::rownames_to_column()` instead.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">smartid</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue at</span></span>
+<span><span class="co">#&gt;   <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/DavisLaboratory/smartid/issues&gt;</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
 <p><img src="smartid_Demo_files/figure-html/unnamed-chunk-6-1.png" width="768"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -426,10 +434,11 @@ cells, thus not confident enough to be selected as markers.</p>
 marker selection. Here is another example using <code>mclust</code>.
 Different from <code><a href="../reference/markers_mixmdl.html">markers_mixmdl()</a></code>,
 <code><a href="../reference/markers_mclust.html">markers_mclust()</a></code> doesn’t need a pre-defined number of
-components (which is 3 in <code><a href="../reference/markers_mixmdl.html">markers_mixmdl()</a></code>), instead, it
-will select the number of components by searching a series of potential
-numbers. This method is sometimes more robust than
-<code><a href="../reference/markers_mixmdl.html">markers_mixmdl()</a></code>.</p>
+components (which is default 3 in <code><a href="../reference/markers_mixmdl.html">markers_mixmdl()</a></code>),
+instead, it will select the number of components by searching a series
+of potential numbers. This method is sometimes more robust than
+<code><a href="../reference/markers_mixmdl.html">markers_mixmdl()</a></code> but will also take longer running
+time.</p>
 <p>Similarly, this method also allows to plot the mixture distribution
 for each component, but separately.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
@@ -482,7 +491,7 @@ need for data pre-processing, which is quite convenient and fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.170   0.028   0.198</span></span>
+<span><span class="co">#&gt;   0.178   0.020   0.198</span></span>
 <span></span>
 <span><span class="co">## new score is saved and tf,idf,iae all updated</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">data_sim</span><span class="op">)</span></span>
@@ -584,44 +593,47 @@ group from all others.</p>
 <span><span class="co">#&gt;  [23] cachem_1.0.8              beachmat_2.19.2          </span></span>
 <span><span class="co">#&gt;  [25] jsonlite_1.8.8            SnowballC_0.7.1          </span></span>
 <span><span class="co">#&gt;  [27] highr_0.10                DelayedArray_0.29.9      </span></span>
-<span><span class="co">#&gt;  [29] BiocParallel_1.37.1       irlba_2.3.5.1            </span></span>
-<span><span class="co">#&gt;  [31] parallel_4.4.0            R6_2.5.1                 </span></span>
-<span><span class="co">#&gt;  [33] bslib_0.7.0               stringi_1.8.3            </span></span>
-<span><span class="co">#&gt;  [35] jquerylib_0.1.4           Rcpp_1.0.12              </span></span>
-<span><span class="co">#&gt;  [37] bookdown_0.38             knitr_1.45               </span></span>
-<span><span class="co">#&gt;  [39] mixtools_2.0.0            splines_4.4.0            </span></span>
-<span><span class="co">#&gt;  [41] Matrix_1.7-0              tidyselect_1.2.1         </span></span>
-<span><span class="co">#&gt;  [43] abind_1.4-5               yaml_2.3.8               </span></span>
-<span><span class="co">#&gt;  [45] viridis_0.6.5             codetools_0.2-19         </span></span>
-<span><span class="co">#&gt;  [47] plyr_1.8.9                lattice_0.22-6           </span></span>
-<span><span class="co">#&gt;  [49] tibble_3.2.1              withr_3.0.0              </span></span>
-<span><span class="co">#&gt;  [51] evaluate_0.23             survival_3.5-8           </span></span>
-<span><span class="co">#&gt;  [53] desc_1.4.3                mclust_6.1               </span></span>
-<span><span class="co">#&gt;  [55] kernlab_0.9-32            pillar_1.9.0             </span></span>
-<span><span class="co">#&gt;  [57] BiocManager_1.30.22       janeaustenr_1.0.0        </span></span>
-<span><span class="co">#&gt;  [59] checkmate_2.3.1           plotly_4.10.4            </span></span>
-<span><span class="co">#&gt;  [61] generics_0.1.3            RCurl_1.98-1.14          </span></span>
-<span><span class="co">#&gt;  [63] sparseMatrixStats_1.15.0  munsell_0.5.0            </span></span>
-<span><span class="co">#&gt;  [65] scales_1.3.0              glue_1.7.0               </span></span>
-<span><span class="co">#&gt;  [67] lazyeval_0.2.2            tools_4.4.0              </span></span>
-<span><span class="co">#&gt;  [69] data.table_1.15.2         BiocNeighbors_1.21.2     </span></span>
-<span><span class="co">#&gt;  [71] tokenizers_0.3.0          ScaledMatrix_1.11.1      </span></span>
-<span><span class="co">#&gt;  [73] locfit_1.5-9.9            fs_1.6.3                 </span></span>
-<span><span class="co">#&gt;  [75] grid_4.4.0                tidyr_1.3.1              </span></span>
-<span><span class="co">#&gt;  [77] colorspace_2.1-0          nlme_3.1-164             </span></span>
-<span><span class="co">#&gt;  [79] GenomeInfoDbData_1.2.12   beeswarm_0.4.0           </span></span>
-<span><span class="co">#&gt;  [81] BiocSingular_1.19.0       vipor_0.4.7              </span></span>
-<span><span class="co">#&gt;  [83] cli_3.6.2                 rsvd_1.0.5               </span></span>
-<span><span class="co">#&gt;  [85] textshaping_0.3.7         fansi_1.0.6              </span></span>
-<span><span class="co">#&gt;  [87] segmented_2.0-3           S4Arrays_1.3.6           </span></span>
-<span><span class="co">#&gt;  [89] viridisLite_0.4.2         dplyr_1.1.4              </span></span>
-<span><span class="co">#&gt;  [91] gtable_0.3.4              sass_0.4.9               </span></span>
-<span><span class="co">#&gt;  [93] digest_0.6.35             SparseArray_1.3.4        </span></span>
-<span><span class="co">#&gt;  [95] ggrepel_0.9.5             htmlwidgets_1.6.4        </span></span>
-<span><span class="co">#&gt;  [97] farver_2.1.1              memoise_2.0.1            </span></span>
-<span><span class="co">#&gt;  [99] htmltools_0.5.8           pkgdown_2.0.7            </span></span>
-<span><span class="co">#&gt; [101] lifecycle_1.0.4           httr_1.4.7               </span></span>
-<span><span class="co">#&gt; [103] MASS_7.3-60.2</span></span></code></pre></div>
+<span><span class="co">#&gt;  [29] BiocParallel_1.37.1       broom_1.0.5              </span></span>
+<span><span class="co">#&gt;  [31] irlba_2.3.5.1             parallel_4.4.0           </span></span>
+<span><span class="co">#&gt;  [33] R6_2.5.1                  bslib_0.7.0              </span></span>
+<span><span class="co">#&gt;  [35] stringi_1.8.3             car_3.1-2                </span></span>
+<span><span class="co">#&gt;  [37] jquerylib_0.1.4           Rcpp_1.0.12              </span></span>
+<span><span class="co">#&gt;  [39] bookdown_0.38             knitr_1.45               </span></span>
+<span><span class="co">#&gt;  [41] mixtools_2.0.0            splines_4.4.0            </span></span>
+<span><span class="co">#&gt;  [43] Matrix_1.7-0              tidyselect_1.2.1         </span></span>
+<span><span class="co">#&gt;  [45] abind_1.4-5               yaml_2.3.8               </span></span>
+<span><span class="co">#&gt;  [47] viridis_0.6.5             codetools_0.2-19         </span></span>
+<span><span class="co">#&gt;  [49] plyr_1.8.9                lattice_0.22-6           </span></span>
+<span><span class="co">#&gt;  [51] tibble_3.2.1              withr_3.0.0              </span></span>
+<span><span class="co">#&gt;  [53] evaluate_0.23             survival_3.5-8           </span></span>
+<span><span class="co">#&gt;  [55] desc_1.4.3                mclust_6.1               </span></span>
+<span><span class="co">#&gt;  [57] kernlab_0.9-32            pillar_1.9.0             </span></span>
+<span><span class="co">#&gt;  [59] BiocManager_1.30.22       ggpubr_0.6.0             </span></span>
+<span><span class="co">#&gt;  [61] carData_3.0-5             janeaustenr_1.0.0        </span></span>
+<span><span class="co">#&gt;  [63] checkmate_2.3.1           plotly_4.10.4            </span></span>
+<span><span class="co">#&gt;  [65] generics_0.1.3            RCurl_1.98-1.14          </span></span>
+<span><span class="co">#&gt;  [67] sparseMatrixStats_1.15.0  munsell_0.5.0            </span></span>
+<span><span class="co">#&gt;  [69] scales_1.3.0              glue_1.7.0               </span></span>
+<span><span class="co">#&gt;  [71] lazyeval_0.2.2            tools_4.4.0              </span></span>
+<span><span class="co">#&gt;  [73] data.table_1.15.2         BiocNeighbors_1.21.2     </span></span>
+<span><span class="co">#&gt;  [75] tokenizers_0.3.0          ScaledMatrix_1.11.1      </span></span>
+<span><span class="co">#&gt;  [77] ggsignif_0.6.4            locfit_1.5-9.9           </span></span>
+<span><span class="co">#&gt;  [79] fs_1.6.3                  grid_4.4.0               </span></span>
+<span><span class="co">#&gt;  [81] tidyr_1.3.1               colorspace_2.1-0         </span></span>
+<span><span class="co">#&gt;  [83] nlme_3.1-164              GenomeInfoDbData_1.2.12  </span></span>
+<span><span class="co">#&gt;  [85] beeswarm_0.4.0            BiocSingular_1.19.0      </span></span>
+<span><span class="co">#&gt;  [87] vipor_0.4.7               cli_3.6.2                </span></span>
+<span><span class="co">#&gt;  [89] rsvd_1.0.5                textshaping_0.3.7        </span></span>
+<span><span class="co">#&gt;  [91] fansi_1.0.6               segmented_2.0-3          </span></span>
+<span><span class="co">#&gt;  [93] S4Arrays_1.3.6            viridisLite_0.4.2        </span></span>
+<span><span class="co">#&gt;  [95] dplyr_1.1.4               gtable_0.3.4             </span></span>
+<span><span class="co">#&gt;  [97] rstatix_0.7.2             sass_0.4.9               </span></span>
+<span><span class="co">#&gt;  [99] digest_0.6.35             SparseArray_1.3.4        </span></span>
+<span><span class="co">#&gt; [101] ggrepel_0.9.5             htmlwidgets_1.6.4        </span></span>
+<span><span class="co">#&gt; [103] farver_2.1.1              memoise_2.0.1            </span></span>
+<span><span class="co">#&gt; [105] htmltools_0.5.8           pkgdown_2.0.7            </span></span>
+<span><span class="co">#&gt; [107] lifecycle_1.0.4           httr_1.4.7               </span></span>
+<span><span class="co">#&gt; [109] MASS_7.3-60.2</span></span></code></pre></div>
 </div>
   </div>
 
