@@ -21,3 +21,7 @@
 # smartid 0.99.5
 
 * Update `scale_mgm()` function adding pooled SD option, add details for scale function.
+
+# smartid 1.1.1
+
+* Update `cal_score()` function to convert input sparse matrix into dense matrix.
