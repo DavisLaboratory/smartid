@@ -13,7 +13,7 @@ setMethod(
            par.idf = NULL,
            par.iae = NULL) {
     score <- cal_score_init(
-      expr = data,
+      expr = as.matrix(data),
       tf = tf,
       idf = idf,
       iae = iae,

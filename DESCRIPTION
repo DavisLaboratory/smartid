@@ -14,7 +14,7 @@ biocViews: Software, GeneExpression, Transcriptomics
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Collate: 
     'AllClasses.R'
     'tf_idf_iae_wrappers.R'

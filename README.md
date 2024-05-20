@@ -21,7 +21,7 @@ You can install the development version of smartid like so:
 
 ``` r
 # install from GitHub
-devtools::install("DavisLaboratory/smartid")
+devtools::install_github("DavisLaboratory/smartid")
 ```
 
 smartid can be installed from Bioconductor directly as follows:
