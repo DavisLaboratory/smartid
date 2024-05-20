@@ -1,6 +1,6 @@
 Package: smartid
 Title: Scoring and Marker Selection Method Based on Modified TF-IDF
-Version: 0.99.5
+Version: 1.1.0
 Authors@R: 
     person("Jinjin", "Chen", email = "chen.j@wehi.edu.au", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7923-5723"))
