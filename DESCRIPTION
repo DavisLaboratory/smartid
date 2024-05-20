@@ -1,6 +1,6 @@
 Package: smartid
 Title: Scoring and Marker Selection Method Based on Modified TF-IDF
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: 
     person("Jinjin", "Chen", email = "chen.j@wehi.edu.au", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7923-5723"))
@@ -14,7 +14,7 @@ biocViews: Software, GeneExpression, Transcriptomics
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Collate: 
     'AllClasses.R'
     'tf_idf_iae_wrappers.R'

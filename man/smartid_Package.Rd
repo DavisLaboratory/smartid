@@ -2,6 +2,7 @@
 % Please edit documentation in R/smartid-package.R
 \docType{package}
 \name{smartid_Package}
+\alias{smartid-package}
 \alias{smartid_Package}
 \alias{smartid}
 \title{Scoring and Marker Selection method based on modified TF-IDF}
@@ -14,6 +15,14 @@ especially for rare population. The package is developed for generating
 specific lists of signature genes based on TF-IDF modified methods. It
 can also be used as a new gene-set scoring method or data transformation
 method. Multiple visualization functions are implemented in this package.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://davislaboratory.github.io/smartid}
+  \item Report bugs at \url{https://github.com/DavisLaboratory/smartid/issues}
+}
+
 }
 \author{
 Jinjin Chen \email{chen.j@wehi.edu.au}
