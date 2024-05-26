@@ -36,8 +36,9 @@ markers_mixmdl <- function(top_markers, column = ".dot",
   ## split tibble into list
   top_markers <- top_markers |>
     dplyr::group_by(!!ggplot2::sym(column)) |>
-    dplyr::group_split() |>
-    setNames(unique(top_markers[[column]]) |> sort())
+    dplyr::group_split()
+  ## set names as first element of column .dot
+  names(top_markers) <- vapply(top_markers, FUN = "[[", FUN.VALUE = "A", 1, column)
 
   markers_list <- lapply(top_markers, function(m) {
     if (dist == "norm") {
@@ -106,8 +107,9 @@ markers_mclust <- function(top_markers,
   ## split tibble into list
   top_markers <- top_markers |>
     dplyr::group_by(!!ggplot2::sym(column)) |>
-    dplyr::group_split() |>
-    setNames(unique(top_markers[[column]]) |> sort())
+    dplyr::group_split()
+  ## set names as first element of column .dot
+  names(top_markers) <- vapply(top_markers, FUN = "[[", FUN.VALUE = "A", 1, column)
 
   markers_list <- lapply(names(top_markers), function(g) {
     m <- top_markers[[g]]
@@ -180,8 +182,9 @@ markers_hdbscan <- function(top_markers,
   ## split tibble into list
   top_markers <- top_markers |>
     dplyr::group_by(!!sym(column)) |>
-    dplyr::group_split() |>
-    setNames(unique(top_markers[[column]]) |> sort())
+    dplyr::group_split()
+  ## set names as first element of column .dot
+  names(top_markers) <- vapply(top_markers, FUN = "[[", FUN.VALUE = "A", 1, column)
 
   markers_list <- lapply(top_markers, function(m) {
     s <- m$Scores

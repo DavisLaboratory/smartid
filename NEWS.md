@@ -25,3 +25,7 @@
 # smartid 1.1.1
 
 * Update `cal_score()` function to convert input sparse matrix into dense matrix.
+
+# smartid 1.1.2
+
+* Update marker selection functions to fix wrong names of marker list.
