@@ -68,6 +68,7 @@
 <span>  <span class="va">label</span>,</span>
 <span>  n <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  use.glm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  batch <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  use.mgm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  softmax <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -94,6 +95,10 @@
 <dt id="arg-use-glm">use.glm<a class="anchor" aria-label="anchor" href="#arg-use-glm"></a></dt>
 <dd><p>logical, if to use <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">stats::glm()</a></code> to compute group mean score,
 if TRUE, also compute mean score difference as output</p></dd>
+
+
+<dt id="arg-batch">batch<a class="anchor" aria-label="anchor" href="#arg-batch"></a></dt>
+<dd><p>a vector of batch labels, default NULL</p></dd>
 
 
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
