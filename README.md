@@ -33,3 +33,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("smartid")
 ```
 
+## Overall workflow
+
+<img src="man/figures/smartid_workflow.png">
+
