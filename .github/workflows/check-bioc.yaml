@@ -55,8 +55,8 @@ jobs:
       matrix:
         config:
           # - { os: ubuntu-latest, r: 'devel', bioc: 'devel', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-          - { os: ubuntu-latest, r: '4.4', bioc: '3.20', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-          # - { os: ubuntu-latest, r: 'devel', bioc: '3.18', cont: "bioconductor/bioconductor_docker:RELEASE_3_18", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
+          # - { os: ubuntu-latest, r: '4.4', bioc: '3.20', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
+          - { os: ubuntu-latest, r: 'devel', bioc: '3.18', cont: "bioconductor/bioconductor_docker:RELEASE_3_18", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
           # - { os: ubuntu-latest, r: '4.3.3', bioc: '3.18', cont: "bioconductor/bioconductor_docker:RELEASE_3_18", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
           # - { os: macOS-latest, r: 'devel', bioc: '3.19'}
           # - { os: windows-latest, r: 'devel', bioc: '3.19'}
