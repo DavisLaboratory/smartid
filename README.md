@@ -1,5 +1,5 @@
 
-# smartid: Scoring and MARker identification method based on modified Tf-IDf
+# smartid: Scoring and MARker identification method based on modified Tf-IDf <img src="https://github.com/Bioconductor/BiocStickers/blob/devel/smartid/smartid.svg" alt="logo" align="right" height="140" width="120"/>
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/DavisLaboratory/smartid/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/DavisLaboratory/smartid/actions)
