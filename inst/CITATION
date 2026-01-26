@@ -1,0 +1,32 @@
+pkgVer <- function(pkg) {
+    if (!exists("meta") || is.null(meta)) meta <- packageDescription(pkg)
+    ver <- meta$Version
+    paste0('https://github.com/DavisLaboratory/smartid/', pkg, ' - R package version ', ver)
+}
+
+c(
+
+    bibentry(bibtype="article",
+        title = "Improved marker detection for rare population in single-cell transcriptomics through text mining-inspired scoring approach",
+        author = c(person("Jinjin", "Chen"),
+  		 		   person("Mengbo", "Li"),
+  		 		   person("Dharmesh D.", "Bhuva"),
+  		 		   person("Melissa J.", "Davis"),
+  		 		   person("Anthony T.", "Papenfuss"),
+  		 		   person("Chin Wee", "Tan")),
+        year = 2025,
+        journal = "bioRxiv",
+        doi = "10.1101/2025.11.10.687759",
+        url = "https://doi.org/10.1101/2025.11.10.687759"
+    ),
+    bibentry(bibtype="manual",
+        title = "smartid: Scoring and Marker Selection Method Based on Modified TF-IDF",
+        author = c(
+            person("Jinjin", "Chen")
+        ),
+        year = format(Sys.Date(), "%Y"),
+        url = "https://bioconductor.org/packages/smartid",
+        note = pkgVer('smartid'),
+        doi = '10.18129/B9.bioc.smartid'
+    )
+)
