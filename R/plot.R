@@ -94,7 +94,7 @@ sin_score_boxplot <- function(data, features = NULL,
   data[features, , drop = FALSE] |>
     as.matrix() |>
     as.data.frame() |>
-    dplyr::add_rownames("Gene") |>
+    tibble::rownames_to_column("Gene") |>
     setNames(c("Gene", as.character(label))) |>
     tidyr::pivot_longer(-"Gene", names_to = "Type", values_to = "Score") |>
     dplyr::mutate(Type = gsub("\\.\\d+$", "", Type)) |>

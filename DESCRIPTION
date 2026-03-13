@@ -52,6 +52,7 @@ Suggests:
     scater,
     splatter,
     testthat (>= 3.0.0),
+    tibble,
     tidytext,
     UpSetR
 URL: https://davislaboratory.github.io/smartid
