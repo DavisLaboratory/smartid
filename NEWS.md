@@ -41,3 +41,7 @@
 # smartid 1.7.1
 
 * Add bioRxiv citation.
+
+# smartid 1.7.2
+
+* Fix dplyr defunct.
