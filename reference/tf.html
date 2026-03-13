@@ -93,27 +93,27 @@ where \(N_{i,j}\) is the counts of feature i in cell j.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fl">10</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">smartid</span><span class="fu">:::</span><span class="fu">tf</span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]       [,2]       [,3]       [,4]       [,5]       [,6]       [,7]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.11757790 0.00000000 0.11104942 0.04997501 0.09995002 0.04164931 0.09995002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.05878895 0.09995002 0.11104942 0.19990005 0.09995002 0.12494794 0.09995002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.00000000 0.19990005 0.16657413 0.19990005 0.14992504 0.04164931 0.04997501</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.29394474 0.09995002 0.11104942 0.04997501 0.04997501 0.16659725 0.14992504</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.05878895 0.09995002 0.00000000 0.04997501 0.14992504 0.08329863 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.11757790 0.14992504 0.27762354 0.04997501 0.04997501 0.04164931 0.14992504</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.11757790 0.00000000 0.05552471 0.14992504 0.04997501 0.08329863 0.14992504</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.05878895 0.14992504 0.05552471 0.14992504 0.09995002 0.20824656 0.09995002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.00000000 0.09995002 0.00000000 0.00000000 0.04997501 0.12494794 0.09995002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.17636684 0.09995002 0.11104942 0.09995002 0.19990005 0.08329863 0.09995002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.09086779 0.11757790 0.00000000 0.11104942 0.04997501 0.09995002 0.04164931</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.00000000 0.05878895 0.09995002 0.11104942 0.19990005 0.09995002 0.12494794</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.09086779 0.00000000 0.19990005 0.16657413 0.19990005 0.14992504 0.04164931</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.04543389 0.29394474 0.09995002 0.11104942 0.04997501 0.04997501 0.16659725</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.18173557 0.05878895 0.09995002 0.00000000 0.04997501 0.14992504 0.08329863</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.13630168 0.11757790 0.14992504 0.27762354 0.04997501 0.04997501 0.04164931</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.09086779 0.11757790 0.00000000 0.05552471 0.14992504 0.04997501 0.08329863</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.13630168 0.05878895 0.14992504 0.05552471 0.14992504 0.09995002 0.20824656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.13630168 0.00000000 0.09995002 0.00000000 0.00000000 0.04997501 0.12494794</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.09086779 0.17636684 0.09995002 0.11104942 0.09995002 0.19990005 0.08329863</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          [,8]       [,9]      [,10]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.14278915 0.14992504 0.06662225</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.09519277 0.09995002 0.06662225</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.14278915 0.09995002 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.04759638 0.14992504 0.19986676</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.09519277 0.00000000 0.13324450</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.04759638 0.14992504 0.13324450</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.28557830 0.09995002 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.04759638 0.09995002 0.13324450</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.09519277 0.09995002 0.19986676</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.00000000 0.04997501 0.06662225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.09995002 0.14278915 0.14992504</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.09995002 0.09519277 0.09995002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.04997501 0.14278915 0.09995002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.14992504 0.04759638 0.14992504</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.00000000 0.09519277 0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.14992504 0.04759638 0.14992504</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.14992504 0.28557830 0.09995002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.09995002 0.04759638 0.09995002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.09995002 0.09519277 0.09995002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.09995002 0.00000000 0.04997501</span>
 </code></pre></div>
     </div>
   </div>
