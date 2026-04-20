@@ -20,6 +20,12 @@
 #'     optional, default 'counts'
 #' @param new.slot a character, specify the name of slot to save score in se object,
 #'     optional, default 'score'
+#' @param return.intermediate logical, if TRUE also return or store the
+#'     intermediate `tf`, `idf` and `iae` matrices. Defaults to FALSE since
+#'     these objects have the same dimension as the input expression matrix
+#'     and can dominate memory usage on large datasets. Set to TRUE to
+#'     restore the pre-1.7.3 behavior where intermediates were kept in
+#'     `metadata()` of the SummarizedExperiment output.
 #'
 #' @return A list of matrices or se object containing combined score
 #'
@@ -42,7 +48,8 @@ setGeneric(
            slot = "counts",
            new.slot = "score",
            par.idf = NULL,
-           par.iae = NULL) {
+           par.iae = NULL,
+           return.intermediate = FALSE) {
     standardGeneric("cal_score")
   }
 )

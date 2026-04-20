@@ -11,14 +11,16 @@ setMethod(
            idf = "prob",
            iae = "prob",
            par.idf = NULL,
-           par.iae = NULL) {
+           par.iae = NULL,
+           return.intermediate = FALSE) {
     score <- cal_score_init(
-      expr = as.matrix(data),
+      expr = data,
       tf = tf,
       idf = idf,
       iae = iae,
       par.idf = par.idf,
-      par.iae = par.iae
+      par.iae = par.iae,
+      return.intermediate = return.intermediate
     )
 
     return(score)
@@ -37,7 +39,8 @@ setMethod(
            slot = "counts",
            new.slot = "score",
            par.idf = NULL,
-           par.iae = NULL) {
+           par.iae = NULL,
+           return.intermediate = FALSE) {
     ## get expr
     expr <- SummarizedExperiment::assay(data, i = slot)
     ## get label
@@ -54,13 +57,24 @@ setMethod(
       idf = idf,
       iae = iae,
       par.idf = par.idf,
-      par.iae = par.iae
+      par.iae = par.iae,
+      return.intermediate = return.intermediate
     )
 
     SummarizedExperiment::assay(data, i = new.slot) <- res$score
-    slot(data, "metadata")$tf <- res$tf
-    slot(data, "metadata")$idf <- res$idf
-    slot(data, "metadata")$iae <- res$iae
+
+    ## Store or clear intermediate matrices depending on caller request.
+    ## Explicitly clearing stale values prevents old metadata from leaking
+    ## when `cal_score()` is re-run on an object that previously held them.
+    if (isTRUE(return.intermediate)) {
+      slot(data, "metadata")$tf <- res$tf
+      slot(data, "metadata")$idf <- res$idf
+      slot(data, "metadata")$iae <- res$iae
+    } else {
+      slot(data, "metadata")$tf <- NULL
+      slot(data, "metadata")$idf <- NULL
+      slot(data, "metadata")$iae <- NULL
+    }
 
     return(data)
   }

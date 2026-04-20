@@ -57,8 +57,13 @@ idf_iae_methods <- function() {
 #'     be accessed using [idf_iae_methods()]
 #' @param par.idf other parameters for specified IDF methods
 #' @param par.iae other parameters for specified IAE methods
+#' @param return.intermediate logical, if TRUE the returned list also contains
+#'     the intermediate `tf`, `idf` and `iae` objects. Default `FALSE` keeps
+#'     only the combined `score` to avoid the memory overhead of three extra
+#'     feature-by-cell matrices on large inputs.
 #'
-#' @return a list of combined score, tf, idf and iae
+#' @return a list always containing `score`; when `return.intermediate = TRUE`
+#'     the list additionally contains `tf`, `idf` and `iae`.
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
@@ -69,14 +74,17 @@ idf_iae_methods <- function() {
 #' )
 cal_score_init <- function(expr, tf = c("logtf", "tf"),
                            idf = "prob", iae = "prob",
-                           par.idf = NULL, par.iae = NULL) {
+                           par.idf = NULL, par.iae = NULL,
+                           return.intermediate = FALSE) {
   ## check
   tf <- match.arg(tf)
   idf <- match.arg(idf, choices = idf_iae_methods())
   iae <- match.arg(iae, choices = idf_iae_methods())
   stopifnot(
     "par.idf must be a named list or NULL" = is.null(par.idf) | is.list(par.idf),
-    "par.iae must be a named list or NULL" = is.null(par.iae) | is.list(par.iae)
+    "par.iae must be a named list or NULL" = is.null(par.iae) | is.list(par.iae),
+    "return.intermediate must be a single logical" =
+      is.logical(return.intermediate) && length(return.intermediate) == 1L
   )
 
   ## compute tf
@@ -101,5 +109,8 @@ cal_score_init <- function(expr, tf = c("logtf", "tf"),
   ## combined score
   score <- tf * idf * iae
 
-  return(list(score = score, tf = tf, idf = idf, iae = iae))
+  if (isTRUE(return.intermediate)) {
+    return(list(score = score, tf = tf, idf = idf, iae = iae))
+  }
+  list(score = score)
 }
