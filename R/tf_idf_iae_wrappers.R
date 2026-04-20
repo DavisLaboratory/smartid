@@ -257,7 +257,6 @@ idf_prob <- function(expr, features = NULL, label,
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
   df_n <- expr[features, , drop = FALSE] > thres ## if contain feature i > thres
-  df_n_inv <- !df_n ## if not contain feature i > thres
 
   ## convert label into character in case problem for factor
   label <- as.character(label)
