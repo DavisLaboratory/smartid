@@ -106,11 +106,74 @@ cal_score_init <- function(expr, tf = c("logtf", "tf"),
     iae <- do.call(iae, c(list(expr = expr), par.iae))
   }
 
-  ## combined score
-  score <- tf * idf * iae
+  ## combined score via per-group column-block broadcast; avoids
+  ## materialising the full G x N copy that a naive `tf * idf * iae`
+  ## would trigger when either factor is a G x K compact matrix.
+  score <- combine_tf_idf_iae(tf, idf, iae,
+                              label_idf = par.idf$label,
+                              label_iae = par.iae$label)
 
   if (isTRUE(return.intermediate)) {
     return(list(score = score, tf = tf, idf = idf, iae = iae))
   }
   list(score = score)
 }
+
+## Per-group column-block composition of score = tf * idf * iae.
+##
+## Each factor can be one of:
+##   * scalar 1 (the "null" path),
+##   * a G-vector (cell-independent, e.g. idf/iae/idf_sd/iae_sd/idf_igm/iae_igm),
+##   * a G x K compact matrix with colnames = unique labels (idf_prob, idf_rf,
+##     iae_prob, iae_rf after Phase B),
+##   * a full G x N matrix (idf_m, iae_m, idf_hdb, iae_hdb — the latter two
+##     expand internally to preserve their legacy contract).
+##
+## When at least one factor is compact we loop over groups and broadcast
+## only the active slice into the corresponding columns of `score`. When
+## both factors are cell-independent or full-cell we fall back to the
+## direct algebraic form.
+combine_tf_idf_iae <- function(tf_mat, idf_obj, iae_obj,
+                               label_idf = NULL, label_iae = NULL) {
+  N <- ncol(tf_mat)
+  is_compact <- function(x) {
+    if (is.null(dim(x))) return(FALSE)
+    !is.null(colnames(x)) && ncol(x) < N
+  }
+  idf_is_gk <- is_compact(idf_obj)
+  iae_is_gk <- is_compact(iae_obj)
+
+  if (!idf_is_gk && !iae_is_gk) {
+    ## no compact factor; direct algebra preserves sparsity for scalar /
+    ## G-vector factors and only densifies when a factor is already G x N.
+    return(tf_mat * idf_obj * iae_obj)
+  }
+
+  label <- label_idf %||% label_iae
+  stopifnot(
+    "par.idf$label or par.iae$label is required when idf/iae return compact G x K matrices" =
+      !is.null(label),
+    "length(label) must equal ncol(expr)" = length(label) == N
+  )
+  label_ch <- as.character(label)
+
+  ## Slice a factor for a given (column subset, group name) pair.
+  slice_factor <- function(x, cols, group_name) {
+    if (is.null(dim(x))) return(x)             # scalar or G-vector
+    if (ncol(x) == N) return(x[, cols, drop = FALSE])  # G x N full
+    x[, group_name]                             # G x K compact
+  }
+
+  score <- tf_mat
+  for (g in unique(label_ch)) {
+    cols <- which(label_ch == g)
+    if (!length(cols)) next
+    idf_g <- slice_factor(idf_obj, cols, g)
+    iae_g <- slice_factor(iae_obj, cols, g)
+    score[, cols] <- score[, cols, drop = FALSE] * idf_g * iae_g
+  }
+  score
+}
+
+## Null-coalescing helper (kept local to avoid a new Imports).
+`%||%` <- function(x, y) if (is.null(x)) y else x
