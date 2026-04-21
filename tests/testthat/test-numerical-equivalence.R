@@ -87,18 +87,23 @@ test_that("cal_score return.intermediate=TRUE restores legacy metadata", {
   expect_false(is.null(md$tf))
   expect_false(is.null(md$idf))
   expect_false(is.null(md$iae))
+  ## tf stays G x N; direct comparison.
   expect_equal(
     unname(as.matrix(md$tf)),
     unname(snap$cal_score$se_tf),
     tolerance = 1e-10
   )
+  ## Phase B: idf/iae for labelled prob/rf methods now return compact
+  ## G x K matrices. Expand via the Group label to recover the legacy
+  ## G x N representation and compare element-wise.
+  label_ch <- as.character(snap$inputs$label)
   expect_equal(
-    unname(as.matrix(md$idf)),
+    unname(as.matrix(md$idf)[, label_ch, drop = FALSE]),
     unname(snap$cal_score$se_idf),
     tolerance = 1e-10
   )
   expect_equal(
-    unname(as.matrix(md$iae)),
+    unname(as.matrix(md$iae)[, label_ch, drop = FALSE]),
     unname(snap$cal_score$se_iae),
     tolerance = 1e-10
   )

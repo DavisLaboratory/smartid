@@ -1,4 +1,53 @@
 #################################################
+#-----------------Helpers----------------------#
+#################################################
+
+## For each row i and each column k of `mat`, return the maximum of
+## `mat[i, -k]`. Vectorised O(G * K) replacement for the nested
+## `apply(mat, 1, function(x) max(x[names(x) != type]))` pattern used in
+## the multi-class branches of the labelled IDF/IAE helpers.
+rowwise_notin_max <- function(mat) {
+  stopifnot(!is.null(dim(mat)))
+  G <- nrow(mat)
+  K <- ncol(mat)
+  if (K == 1L) {
+    ## no "other" column exists; return -Inf to mark degenerate input
+    out <- matrix(-Inf, nrow = G, ncol = 1L, dimnames = dimnames(mat))
+    return(out)
+  }
+  row_max  <- sparseMatrixStats::rowMaxs(mat, na.rm = TRUE)
+  argmax   <- max.col(mat, ties.method = "first")
+  masked   <- mat
+  masked[cbind(seq_len(G), argmax)] <- -Inf
+  row_max2 <- sparseMatrixStats::rowMaxs(masked, na.rm = TRUE)
+  ## broadcast row_max across all K columns, then overwrite with row_max2
+  ## wherever column index == argmax (i.e. the excluded-self case).
+  notin <- matrix(row_max, nrow = G, ncol = K)
+  for (k in seq_len(K)) {
+    hit <- argmax == k
+    if (any(hit)) notin[hit, k] <- row_max2[hit]
+  }
+  dimnames(notin) <- dimnames(mat)
+  notin
+}
+
+## Sparse-preserving equivalent of `pmax(x - thres, 0)`. For dgCMatrix
+## we mutate the non-zero slot in place and drop structural zeros,
+## avoiding the dense allocation that `x[x < 0] <- 0` would trigger.
+## `thres == 0` short-circuits because scRNA-seq counts are already
+## non-negative, which is the common default path.
+pmax0_offset <- function(x, thres = 0) {
+  if (thres == 0) return(x)
+  if (methods::is(x, "sparseMatrix")) {
+    x@x <- pmax(x@x - thres, 0)
+    return(Matrix::drop0(x))
+  }
+  out <- x - thres
+  out[out < 0] <- 0
+  out
+}
+
+#################################################
 #-----------------TF variants------------------#
 #################################################
 
@@ -14,18 +63,27 @@
 #' @param expr a count matrix, features in row and cells in column
 #' @param log logical, if to do log-transformation
 #'
-#' @return a matrix of term/gene frequency
+#' @return a matrix of term/gene frequency. For a `dgCMatrix` input the
+#'     returned object preserves sparsity (`log1p(0) == 0`); dense input
+#'     returns a dense matrix.
 #'
 #' @examples
 #' data <- matrix(rpois(100, 2), 10, dimnames = list(1:10))
 #' smartid:::tf(data)
 tf <- function(expr, log = FALSE) {
-  t.f <- sweep(expr, 2, colSums(expr, na.rm = TRUE) + 0.01, FUN = "/")
-  if (log) {
-    t.f <- log1p(t.f)
+  ## Column sums: use Matrix-aware accessor so dgCMatrix stays sparse.
+  cs <- Matrix::colSums(expr, na.rm = TRUE) + 0.01
+  if (methods::is(expr, "sparseMatrix")) {
+    ## Right-multiplying by a diagonal with 1/cs scales each column
+    ## without materialising a dense copy. log1p preserves sparsity
+    ## because log1p(0) == 0.
+    out <- expr %*% Matrix::Diagonal(x = 1 / cs)
+    dimnames(out) <- dimnames(expr)
+  } else {
+    out <- sweep(expr, 2, cs, FUN = "/")
   }
-
-  return(t.f)
+  if (log) out <- log1p(out)
+  out
 }
 
 #################################################
@@ -155,22 +213,24 @@ idf_hdb <- function(expr, features = NULL, multi = TRUE,
                     thres = 0, minPts = 2, ...) {
   if (is.null(features)) features <- seq_len(nrow(expr))
 
-  ## initially compute naive tf-idf
-  # tf <- (edgeR::cpm(expr)/1e6)[features, , drop = FALSE]
-  tf <- sweep(expr, 2, colSums(expr, na.rm = TRUE), "/")[features, , drop = FALSE]
-  tfidf <- tf * idf(expr, features = features, thres = thres)
+  ## initially compute naive tf-idf (sparse-preserving via tf() helper)
+  tfidf <- tf(expr)[features, , drop = FALSE] *
+    idf(expr, features = features, thres = thres)
 
   ## cluster obs based on given features
-  cluster <- dbscan::hdbscan(t(tfidf), minPts = minPts, ...)$cluster
+  cluster <- dbscan::hdbscan(Matrix::t(tfidf), minPts = minPts, ...)$cluster
   ## factor cluster
   cluster <- factor(cluster)
 
-  idf <- idf_prob(
+  ## `idf_prob()` now returns a compact G x K matrix; `idf_hdb()` owns the
+  ## cluster labels and is not reachable from `cal_score_init()`, so we
+  ## expand here to keep the G x N external contract.
+  idf_compact <- idf_prob(
     expr = expr, features = features,
     label = cluster, multi = multi,
     thres = thres
   )
-  return(idf)
+  idf_compact[, as.character(cluster), drop = FALSE]
 }
 
 ## ------------------labeled--------------------##
@@ -213,9 +273,8 @@ idf_rf <- function(expr, features = NULL, label,
     )
   }, rep(1, nrow(df_n))) ## mean counts for each gene in the group
   if (multi == TRUE) {
-    mean_row_notin <- vapply(colnames(mean_row_in), function(type) {
-      apply(mean_row_in, 1, function(x) max(x[names(x) != type]))
-    }, rep(1, nrow(mean_row_in))) ## doc freq for each gene not in group for multi-class: max(mean(N in Gi))
+    ## G x K: row-wise max over "other" columns; O(G * K) vectorisation
+    mean_row_notin <- rowwise_notin_max(mean_row_in)
   } else {
     mean_row_notin <- vapply(unique(label), function(type) {
       sparseMatrixStats::rowMeans2(df_n[, label != type, drop = FALSE],
@@ -224,9 +283,11 @@ idf_rf <- function(expr, features = NULL, label,
     }, rep(1, nrow(df_n))) ## doc freq for each gene not in group for bi-class
   }
 
-  idf <- log1p((mean_row_in / (mean_row_notin + 1e-8))[, label, drop = FALSE]) ## IDF scores
-
-  return(idf)
+  ## Return compact G x K matrix; `cal_score_init()` handles per-group
+  ## broadcast so we never materialise a G x N copy via `[, label]`.
+  idf <- log1p(mean_row_in / (mean_row_notin + 1e-8))
+  colnames(idf) <- colnames(mean_row_in)
+  idf
 }
 
 ## labeled inverse document frequency: probability based
@@ -266,9 +327,8 @@ idf_prob <- function(expr, features = NULL, label,
     )
   }, rep(1, nrow(df_n))) ## mean counts for each gene in the group
   if (multi == TRUE) {
-    mean_row_notin <- vapply(colnames(mean_row_in), function(type) {
-      apply(mean_row_in, 1, function(x) max(x[names(x) != type]))
-    }, rep(1, nrow(mean_row_in))) ## doc freq for each gene not in group for multi-class: max(mean(N in Gi))
+    ## G x K: row-wise max over "other" columns; O(G * K) vectorisation
+    mean_row_notin <- rowwise_notin_max(mean_row_in)
   } else {
     mean_row_notin <- vapply(unique(label), function(type) {
       sparseMatrixStats::rowMeans2(df_n[, label != type, drop = FALSE],
@@ -277,7 +337,10 @@ idf_prob <- function(expr, features = NULL, label,
     }, rep(1, nrow(df_n))) ## doc freq for each gene not in group for bi-class
   }
 
-  idf <- log1p((mean_row_in^2 / (mean_row_notin + 1e-8))[, label, drop = FALSE]) ## IDF scores
+  ## Return compact G x K; `cal_score_init()` broadcasts per group.
+  idf <- log1p(mean_row_in^2 / (mean_row_notin + 1e-8))
+  colnames(idf) <- colnames(mean_row_in)
+  idf
 
   return(idf)
 }
@@ -352,11 +415,9 @@ iae <- function(expr, features = NULL, thres = 0) {
   if (is.null(features)) features <- seq_len(nrow(expr))
   n_obs <- ncol(expr) ## number of total obs
 
-  # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
-  expr_offset <- expr[features, , drop = FALSE] - thres ## subtract offset
-  expr_offset[expr_offset < 0] <- 0
-  s_row <- rowSums(expr_offset) ## total counts of feature i across all cells
+  expr_offset <- pmax0_offset(expr[features, , drop = FALSE], thres)
+  s_row <- Matrix::rowSums(expr_offset, na.rm = TRUE) ## per-feature total counts
 
   iae <- log1p(n_obs / (s_row + 1))
   return(iae)
@@ -384,13 +445,14 @@ iae <- function(expr, features = NULL, thres = 0) {
 iae_m <- function(expr, features = NULL, thres = 0) {
   if (is.null(features)) features <- seq_len(nrow(expr))
 
-  # thres <- 0
-  # thres <- sparseMatrixStats::rowQuantiles(expr, probs = 0.25, na.rm = TRUE)
-  expr_offset <- expr - thres ## subtract offset
-  expr_offset[expr_offset < 0] <- 0
-  s_row <- rowSums(expr_offset) ## total counts of feature i across all cells
-
-  s_max <- ifelse(expr_offset > 0, s_row, 0) |> sparseMatrixStats::colMaxs()
+  # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
+  expr_offset <- pmax0_offset(expr, thres)
+  s_row <- Matrix::rowSums(expr_offset, na.rm = TRUE) ## per-feature total counts
+  ## For each cell: max over features of s_row restricted to features
+  ## that are expressed > thres in that cell. `ifelse()` on the logical
+  ## mask preserves sparsity for dgCMatrix.
+  nonzero <- expr_offset > 0
+  s_max <- sparseMatrixStats::colMaxs(nonzero * s_row, na.rm = TRUE)
 
   iae <- matrix(1 / (1 + s_row), ncol = 1) %*% matrix(s_max, nrow = 1)
   dimnames(iae) <- dimnames(expr)
@@ -424,10 +486,8 @@ iae_sd <- function(expr, features = NULL, log = FALSE, thres = 0) {
 
   tfs <- tf(expr, log = log)
 
-  # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
-  expr_offset <- expr[features, , drop = FALSE] - thres ## subtract offset
-  expr_offset[expr_offset < 0] <- 0
+  expr_offset <- pmax0_offset(expr[features, , drop = FALSE], thres)
   s_row <- sparseMatrixStats::rowSums2(expr_offset, na.rm = TRUE) ## summed counts for each gene
   sd_row <- sparseMatrixStats::rowSds(tfs, na.rm = TRUE)
 
@@ -456,22 +516,23 @@ iae_hdb <- function(expr, features = NULL, multi = TRUE,
                     thres = 0, minPts = 2, ...) {
   if (is.null(features)) features <- seq_len(nrow(expr))
 
-  ## initially compute naive tf-idf
-  # tf <- (edgeR::cpm(expr)/1e6)[features, , drop = FALSE]
-  tf <- sweep(expr, 2, colSums(expr, na.rm = TRUE), "/")[features, , drop = FALSE]
-  tfidf <- tf * iae(expr, features = features, thres = thres)
+  ## initially compute naive tf-iae (sparse-preserving via tf() helper)
+  tfidf <- tf(expr)[features, , drop = FALSE] *
+    iae(expr, features = features, thres = thres)
 
   ## cluster obs based on given features
-  cluster <- dbscan::hdbscan(t(tfidf), minPts = minPts, ...)$cluster
+  cluster <- dbscan::hdbscan(Matrix::t(tfidf), minPts = minPts, ...)$cluster
   ## factor cluster
   cluster <- factor(cluster)
 
-  iae <- iae_prob(
+  ## Same rationale as `idf_hdb()`: expand G x K compact to G x N here
+  ## since cluster labels are not visible to `cal_score_init()`.
+  iae_compact <- iae_prob(
     expr = expr, features = features,
     label = cluster, multi = multi,
     thres = thres
   )
-  return(iae)
+  iae_compact[, as.character(cluster), drop = FALSE]
 }
 
 ## ------------------labeled--------------------##
@@ -501,8 +562,7 @@ iae_rf <- function(expr, features = NULL, label,
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
-  expr_offset <- expr[features, , drop = FALSE] - thres ## subtract offset
-  expr_offset[expr_offset < 0] <- 0
+  expr_offset <- pmax0_offset(expr[features, , drop = FALSE], thres)
 
   ## convert label into character in case problem for factor
   label <- as.character(label)
@@ -512,9 +572,7 @@ iae_rf <- function(expr, features = NULL, label,
     )
   }, rep(1, nrow(expr_offset))) ## mean counts for each gene in the group
   if (multi == TRUE) {
-    mean_row_notin <- vapply(colnames(mean_row_in), function(type) {
-      apply(mean_row_in, 1, function(x) max(x[names(x) != type]))
-    }, rep(1, nrow(mean_row_in))) ## mean counts for each gene not in group for multi-class: max(mean(N in Gi))
+    mean_row_notin <- rowwise_notin_max(mean_row_in)
   } else {
     mean_row_notin <- vapply(unique(label), function(type) {
       sparseMatrixStats::rowMeans2(expr_offset[, label != type, drop = FALSE],
@@ -523,8 +581,10 @@ iae_rf <- function(expr, features = NULL, label,
     }, rep(1, nrow(expr_offset))) ## mean counts for each gene not in group for bi-class
   }
 
-  iae <- log1p((mean_row_in / (mean_row_notin + 1e-8))[, label, drop = FALSE]) ## IDF scores
-  return(iae)
+  ## Return compact G x K; `cal_score_init()` broadcasts per group.
+  iae <- log1p(mean_row_in / (mean_row_notin + 1e-8))
+  colnames(iae) <- colnames(mean_row_in)
+  iae
 }
 
 ## labeled inverse average expression: probability based
@@ -553,8 +613,7 @@ iae_prob <- function(expr, features = NULL, label,
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
-  expr_offset <- expr[features, , drop = FALSE] - thres ## subtract offset
-  expr_offset[expr_offset < 0] <- 0
+  expr_offset <- pmax0_offset(expr[features, , drop = FALSE], thres)
 
   ## convert label into character in case problem for factor
   label <- as.character(label)
@@ -564,9 +623,7 @@ iae_prob <- function(expr, features = NULL, label,
     )
   }, rep(1, nrow(expr_offset))) ## mean counts for each gene in the group
   if (multi == TRUE) {
-    mean_row_notin <- vapply(colnames(mean_row_in), function(type) {
-      apply(mean_row_in, 1, function(x) max(x[names(x) != type]))
-    }, rep(1, nrow(mean_row_in))) ## mean counts for each gene not in group for multi-class: max(mean(N in Gi))
+    mean_row_notin <- rowwise_notin_max(mean_row_in)
   } else {
     mean_row_notin <- vapply(unique(label), function(type) {
       sparseMatrixStats::rowMeans2(expr_offset[, label != type, drop = FALSE],
@@ -575,8 +632,10 @@ iae_prob <- function(expr, features = NULL, label,
     }, rep(1, nrow(expr_offset))) ## mean counts for each gene not in group for bi-class
   }
 
-  iae <- log1p((mean_row_in^2 / (mean_row_notin + 1e-8))[, label, drop = FALSE]) ## IDF scores
-  return(iae)
+  ## Return compact G x K; `cal_score_init()` broadcasts per group.
+  iae <- log1p(mean_row_in^2 / (mean_row_notin + 1e-8))
+  colnames(iae) <- colnames(mean_row_in)
+  iae
 }
 
 ## labeled inverse average expression IGM
@@ -603,10 +662,8 @@ iae_prob <- function(expr, features = NULL, label,
 iae_igm <- function(expr, features = NULL, label, lambda = 7, thres = 0) {
   if (is.null(features)) features <- seq_len(nrow(expr))
 
-  # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
-  expr_offset <- expr[features, , drop = FALSE] - thres ## subtract offset
-  expr_offset[expr_offset < 0] <- 0
+  expr_offset <- pmax0_offset(expr[features, , drop = FALSE], thres)
 
   mean_row_in <- vapply(unique(label), function(type) {
     sparseMatrixStats::rowMeans2(expr_offset[, label == type, drop = FALSE],
