@@ -105,6 +105,26 @@
 <h2 class="page-header" data-toc-text="1.7.2" id="smartid-172">smartid 1.7.2<a class="anchor" aria-label="anchor" href="#smartid-172"></a></h2>
 <ul><li>Fix dplyr defunct.</li>
 </ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="development version" id="smartid-development-version">smartid (development version)<a class="anchor" aria-label="anchor" href="#smartid-development-version"></a></h2>
+<ul><li>Major memory and performance optimization for <code><a href="../reference/cal_score.html">cal_score()</a></code> and <code><a href="../reference/top_markers.html">top_markers()</a></code>. On a 20,000 gene x 100,000 cell sparse input peak memory drops from roughly 100 GB to a few GB, and <code><a href="../reference/top_markers.html">top_markers()</a></code> with the default <code><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian()</a></code> family runs in seconds instead of hours.</li>
+<li>
+<strong>Breaking change</strong>: <code><a href="../reference/cal_score.html">cal_score()</a></code> no longer stores the intermediate <code>tf</code>, <code>idf</code> and <code>iae</code> matrices in <code>metadata()</code> by default. Callers that relied on <code>metadata(se)$tf / $idf / $iae</code> (introduced in v1.1.1) must now pass <code>return.intermediate = TRUE</code>. When the flag is <code>TRUE</code>, the stored <code>idf</code> / <code>iae</code> for labelled methods (<code>prob</code>, <code>rf</code>) are now compact <code>G x K</code> matrices (columns = unique labels); expand with <code>md$idf[, as.character(label)]</code> to recover the legacy per-cell form.</li>
+<li>Internal refactor: labelled <code>idf_prob</code>, <code>idf_rf</code>, <code>iae_prob</code> and <code>iae_rf</code> helpers now return a compact <code>G x K</code> matrix. <code><a href="../reference/cal_score.html">cal_score()</a></code> composes the final score through per-group column-block multiplication, avoiding the materialisation of full <code>G x N</code> intermediates.</li>
+<li>
+<code><a href="../reference/cal_score.html">cal_score()</a></code> no longer forces dense conversion of <code>dgCMatrix</code> inputs; the score assay stays sparse throughout the pipeline when the input is sparse.</li>
+<li>
+<code><a href="../reference/tf.html">tf()</a></code>, <code><a href="../reference/idf_hdb.html">idf_hdb()</a></code>, <code><a href="../reference/iae_hdb.html">iae_hdb()</a></code> and all IAE helpers now preserve <code>dgCMatrix</code> sparsity by routing column scaling through <code><a href="https://rdrr.io/pkg/Matrix/man/Diagonal.html" class="external-link">Matrix::Diagonal</a></code> and replacing the densifying <code>x[x &lt; 0] &lt;- 0</code> pattern with <code>pmax0_offset()</code>.</li>
+<li>
+<code><a href="../reference/top_markers_glm.html">top_markers_glm()</a></code> has a vectorised closed-form least-squares fast path for the default <code><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian()</a></code> + identity link; non-gaussian families or rank-deficient designs automatically fall back to the legacy per-gene <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> loop with no behaviour change.</li>
+<li>
+<code><a href="../reference/top_markers_abs.html">top_markers_abs()</a></code> aggregates directly on the scored matrix via <code>sparseMatrixStats::rowMeans2 / rowMedians / rowMads</code>, removing the intermediate wide <code>data.frame</code> that previously reached tens of GB.</li>
+<li>
+<code><a href="../reference/scale_mgm.html">scale_mgm()</a></code> caches per-group column indices and collapses the two-step <code>(expr - mgm) / (sds + 1e-8)</code> into a single broadcast.</li>
+<li>The <code>multi = TRUE</code> branch of the labelled IDF/IAE helpers switched from an O(G * K^2) <code><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply()</a></code> to an O(G * K) top-1 + top-2 trick via the new <code>rowwise_notin_max()</code> helper.</li>
+<li>New <code>inst/bench/benchmark_smartid.R</code> micro-benchmark script; new <code>tests/testthat/test-numerical-equivalence.R</code> pins <code><a href="../reference/cal_score.html">cal_score()</a></code> and <code><a href="../reference/top_markers.html">top_markers()</a></code> outputs to a frozen pre-refactor snapshot at 1e-10 tolerance.</li>
+<li>No new dependencies; the refactor relies entirely on <code>Matrix</code>, <code>sparseMatrixStats</code> and base R.</li>
+</ul></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

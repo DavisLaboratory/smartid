@@ -69,7 +69,8 @@
 <span>  idf <span class="op">=</span> <span class="st">"prob"</span>,</span>
 <span>  iae <span class="op">=</span> <span class="st">"prob"</span>,</span>
 <span>  par.idf <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  par.iae <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  par.iae <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return.intermediate <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -102,10 +103,18 @@ be accessed using <code><a href="idf_iae_methods.html">idf_iae_methods()</a></co
 <dt id="arg-par-iae">par.iae<a class="anchor" aria-label="anchor" href="#arg-par-iae"></a></dt>
 <dd><p>other parameters for specified IAE methods</p></dd>
 
+
+<dt id="arg-return-intermediate">return.intermediate<a class="anchor" aria-label="anchor" href="#arg-return-intermediate"></a></dt>
+<dd><p>logical, if TRUE the returned list also contains
+the intermediate <code>tf</code>, <code>idf</code> and <code>iae</code> objects. Default <code>FALSE</code> keeps
+only the combined <code>score</code> to avoid the memory overhead of three extra
+feature-by-cell matrices on large inputs.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a list of combined score, tf, idf and iae</p>
+    <p>a list always containing <code>score</code>; when <code>return.intermediate = TRUE</code>
+the list additionally contains <code>tf</code>, <code>idf</code> and <code>iae</code>.</p>
     </div>
 
     <div id="ref-examples">
@@ -116,26 +125,6 @@ be accessed using <code><a href="idf_iae_methods.html">idf_iae_methods()</a></co
 <span class="r-in"><span>  par.idf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">label</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  par.iae <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">label</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>no non-missing arguments to max; returning -Inf</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $score</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1     0    0    0    0    0    0    0    0    0     0</span>
@@ -148,56 +137,6 @@ be accessed using <code><a href="idf_iae_methods.html">idf_iae_methods()</a></co
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8     0    0    0    0    0    0    0    0    0     0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9     0    0    0    0    0    0    0    0    0     0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10    0    0    0    0    0    0    0    0    0     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $tf</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]       [,2]       [,3]       [,4]       [,5]       [,6]       [,7]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.17427723 0.04443201 0.00000000 0.13969676 0.14948694 0.16698418 0.12508476</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.09093039 0.08697351 0.25583932 0.04876637 0.09234487 0.04443201 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.04649838 0.12777885 0.08001067 0.13969676 0.12132400 0.00000000 0.18221051</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.17427723 0.16698418 0.04080533 0.04876637 0.06250081 0.16698418 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.17427723 0.08697351 0.15409118 0.09526475 0.09234487 0.08697351 0.18221051</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.04649838 0.08697351 0.00000000 0.04876637 0.17687841 0.12777885 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.04649838 0.12777885 0.08001067 0.09526475 0.09234487 0.08697351 0.12508476</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.13347190 0.04443201 0.04080533 0.04876637 0.03173862 0.08697351 0.06449688</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.00000000 0.00000000 0.15409118 0.09526475 0.03173862 0.04443201 0.18221051</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.04649838 0.16698418 0.11773676 0.18223826 0.09234487 0.12777885 0.06449688</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          [,8]       [,9]      [,10]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.15410308 0.06058788 0.03635442</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.03277907 0.22301862 0.10532349</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.03277907 0.06058788 0.03635442</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.12512394 0.00000000 0.13810257</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.09527989 0.06058788 0.03635442</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.00000000 0.17175163 0.20060338</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.12512394 0.06058788 0.07143343</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.09527989 0.06058788 0.10532349</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.03277907 0.00000000 0.10532349</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.23631862 0.22301862 0.10532349</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $idf</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    A A A A A A A A A A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $iae</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    A A A A A A A A A A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0 0 0 0 0 0 0 0 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0 0 0 0 0 0 0 0 0 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

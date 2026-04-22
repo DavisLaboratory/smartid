@@ -106,28 +106,17 @@ class \(D\), \(n_{j\in D}\) is the total number of cells in class \(D\),
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fl">10</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">smartid</span><span class="fu">:::</span><span class="fu">idf_rf</span><span class="op">(</span><span class="va">data</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>, <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            B         B         A         B         A         B         A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.5596158 0.5596158 0.8472979 0.5596158 0.8472979 0.5596158 0.8472979</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.9162907 0.9162907 0.5108256 0.9162907 0.5108256 0.9162907 0.5108256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.6931472 0.6931472 0.6931472 0.6931472 0.6931472 0.6931472 0.6931472</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.6418539 0.6418539 0.7472144 0.6418539 0.7472144 0.6418539 0.7472144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.7884574 0.7884574 0.6061358 0.7884574 0.6061358 0.7884574 0.6061358</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.7884574 0.7884574 0.6061358 0.7884574 0.6061358 0.7884574 0.6061358</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.6418539 0.6418539 0.7472144 0.6418539 0.7472144 0.6418539 0.7472144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.6418539 0.6418539 0.7472144 0.6418539 0.7472144 0.6418539 0.7472144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.6418539 0.6418539 0.7472144 0.6418539 0.7472144 0.6418539 0.7472144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.5596158 0.5596158 0.8472979 0.5596158 0.8472979 0.5596158 0.8472979</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            A         A         A</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.8472979 0.8472979 0.8472979</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.5108256 0.5108256 0.5108256</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.6931472 0.6931472 0.6931472</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.7472144 0.7472144 0.7472144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.6061358 0.6061358 0.6061358</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.6061358 0.6061358 0.6061358</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.7472144 0.7472144 0.7472144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.7472144 0.7472144 0.7472144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.7472144 0.7472144 0.7472144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.8472979 0.8472979 0.8472979</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            B         A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.5596158 0.8472979</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.9162907 0.5108256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.6931472 0.6931472</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.6418539 0.7472144</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.7884574 0.6061358</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.7884574 0.6061358</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.6418539 0.7472144</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.6418539 0.7472144</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.6418539 0.7472144</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.5596158 0.8472979</span>
 </code></pre></div>
     </div>
   </div>
