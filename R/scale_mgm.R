@@ -17,51 +17,45 @@
 #' @examples
 #' scale_mgm(matrix(rnorm(100), 10), label = rep(letters[1:2], 5))
 scale_mgm <- function(expr, label, pooled.sd = FALSE) {
-  if (pooled.sd) {
-    ## compute pooled sds
-    sds <- row_pool_sds(expr, label)
-  } else {
-    ## compute overall sds
-    sds <- sparseMatrixStats::rowSds(expr, na.rm = TRUE)
+  ## Cache column indices per group once; the group-mean and pooled-SD
+  ## paths previously recomputed `label == i` inside every `vapply`
+  ## iteration, which is O(K * N) in scan cost.
+  idx_by_grp <- split(seq_len(ncol(expr)), label)
 
-    # ## compute group sds
-    # sds <- vapply(unique(label), \(i)
-    #               sparseMatrixStats::rowSds(expr[, label == i, drop = FALSE],
-    #                                         na.rm = TRUE),
-    #               rep(1, nrow(expr))
-    #        ) # get sds of each group
-    # sds <- sparseMatrixStats::rowMeans2(sds)
+  sds <- if (isTRUE(pooled.sd)) {
+    row_pool_sds_from_idx(expr, idx_by_grp)
+  } else {
+    sparseMatrixStats::rowSds(expr, na.rm = TRUE)
   }
 
-  ## compute group means
-  mgm <- vapply(
-    unique(label), \(i)
-    sparseMatrixStats::rowMeans2(expr[, label == i, drop = FALSE],
-      na.rm = TRUE
-    ),
-    rep(1, nrow(expr))
-  ) |> # get mean of each group
-    rowMeans(na.rm = TRUE) # get mean of group mean
+  # Compute per-group means, then average them to get the mean of group means (MGM).
+  group_means <- vapply(idx_by_grp, function(cols)
+    sparseMatrixStats::rowMeans2(expr[, cols, drop = FALSE], na.rm = TRUE),
+    numeric(nrow(expr)))
+  mgm <- rowMeans(group_means, na.rm = TRUE) # mean of per-group means
 
-  ## scale
-  expr <- (expr - mgm) / (sds + 1e-8)
-
-  # expr[is.na(expr)] <- 0 # assign 0 to NA when sd = 0
-
-  return(expr)
+  # scale
+  ## Single broadcast + single allocation: `(expr - mgm) * inv_sd`
+  ## collapses the prior two temporaries ((expr - mgm), then divide) into
+  ## one. Division-by-zero is guarded by the additive epsilon.
+  inv_sd <- 1 / (sds + 1e-8)
+  (expr - mgm) * inv_sd
 }
 
 
-## row-wise pooled SDs
-row_pool_sds <- function(expr, label) {
-  sds <- vapply(
-    unique(label), \(i)
-    sparseMatrixStats::rowVars(expr[, label == i, drop = FALSE], na.rm = TRUE),
-    rep(1, nrow(expr))
-  ) # get vars of each group
-  ng <- table(label)[unique(label)] # get group sizes in the same order
-  sds <- sds %*% cbind(ng - 1)
-  sds <- as.numeric(sqrt(sds / sum(ng - 1)))
+## Row-wise pooled SDs given pre-computed per-group column indices.
+row_pool_sds_from_idx <- function(expr, idx_by_grp) {
+  # Compute per-group variances, then combine them with the group sizes to get the pooled SD.
+  vars <- vapply(idx_by_grp, function(cols)
+    sparseMatrixStats::rowVars(expr[, cols, drop = FALSE], na.rm = TRUE),
+    numeric(nrow(expr)))
+  # Group sizes: number of columns in each group.
+  ng <- lengths(idx_by_grp)
+  as.numeric(sqrt((vars %*% cbind(ng - 1)) / sum(ng - 1)))
+}
 
-  return(sds)
+## Back-compat shim: preserves the old `row_pool_sds(expr, label)`
+## internal call signature in case any caller still uses it.
+row_pool_sds <- function(expr, label) {
+  row_pool_sds_from_idx(expr, split(seq_len(ncol(expr)), label))
 }
