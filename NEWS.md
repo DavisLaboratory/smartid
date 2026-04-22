@@ -46,7 +46,7 @@
 
 * Fix dplyr defunct.
 
-# smartid (development version)
+# smartid 1.7.3
 
 * Major memory and performance optimization for `cal_score()` and
   `top_markers()`. On a 20,000 gene x 100,000 cell sparse input peak
