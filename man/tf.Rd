@@ -12,7 +12,9 @@ tf(expr, log = FALSE)
 \item{log}{logical, if to do log-transformation}
 }
 \value{
-a matrix of term/gene frequency
+a matrix of term/gene frequency. For a \code{dgCMatrix} input the
+returned object preserves sparsity (\code{log1p(0) == 0}); dense input
+returns a dense matrix.
 }
 \description{
 compute term/feature frequency within each cell

@@ -77,6 +77,16 @@ top_markers_abs <- function(data, label, n = 10,
 
 #' calculate group mean score using glm and order genes based on scores difference
 #'
+#' @details
+#' When `family` is `gaussian()` with the identity link (the default) and
+#' the design matrix is full-rank, `top_markers_glm()` computes all per-
+#' gene label coefficients in a single closed-form least-squares solve
+#' via `Matrix::solve(crossprod(X), crossprod(X, t(data)))`, avoiding
+#' the per-gene `glm()` loop. For any other family, or a rank-deficient
+#' design, the function automatically falls back to the legacy
+#' `apply(data, 1, glm(...))` path, so results are unchanged for users
+#' who pass e.g. `family = Gamma()` or `family = poisson()`.
+#'
 #' @inheritParams scale_mgm
 #' @param data matrix, features in row and samples in column
 #' @param n integer, number of returned top genes for each group
