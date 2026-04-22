@@ -135,6 +135,8 @@ TF here stands for gene frequency, which is similar to CPM, while IDF represents
 
 Another advantage of `smartid` is that it can start with raw counts data, with no need for pre-processed data. And the scoring is quite fast.
 
+Starting from smartid 1.7.3, `cal_score()` no longer stores the intermediate `tf`, `idf` and `iae` matrices in `metadata()` by default, because on large inputs these objects can each match the full feature-by-cell score matrix in size and quickly dominate memory. When the intermediates are useful for inspection (as in this demo), pass `return.intermediate = TRUE` to restore the pre-1.7.3 behaviour.
+
 ```{r}
 ## compute score
 system.time(
@@ -144,11 +146,13 @@ system.time(
     idf = "prob",
     iae = "prob",
     par.idf = list(label = "Group"),
-    par.iae = list(label = "Group")
+    par.iae = list(label = "Group"),
+    return.intermediate = TRUE
   )
 )
 
-## score and tf,idf,iae all saved
+## score in assays; tf, idf and iae are stored in metadata()
+## because we opted in with return.intermediate = TRUE.
 assays(data_sim)
 names(metadata(data_sim))
 ```
@@ -278,11 +282,13 @@ system.time(
     tf = "logtf",
     idf = "sd",
     iae = "sd",
-    new.slot = "score_unlabel"
+    new.slot = "score_unlabel",
+    return.intermediate = TRUE
   )
 )
 
-## new score is saved and tf,idf,iae all updated
+## new score is saved; tf/idf/iae are updated in metadata because we
+## again opted in with return.intermediate = TRUE (default is FALSE).
 assays(data_sim)
 names(metadata(data_sim))
 ```
