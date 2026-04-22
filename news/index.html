@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">smartid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@
 <ul><li>Fix dplyr defunct.</li>
 </ul></div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="development version" id="smartid-development-version">smartid (development version)<a class="anchor" aria-label="anchor" href="#smartid-development-version"></a></h2>
+<h2 class="page-header" data-toc-text="1.7.3" id="smartid-173">smartid 1.7.3<a class="anchor" aria-label="anchor" href="#smartid-173"></a></h2>
 <ul><li>Major memory and performance optimization for <code><a href="../reference/cal_score.html">cal_score()</a></code> and <code><a href="../reference/top_markers.html">top_markers()</a></code>. On a 20,000 gene x 100,000 cell sparse input peak memory drops from roughly 100 GB to a few GB, and <code><a href="../reference/top_markers.html">top_markers()</a></code> with the default <code><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian()</a></code> family runs in seconds instead of hours.</li>
 <li>
 <strong>Breaking change</strong>: <code><a href="../reference/cal_score.html">cal_score()</a></code> no longer stores the intermediate <code>tf</code>, <code>idf</code> and <code>iae</code> matrices in <code>metadata()</code> by default. Callers that relied on <code>metadata(se)$tf / $idf / $iae</code> (introduced in v1.1.1) must now pass <code>return.intermediate = TRUE</code>. When the flag is <code>TRUE</code>, the stored <code>idf</code> / <code>iae</code> for labelled methods (<code>prob</code>, <code>rf</code>) are now compact <code>G x K</code> matrices (columns = unique labels); expand with <code>md$idf[, as.character(label)]</code> to recover the legacy per-cell form.</li>
