@@ -44,6 +44,16 @@ a tibble with feature names, group labels and ordered processed scores
 \description{
 calculate group mean score using glm and order genes based on scores difference
 }
+\details{
+When \code{family} is \code{gaussian()} with the identity link (the default) and
+the design matrix is full-rank, \code{top_markers_glm()} computes all per-
+gene label coefficients in a single closed-form least-squares solve
+via \code{Matrix::solve(crossprod(X), crossprod(X, t(data)))}, avoiding
+the per-gene \code{glm()} loop. For any other family, or a rank-deficient
+design, the function automatically falls back to the legacy
+\code{apply(data, 1, glm(...))} path, so results are unchanged for users
+who pass e.g. \code{family = Gamma()} or \code{family = poisson()}.
+}
 \examples{
 data <- matrix(rgamma(100, 2), 10, dimnames = list(1:10))
 top_markers_glm(data, label = rep(c("A", "B"), 5))

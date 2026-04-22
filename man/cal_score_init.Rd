@@ -10,7 +10,8 @@ cal_score_init(
   idf = "prob",
   iae = "prob",
   par.idf = NULL,
-  par.iae = NULL
+  par.iae = NULL,
+  return.intermediate = FALSE
 )
 }
 \arguments{
@@ -27,9 +28,15 @@ be accessed using \code{\link[=idf_iae_methods]{idf_iae_methods()}}}
 \item{par.idf}{other parameters for specified IDF methods}
 
 \item{par.iae}{other parameters for specified IAE methods}
+
+\item{return.intermediate}{logical, if TRUE the returned list also contains
+the intermediate \code{tf}, \code{idf} and \code{iae} objects. Default \code{FALSE} keeps
+only the combined \code{score} to avoid the memory overhead of three extra
+feature-by-cell matrices on large inputs.}
 }
 \value{
-a list of combined score, tf, idf and iae
+a list always containing \code{score}; when \code{return.intermediate = TRUE}
+the list additionally contains \code{tf}, \code{idf} and \code{iae}.
 }
 \description{
 Calculate score for each feature in each cell

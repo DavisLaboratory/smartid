@@ -14,7 +14,8 @@ cal_score(
   slot = "counts",
   new.slot = "score",
   par.idf = NULL,
-  par.iae = NULL
+  par.iae = NULL,
+  return.intermediate = FALSE
 )
 
 \S4method{cal_score}{AnyMatrix}(
@@ -23,7 +24,8 @@ cal_score(
   idf = "prob",
   iae = "prob",
   par.idf = NULL,
-  par.iae = NULL
+  par.iae = NULL,
+  return.intermediate = FALSE
 )
 
 \S4method{cal_score}{SummarizedExperiment}(
@@ -34,7 +36,8 @@ cal_score(
   slot = "counts",
   new.slot = "score",
   par.idf = NULL,
-  par.iae = NULL
+  par.iae = NULL,
+  return.intermediate = FALSE
 )
 }
 \arguments{
@@ -57,6 +60,13 @@ optional, default 'score'}
 \item{par.idf}{other parameters for specified IDF methods}
 
 \item{par.iae}{other parameters for specified IAE methods}
+
+\item{return.intermediate}{logical, if TRUE also return or store the
+intermediate \code{tf}, \code{idf} and \code{iae} matrices. Defaults to FALSE since
+these objects have the same dimension as the input expression matrix
+and can dominate memory usage on large datasets. Set to TRUE to
+restore the pre-1.7.3 behavior where intermediates were kept in
+\code{metadata()} of the SummarizedExperiment output.}
 }
 \value{
 A list of matrices or se object containing combined score
