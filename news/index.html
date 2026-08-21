@@ -152,6 +152,21 @@
 <code>SVT_SparseMatrix</code> from the SparseArray package, which current SingleCellExperiment readers emit, is still rejected; it is not a <code>Matrix</code> subclass and supporting it would add a dependency.</li>
 </ul></div>
 </div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.9.2" id="smartid-192">smartid 1.9.2<a class="anchor" aria-label="anchor" href="#smartid-192"></a></h2>
+<ul><li>All the main wrapper functions keep the same usage.</li>
+</ul><div class="section level3">
+<h3 id="performance-1-9-2">Performance<a class="anchor" aria-label="anchor" href="#performance-1-9-2"></a></h3>
+<ul><li>
+<code><a href="../reference/top_markers.html">top_markers()</a></code> no longer scales the full feature-by-cell matrix. Row centring densifies a <code>dgCMatrix</code> by construction, and that dense intermediate was the single largest allocation in the pipeline. The scaling is now deferred to the reduced G x K / K x G statistic: <code><a href="../reference/scale_mgm.html">scale_mgm()</a></code> applies a per-row affine map with a strictly positive scale, and every statistic downstream of it is affine-equivariant, so scaling the reduced result is the same operation on a matrix thousands of times smaller. On a 5000 x 3000 input at 3% non-zero this is 9-18x faster and uses 10-17x less memory for sparse input, and roughly 1.2x faster with 1.4x less memory for dense input.</li>
+<li>
+<code>mad</code> and the 1-vs-max beta contrast are location-invariant, so they take the scale factor only; <code>mean</code>, <code>median</code> and the raw label coefficients take both terms.</li>
+<li>
+<code><a href="../reference/scale_mgm.html">scale_mgm()</a></code> itself is unchanged, including its return class. The new <code>row_scaling_params()</code> holds the centre and inverse SD both it and the deferred path use, so the two cannot drift apart.</li>
+<li>Scores are unchanged. <code>median</code> and <code>mad</code> are bitwise identical; the <code>mean</code> and glm paths agree to within 1e-15, the round-off expected from reassociating the arithmetic, and the selected marker sets were identical across every scaling, aggregation, batch and softmax combination tested.</li>
+<li>The deferral applies only where <code>fit_label_betas()</code> takes the closed-form solve. A non-identity link is not affine in the response, and a rank-deficient design (a batch or donor covariate nested inside the label) is rejected by the closed form, so both cases fall back to the previous materialised route with no change in behaviour.</li>
+</ul></div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
