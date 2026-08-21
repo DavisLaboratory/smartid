@@ -26,7 +26,13 @@ gs_score_init <- function(score, features = NULL) {
   stopifnot("less than 2 features are in score rows!" = length(features) > 1)
 
   ## calculate mean score of features
-  m_score <- colMeans(score[features, , drop = FALSE], na.rm = TRUE)
+  ## `sparseMatrixStats` for an ordinary matrix and to the sparse method for 
+  ## a dgCMatrix. `base::colMeans()` rejects any Matrix object outright
+  ## ("'x' must be an array of at least two dimensions").
+  m_score <- sparseMatrixStats::colMeans2(
+    score[features, , drop = FALSE],
+    na.rm = TRUE
+  )
   return(m_score)
 }
 

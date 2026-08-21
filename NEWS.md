@@ -90,3 +90,58 @@
   tolerance.
 * No new dependencies; the refactor relies entirely on `Matrix`,
   `sparseMatrixStats` and base R.
+
+# smartid 1.9.1
+
+## Bug fixes
+
+* Completed the sparse-matrix support started in 1.7.1. The IAE branch
+  had been converted but the IDF branch had not, so `cal_score()` still
+  aborted on a `dgCMatrix` for four of the eight `idf_iae_methods()`
+  with `'x' must be an array of at least two dimensions`. `idf()`,
+  `idf_m()` and `idf_sd()` now use `sparseMatrixStats::rowSums2()`, and
+  `idf_m()` masks with `(expr > thres) * n_sub` instead of `ifelse()`,
+  which silently drops `dim` on a sparse logical matrix. Affected
+  methods: `standard`, `m`, `sd` and `hdb`.
+* `gs_score_init()` used `base::colMeans()` and therefore rejected all
+  sparse input, which also broke `gs_score()` and `ova_score_boxplot()`.
+  It now uses `sparseMatrixStats::colMeans2()`.
+* `iae_sd()` took row SDs over the whole matrix instead of the requested
+  `features`, so with a `features` subset it returned `nrow(expr)`
+  values instead of `length(features)` and the closing `log1p()`
+  silently recycled a mismatched vector. Values were wrong for any
+  subset other than the leading contiguous rows. `idf_sd()` was already
+  correct; the two now match.
+* `top_markers(use.glm = FALSE, method = "median" | "mad")` failed on
+  sparse input. Row centring turns a `dgCMatrix` into a dense
+  `dgeMatrix`, for which `sparseMatrixStats` carries no `rowMedians()`
+  or `rowMads()` method. The scaling step now returns an ordinary matrix
+  once sparsity is gone, which costs nothing because the data is already
+  dense at that point.
+* `AnyMatrix` named only `matrix` and `dgCMatrix`, so `dgRMatrix`,
+  `dgTMatrix` and `dgeMatrix` inputs failed with "unable to find an
+  inherited method". The class union now uses the `Matrix` virtual
+  class, covering every representation that package defines.
+
+## Testing
+
+* New `tests/testthat/test-sparse-parity.R`: parameterised dense vs
+  `dgCMatrix` parity across all eight IDF/IAE methods, every internal
+  helper, the `features` subset paths, `gs_score()`, `scale_mgm()` and
+  seven `top_markers()` configurations.
+* New `tests/testthat/test-idf-iae-oracles.R`: the IDF/IAE formulas
+  re-implemented independently in base R, guarding dense values across
+  the sparse conversion without shipping a snapshot file.
+
+## Known issues
+
+* `top_markers(family = poisson())` fails with `length of 'dimnames'
+  [1] not equal to array extent`. This is unrelated to sparsity and
+  affects dense input equally: the default `scale = TRUE` produces
+  negative values, `glm.fit()` then errors for every gene, and the
+  unnamed fallback coefficients leave `fit_label_betas_glm_loop()`
+  returning a zero-row matrix. Deciding the correct behaviour is
+  deferred (*to fit poisson distribution, should not use scale=TRUE*).
+* `SVT_SparseMatrix` from the SparseArray package, which current
+  SingleCellExperiment readers emit, is still rejected; it is not a
+  `Matrix` subclass and supporting it would add a dependency.

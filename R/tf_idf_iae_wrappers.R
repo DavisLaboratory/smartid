@@ -116,7 +116,12 @@ idf <- function(expr, features = NULL, thres = 0) {
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
-  n_sub <- rowSums(expr[features, , drop = FALSE] > thres) ## num of obs contain feature i > thres
+  ## `expr > thres` is an lgCMatrix for sparse input, which
+  ## `base::rowSums()` rejects; the re-exported generic handles both
+  ## backends. Mirrors the accessor already used by `iae_sd()`.
+  n_sub <- sparseMatrixStats::rowSums2(
+    expr[features, , drop = FALSE] > thres
+  ) ## num of obs contain feature i > thres
 
   idf <- log1p(n_obs / (n_sub + 1))
   return(idf)
@@ -146,9 +151,16 @@ idf_m <- function(expr, features = NULL, thres = 0) {
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr, probs = 0.25, na.rm = TRUE)
-  n_sub <- rowSums(expr > thres) ## num of obs contain feature i > thres
+  above <- expr > thres
+  n_sub <- sparseMatrixStats::rowSums2(above) ## num of obs contain feature i > thres
 
-  n_max <- ifelse(expr > thres, n_sub, 0) |> sparseMatrixStats::colMaxs()
+  ## For each cell: max over the features expressed in that cell of their
+  ## document frequency. The arithmetic mask replaces `ifelse()`, which
+  ## silently coerces an lgCMatrix to a plain logical vector and so drops
+  ## `dim`. Multiplying instead keeps both the dimensions and the sparsity.
+  ## `n_sub` is a count, hence non-negative, so the two forms agree
+  ## elementwise. Same form as `iae_m()`.
+  n_max <- sparseMatrixStats::colMaxs(above * n_sub)
 
   idf <- matrix(1 / (1 + n_sub), ncol = 1) %*% matrix(n_max, nrow = 1)
   dimnames(idf) <- dimnames(expr)
@@ -185,7 +197,10 @@ idf_sd <- function(expr, features = NULL, log = FALSE, thres = 0) {
 
   # thres <- 0
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
-  n_sub <- rowSums(expr[features, , drop = FALSE] > thres) ## num of obs contain feature i > thres
+  ## Matrix-aware accessor: see the note in `idf()`.
+  n_sub <- sparseMatrixStats::rowSums2(
+    expr[features, , drop = FALSE] > thres
+  ) ## num of obs contain feature i > thres
   sd_row <- sparseMatrixStats::rowSds(tfs[features, , drop = FALSE], na.rm = TRUE)
 
   idf <- log1p(sd_row * n_obs / (n_sub + 1))
@@ -489,7 +504,10 @@ iae_sd <- function(expr, features = NULL, log = FALSE, thres = 0) {
   # thres <- sparseMatrixStats::rowQuantiles(expr[features, , drop = FALSE], probs = 0.25, na.rm = TRUE)
   expr_offset <- pmax0_offset(expr[features, , drop = FALSE], thres)
   s_row <- sparseMatrixStats::rowSums2(expr_offset, na.rm = TRUE) ## summed counts for each gene
-  sd_row <- sparseMatrixStats::rowSds(tfs, na.rm = TRUE)
+  sd_row <- sparseMatrixStats::rowSds(
+    tfs[features, , drop = FALSE],
+    na.rm = TRUE
+  )
 
   iae <- log1p(sd_row * n_obs / (s_row + 1)) ## IDF scores
   return(iae)

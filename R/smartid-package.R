@@ -4,7 +4,7 @@
 #' @import graphics
 #' @importFrom SummarizedExperiment SummarizedExperiment assay colData
 #' @importFrom utils globalVariables stack
-#' @importClassesFrom Matrix dgCMatrix
+#' @importClassesFrom Matrix Matrix dgCMatrix
 NULL
 
 #' Scoring and Marker Selection method based on modified TF-IDF

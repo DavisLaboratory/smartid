@@ -165,12 +165,30 @@ row_scale_zmean <- function(data) {
 
 ## Single entry point for the three `scale` / `use.mgm` branches shared
 ## between `top_markers_abs()` and `top_markers_glm()`.
+##
+## Both scaling destroys sparsity by construction and turns a dgCMatrix into a 
+## dense dgeMatrix. `sparseMatrixStats` only carries methods for the sparse
+## representations, so `rowSds()`, `rowVars()`, `rowMedians()`, `rowMads()` and
+## `rowMaxs()` all fail on a dgeMatrix, which broke
+## `top_markers(use.glm = FALSE, method = "median" | "mad")`.
+## Collapsing to an ordinary matrix here costs nothing -- the data is
+## already dense at this point -- and restores full method coverage.
 apply_row_scaling <- function(data, label, scale, use.mgm, pooled.sd) {
   if (!isTRUE(scale)) return(data)
-  if (isTRUE(use.mgm)) {
-    return(scale_mgm(expr = data, label = label, pooled.sd = pooled.sd))
+  scaled <- if (isTRUE(use.mgm)) {
+    scale_mgm(expr = data, label = label, pooled.sd = pooled.sd)
+  } else {
+    row_scale_zmean(data)
   }
-  row_scale_zmean(data)
+  densify_scaled(scaled)
+}
+
+## Coerce a dense `Matrix` result to an ordinary matrix, leaving anything
+## already sparse or already base untouched.
+densify_scaled <- function(x) {
+  if (methods::is(x, "sparseMatrix")) return(x) # keep sparse
+  if (methods::is(x, "Matrix")) return(as.matrix(x)) # convert dense (e.g. dgeMatrix) to ordinary matrix 
+  x
 }
 
 ## G x K matrix of per-group row statistics. Uses `sparseMatrixStats` so
