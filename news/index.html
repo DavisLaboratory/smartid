@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">smartid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.0</span>
       </span>
     </div>
 
@@ -125,6 +125,33 @@
 <li>New <code>inst/bench/benchmark_smartid.R</code> micro-benchmark script; new <code>tests/testthat/test-numerical-equivalence.R</code> pins <code><a href="../reference/cal_score.html">cal_score()</a></code> and <code><a href="../reference/top_markers.html">top_markers()</a></code> outputs to a frozen pre-refactor snapshot at 1e-10 tolerance.</li>
 <li>No new dependencies; the refactor relies entirely on <code>Matrix</code>, <code>sparseMatrixStats</code> and base R.</li>
 </ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.9.1" id="smartid-191">smartid 1.9.1<a class="anchor" aria-label="anchor" href="#smartid-191"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-1-9-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-9-1"></a></h3>
+<ul><li>Completed the sparse-matrix support started in 1.7.1. The IAE branch had been converted but the IDF branch had not, so <code><a href="../reference/cal_score.html">cal_score()</a></code> still aborted on a <code>dgCMatrix</code> for four of the eight <code><a href="../reference/idf_iae_methods.html">idf_iae_methods()</a></code> with <code>'x' must be an array of at least two dimensions</code>. <code><a href="../reference/idf.html">idf()</a></code>, <code><a href="../reference/idf_m.html">idf_m()</a></code> and <code><a href="../reference/idf_sd.html">idf_sd()</a></code> now use <code>sparseMatrixStats::rowSums2()</code>, and <code><a href="../reference/idf_m.html">idf_m()</a></code> masks with <code>(expr &gt; thres) * n_sub</code> instead of <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code>, which silently drops <code>dim</code> on a sparse logical matrix. Affected methods: <code>standard</code>, <code>m</code>, <code>sd</code> and <code>hdb</code>.</li>
+<li>
+<code><a href="../reference/gs_score_init.html">gs_score_init()</a></code> used <code><a href="https://rdrr.io/r/base/colSums.html" class="external-link">base::colMeans()</a></code> and therefore rejected all sparse input, which also broke <code><a href="../reference/gs_score.html">gs_score()</a></code> and <code><a href="../reference/ova_score_boxplot.html">ova_score_boxplot()</a></code>. It now uses <code>sparseMatrixStats::colMeans2()</code>.</li>
+<li>
+<code><a href="../reference/iae_sd.html">iae_sd()</a></code> took row SDs over the whole matrix instead of the requested <code>features</code>, so with a <code>features</code> subset it returned <code>nrow(expr)</code> values instead of <code>length(features)</code> and the closing <code><a href="https://rdrr.io/r/base/Log.html" class="external-link">log1p()</a></code> silently recycled a mismatched vector. Values were wrong for any subset other than the leading contiguous rows. <code><a href="../reference/idf_sd.html">idf_sd()</a></code> was already correct; the two now match.</li>
+<li>
+<code>top_markers(use.glm = FALSE, method = "median" | "mad")</code> failed on sparse input. Row centring turns a <code>dgCMatrix</code> into a dense <code>dgeMatrix</code>, for which <code>sparseMatrixStats</code> carries no <code>rowMedians()</code> or <code>rowMads()</code> method. The scaling step now returns an ordinary matrix once sparsity is gone, which costs nothing because the data is already dense at that point.</li>
+<li>
+<code>AnyMatrix</code> named only <code>matrix</code> and <code>dgCMatrix</code>, so <code>dgRMatrix</code>, <code>dgTMatrix</code> and <code>dgeMatrix</code> inputs failed with “unable to find an inherited method”. The class union now uses the <code>Matrix</code> virtual class, covering every representation that package defines.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="testing-1-9-1">Testing<a class="anchor" aria-label="anchor" href="#testing-1-9-1"></a></h3>
+<ul><li>New <code>tests/testthat/test-sparse-parity.R</code>: parameterised dense vs <code>dgCMatrix</code> parity across all eight IDF/IAE methods, every internal helper, the <code>features</code> subset paths, <code><a href="../reference/gs_score.html">gs_score()</a></code>, <code><a href="../reference/scale_mgm.html">scale_mgm()</a></code> and seven <code><a href="../reference/top_markers.html">top_markers()</a></code> configurations.</li>
+<li>New <code>tests/testthat/test-idf-iae-oracles.R</code>: the IDF/IAE formulas re-implemented independently in base R, guarding dense values across the sparse conversion without shipping a snapshot file.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="known-issues-1-9-1">Known issues<a class="anchor" aria-label="anchor" href="#known-issues-1-9-1"></a></h3>
+<ul><li>
+<code>top_markers(family = poisson())</code> fails with <code>length of 'dimnames'   [1] not equal to array extent</code>. This is unrelated to sparsity and affects dense input equally: the default <code>scale = TRUE</code> produces negative values, <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm.fit()</a></code> then errors for every gene, and the unnamed fallback coefficients leave <code>fit_label_betas_glm_loop()</code> returning a zero-row matrix. Deciding the correct behaviour is deferred (<em>to fit poisson distribution, should not use scale=TRUE</em>).</li>
+<li>
+<code>SVT_SparseMatrix</code> from the SparseArray package, which current SingleCellExperiment readers emit, is still rejected; it is not a <code>Matrix</code> subclass and supporting it would add a dependency.</li>
+</ul></div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -139,7 +166,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

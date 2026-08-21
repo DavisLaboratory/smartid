@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">smartid</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.0</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@ Biology, University of Melbourne, Parkville, VIC 3010,
 Australia<br><a class="author_email" href="mailto:#"></a><a href="mailto:chen.j@wehi.edu.au" class="email">chen.j@wehi.edu.au</a>
       </address>
                   
-            <h4 data-toc-skip class="date">22 Apr 2026</h4>
+            <h4 data-toc-skip class="date">21 Aug 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/DavisLaboratory/smartid/blob/devel/vignettes/smartid_Demo.Rmd" class="external-link"><code>vignettes/smartid_Demo.Rmd</code></a></small>
       <div class="hidden name"><code>smartid_Demo.Rmd</code></div>
@@ -286,7 +286,7 @@ behaviour.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.163   0.003   0.166</span></span>
+<span><span class="co">#&gt;   0.167   0.001   0.168</span></span>
 <span></span>
 <span><span class="co">## score in assays; tf, idf and iae are stored in metadata()</span></span>
 <span><span class="co">## because we opted in with return.intermediate = TRUE.</span></span>
@@ -435,28 +435,28 @@ DEGs, with a couple of missing genes in Group 1 and 2. But as what we
 showed above, those genes only exhibit low mean expression across all
 cells, thus not confident enough to be selected as markers.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/hms-dbmi/UpSetR" class="external-link">UpSetR</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hms-dbmi/UpSetR" class="external-link">UpSetR</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/UpSetR/man/upset.html" class="external-link">upset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/UpSetR/man/fromList.html" class="external-link">fromList</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/methods/slot.html" class="external-link">slot</a></span><span class="op">(</span><span class="va">data_sim</span>, <span class="st">"metadata"</span><span class="op">)</span><span class="op">$</span><span class="va">up_markers</span>, <span class="va">marker_ls</span><span class="op">)</span><span class="op">)</span>, nsets <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: `aes_string()` was deprecated in ggplot2 3.0.0.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use tidy evaluation idioms with `aes()`.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> See also `vignette("ggplot2-in-packages")` for more information.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">UpSetR</span> package.</span></span>
-<span><span class="co">#&gt;   Please report the issue to the authors.</span></span>
+<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/hms-dbmi/UpSetR/issues&gt;</span>.</span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
 <span><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">UpSetR</span> package.</span></span>
-<span><span class="co">#&gt;   Please report the issue to the authors.</span></span>
+<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/hms-dbmi/UpSetR/issues&gt;</span>.</span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
 <span><span class="co">#&gt; Warning: The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use the `linewidth` argument instead.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">UpSetR</span> package.</span></span>
-<span><span class="co">#&gt;   Please report the issue to the authors.</span></span>
+<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/hms-dbmi/UpSetR/issues&gt;</span>.</span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
@@ -521,7 +521,7 @@ need for data pre-processing, which is quite convenient and fast.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.171   0.012   0.185</span></span>
+<span><span class="co">#&gt;   0.167   0.015   0.182</span></span>
 <span></span>
 <span><span class="co">## new score is saved; tf/idf/iae are updated in metadata because we</span></span>
 <span><span class="co">## again opted in with return.intermediate = TRUE (default is FALSE).</span></span>
@@ -599,53 +599,52 @@ group from all others.</p>
 <span><span class="co">#&gt; [8] base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt;  [1] UpSetR_1.4.0                scater_1.34.1              </span></span>
-<span><span class="co">#&gt;  [3] scuttle_1.16.0              ggplot2_4.0.2              </span></span>
+<span><span class="co">#&gt;  [1] UpSetR_1.4.1                scater_1.34.1              </span></span>
+<span><span class="co">#&gt;  [3] scuttle_1.16.0              ggplot2_4.0.3              </span></span>
 <span><span class="co">#&gt;  [5] splatter_1.30.0             SingleCellExperiment_1.28.1</span></span>
 <span><span class="co">#&gt;  [7] SummarizedExperiment_1.36.0 Biobase_2.66.0             </span></span>
 <span><span class="co">#&gt;  [9] GenomicRanges_1.58.0        GenomeInfoDb_1.42.3        </span></span>
 <span><span class="co">#&gt; [11] IRanges_2.40.1              S4Vectors_0.44.0           </span></span>
 <span><span class="co">#&gt; [13] BiocGenerics_0.52.0         MatrixGenerics_1.18.1      </span></span>
-<span><span class="co">#&gt; [15] matrixStats_1.5.0           smartid_1.7.3              </span></span>
+<span><span class="co">#&gt; [15] matrixStats_1.5.0           smartid_1.9.0              </span></span>
 <span><span class="co">#&gt; [17] BiocStyle_2.34.0           </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;   [1] gridExtra_2.3            rlang_1.2.0              magrittr_2.0.5          </span></span>
+<span><span class="co">#&gt;   [1] gridExtra_2.3.1          rlang_1.3.0              magrittr_2.0.5          </span></span>
 <span><span class="co">#&gt;   [4] tidytext_0.4.3           otel_0.2.0               compiler_4.4.2          </span></span>
 <span><span class="co">#&gt;   [7] systemfonts_1.3.2        vctrs_0.7.3              pkgconfig_2.0.3         </span></span>
 <span><span class="co">#&gt;  [10] crayon_1.5.3             fastmap_1.2.0            backports_1.5.1         </span></span>
 <span><span class="co">#&gt;  [13] XVector_0.46.0           labeling_0.4.3           utf8_1.2.6              </span></span>
 <span><span class="co">#&gt;  [16] rmarkdown_2.31           UCSC.utils_1.2.0         ggbeeswarm_0.7.3        </span></span>
-<span><span class="co">#&gt;  [19] ragg_1.5.2               purrr_1.2.2              xfun_0.57               </span></span>
+<span><span class="co">#&gt;  [19] ragg_1.5.2               purrr_1.2.2              xfun_0.60               </span></span>
 <span><span class="co">#&gt;  [22] zlibbioc_1.52.0          cachem_1.1.0             beachmat_2.22.0         </span></span>
 <span><span class="co">#&gt;  [25] jsonlite_2.0.0           SnowballC_0.7.1          DelayedArray_0.32.0     </span></span>
-<span><span class="co">#&gt;  [28] BiocParallel_1.40.2      broom_1.0.12             irlba_2.3.7             </span></span>
-<span><span class="co">#&gt;  [31] parallel_4.4.2           R6_2.6.1                 bslib_0.10.0            </span></span>
-<span><span class="co">#&gt;  [34] stringi_1.8.7            RColorBrewer_1.1-3       car_3.1-5               </span></span>
-<span><span class="co">#&gt;  [37] jquerylib_0.1.4          Rcpp_1.1.1-1             bookdown_0.46           </span></span>
+<span><span class="co">#&gt;  [28] BiocParallel_1.40.2      broom_1.0.13             irlba_2.3.7             </span></span>
+<span><span class="co">#&gt;  [31] parallel_4.4.2           R6_2.6.1                 bslib_0.12.0            </span></span>
+<span><span class="co">#&gt;  [34] stringi_1.8.9            RColorBrewer_1.1-3       car_3.1-5               </span></span>
+<span><span class="co">#&gt;  [37] jquerylib_0.1.4          Rcpp_1.1.2               bookdown_0.47           </span></span>
 <span><span class="co">#&gt;  [40] knitr_1.51               mixtools_2.0.0.1         splines_4.4.2           </span></span>
-<span><span class="co">#&gt;  [43] Matrix_1.7-5             tidyselect_1.2.1         abind_1.4-8             </span></span>
+<span><span class="co">#&gt;  [43] Matrix_1.7-6             tidyselect_1.2.1         abind_1.4-8             </span></span>
 <span><span class="co">#&gt;  [46] yaml_2.3.12              viridis_0.6.5            codetools_0.2-20        </span></span>
-<span><span class="co">#&gt;  [49] plyr_1.8.9               lattice_0.22-9           tibble_3.3.1            </span></span>
-<span><span class="co">#&gt;  [52] withr_3.0.2              S7_0.2.1-1               evaluate_1.0.5          </span></span>
-<span><span class="co">#&gt;  [55] survival_3.8-6           desc_1.4.3               mclust_6.1.2            </span></span>
+<span><span class="co">#&gt;  [49] plyr_1.8.9               lattice_0.23-1           tibble_3.3.1            </span></span>
+<span><span class="co">#&gt;  [52] withr_3.0.3              S7_0.2.2                 evaluate_1.0.5          </span></span>
+<span><span class="co">#&gt;  [55] survival_3.8-9           desc_1.4.3               mclust_6.1.3            </span></span>
 <span><span class="co">#&gt;  [58] kernlab_0.9-33           pillar_1.11.1            BiocManager_1.30.27     </span></span>
-<span><span class="co">#&gt;  [61] ggpubr_0.6.3             carData_3.0-6            janeaustenr_1.0.0       </span></span>
-<span><span class="co">#&gt;  [64] checkmate_2.3.4          plotly_4.12.0            generics_0.1.4          </span></span>
+<span><span class="co">#&gt;  [61] ggpubr_1.0.0             carData_3.0-6            janeaustenr_1.0.0       </span></span>
+<span><span class="co">#&gt;  [64] checkmate_2.3.4          plotly_4.12.1            generics_0.1.4          </span></span>
 <span><span class="co">#&gt;  [67] sparseMatrixStats_1.18.0 scales_1.4.0             glue_1.8.1              </span></span>
-<span><span class="co">#&gt;  [70] lazyeval_0.2.3           tools_4.4.2              data.table_1.18.2.1     </span></span>
-<span><span class="co">#&gt;  [73] BiocNeighbors_2.0.1      tokenizers_0.3.0         ScaledMatrix_1.14.0     </span></span>
-<span><span class="co">#&gt;  [76] locfit_1.5-9.12          ggsignif_0.6.4           fs_2.1.0                </span></span>
-<span><span class="co">#&gt;  [79] grid_4.4.2               tidyr_1.3.2              nlme_3.1-169            </span></span>
-<span><span class="co">#&gt;  [82] GenomeInfoDbData_1.2.13  beeswarm_0.4.0           BiocSingular_1.22.0     </span></span>
-<span><span class="co">#&gt;  [85] vipor_0.4.7              Formula_1.2-5            cli_3.6.6               </span></span>
-<span><span class="co">#&gt;  [88] rsvd_1.0.5               textshaping_1.0.5        segmented_2.2-1         </span></span>
-<span><span class="co">#&gt;  [91] S4Arrays_1.6.0           viridisLite_0.4.3        dplyr_1.2.1             </span></span>
-<span><span class="co">#&gt;  [94] gtable_0.3.6             rstatix_0.7.3            sass_0.4.10             </span></span>
-<span><span class="co">#&gt;  [97] digest_0.6.39            SparseArray_1.6.2        ggrepel_0.9.8           </span></span>
-<span><span class="co">#&gt; [100] htmlwidgets_1.6.4        farver_2.1.2             htmltools_0.5.9         </span></span>
-<span><span class="co">#&gt; [103] pkgdown_2.2.0            lifecycle_1.0.5          httr_1.4.8              </span></span>
-<span><span class="co">#&gt; [106] MASS_7.3-65</span></span></code></pre></div>
+<span><span class="co">#&gt;  [70] tools_4.4.2              data.table_1.18.4        BiocNeighbors_2.0.1     </span></span>
+<span><span class="co">#&gt;  [73] tokenizers_0.3.0         ScaledMatrix_1.14.0      locfit_1.5-9.12         </span></span>
+<span><span class="co">#&gt;  [76] ggsignif_0.6.4           fs_2.1.0                 grid_4.4.2              </span></span>
+<span><span class="co">#&gt;  [79] tidyr_1.3.2              nlme_3.1-170             GenomeInfoDbData_1.2.13 </span></span>
+<span><span class="co">#&gt;  [82] beeswarm_0.4.0           BiocSingular_1.22.0      vipor_0.4.7             </span></span>
+<span><span class="co">#&gt;  [85] Formula_1.2-6            cli_3.6.6                rsvd_1.0.5              </span></span>
+<span><span class="co">#&gt;  [88] textshaping_1.0.5        segmented_2.2-1          S4Arrays_1.6.0          </span></span>
+<span><span class="co">#&gt;  [91] viridisLite_0.4.3        dplyr_1.2.1              gtable_0.3.6            </span></span>
+<span><span class="co">#&gt;  [94] rstatix_1.1.0            sass_0.4.10              digest_0.6.39           </span></span>
+<span><span class="co">#&gt;  [97] SparseArray_1.6.2        ggrepel_0.9.8            htmlwidgets_1.6.4       </span></span>
+<span><span class="co">#&gt; [100] farver_2.1.2             htmltools_0.5.9          pkgdown_2.2.1           </span></span>
+<span><span class="co">#&gt; [103] lifecycle_1.0.5          httr_1.4.8               MASS_7.3-66</span></span></code></pre></div>
 </div>
   </div>
 
@@ -664,7 +663,7 @@ group from all others.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>
