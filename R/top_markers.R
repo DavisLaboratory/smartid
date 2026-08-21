@@ -65,12 +65,18 @@ top_markers_abs <- function(data, label, n = 10,
                             softmax = TRUE,
                             tau = 1) {
   method <- match.arg(method)
-  data <- apply_row_scaling(data, label, scale, use.mgm, pooled.sd)
+  ## Deferred row scaling: every statistic below is affine-equivariant,
+  ## so scaling the G x K result matches scaling the G x N input while
+  ## leaving a dgCMatrix sparse. `mad` is location-invariant and takes
+  ## the scale only.
+  params <- if (isTRUE(scale))
+    row_scaling_params(data, label, use.mgm, pooled.sd)
 
   ## G x K aggregation goes straight to a long data.frame; skips the
   ## legacy `t() |> as.data.frame() |> summarise_all()` path which
   ## materialised a dense N x G frame (tens of GB on large inputs).
   agg  <- aggregate_rows_by_group(data, label, method)
+  agg  <- apply_deferred_scaling(agg, params, centre = method != "mad")
   long <- long_format_from_group_matrix(agg)
   finalize_top_markers(long, n = n, softmax = softmax, tau = tau)
 }
@@ -114,13 +120,30 @@ top_markers_glm <- function(data, label, n = 10,
   label <- factor(label)
   if (!is.null(batch)) batch <- factor(batch)
 
-  data  <- apply_row_scaling(data, label, scale, use.mgm, pooled.sd)
   # ## log score
   # if(log == TRUE) {
   #   data <- log(data + 1e-8)
   # }
-  betas <- fit_label_betas(data, label, batch, family)      # K x G
+  ## Defer the row scaling for the closed-form solve: OLS is linear in
+  ## the response and the 1-vs-max contrast below cancels the location
+  ## term, so scaling the K x G contrast matches scaling the G x N input
+  ## while leaving a dgCMatrix sparse. Any other family needs the scaled
+  ## matrix itself, a non-identity link not being affine in the response.
+  betas <- if (isTRUE(scale) && identical(family$family, "gaussian") && identical(family$link, "identity")) {
+    try(fit_label_betas_closed_form(data, label, batch), silent = TRUE)
+  }
+  params <- NULL
+  if (is.matrix(betas)) {
+    ## closed form succeeded, so scale the reduced contrast instead
+    params <- row_scaling_params(data, label, use.mgm, pooled.sd)
+  } else {
+    ## not deferrable -- another family, or a design the closed form
+    ## rejected as rank-deficient. Scale up front, exactly as before.
+    data  <- apply_row_scaling(data, label, scale, use.mgm, pooled.sd)
+    betas <- fit_label_betas(data, label, batch, family)    # K x G
+  }
   betas <- betas_to_logfc_1v_max(betas)                     # K x G
+  betas <- apply_deferred_scaling(betas, params, margin = 2L, centre = FALSE)
   rownames(betas) <- levels(label)
 
   long <- data.frame(.dot = rownames(betas), betas,
@@ -155,12 +178,24 @@ tanh <- function(x) 2 / (1 + exp(-2 * x)) - 1
 ## zero or NA SD are collapsed to zero, matching the
 ## `data[is.na(data)] <- 0` guard from the legacy path.
 row_scale_zmean <- function(data) {
-  mu <- sparseMatrixStats::rowMeans2(data, na.rm = TRUE)
-  sd <- sparseMatrixStats::rowSds(data,   na.rm = TRUE)
-  sd[sd == 0 | is.na(sd)] <- 1
-  out <- (data - mu) / sd
+  p   <- row_scaling_params(data, use.mgm = FALSE)
+  out <- (data - p$centre) * p$inv_sd
   out[is.na(out)] <- 0
   out
+}
+
+## Apply the deferred row scaling to a reduced statistic matrix. `params`
+## is NULL when `scale = FALSE`, leaving the input untouched. `margin` is
+## the dimension indexing features: 1 for the G x K aggregate, 2 for the
+## K x G beta matrix. `centre = FALSE` covers the location-invariant
+## statistics -- `mad`, and the 1-vs-max beta contrast, where the centre
+## cancels between the two terms.
+apply_deferred_scaling <- function(x, params, margin = 1L, centre = TRUE) {
+  if (is.null(params)) return(x)
+  if (isTRUE(centre)) x <- sweep(x, margin, params$centre, "-")
+  x <- sweep(x, margin, params$inv_sd, "*")
+  if (isTRUE(params$na_zero)) x[is.na(x)] <- 0
+  x
 }
 
 ## Single entry point for the three `scale` / `use.mgm` branches shared

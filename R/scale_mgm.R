@@ -17,6 +17,37 @@
 #' @examples
 #' scale_mgm(matrix(rnorm(100), 10), label = rep(letters[1:2], 5))
 scale_mgm <- function(expr, label, pooled.sd = FALSE) {
+  p <- row_scaling_params(expr, label, pooled.sd = pooled.sd)
+
+  # scale
+  ## Single broadcast + single allocation: `(expr - centre) * inv_sd`
+  ## collapses the prior two temporaries ((expr - centre), then divide)
+  ## into one. Division-by-zero is guarded by the additive epsilon.
+  (expr - p$centre) * p$inv_sd
+}
+
+## Per-row centre and inverse SD that `scale_mgm()` / `row_scale_zmean()`
+## apply, computed without building the scaled matrix.
+##
+## Row centring turns a dgCMatrix into a dense dgeMatrix, so
+## `top_markers_abs()` and `top_markers_glm()` defer the map to the
+## reduced G x K / K x G statistic instead of applying it to the full
+## G x N input. Keeping the parameters in one place stops the deferred
+## and materialised routes from drifting apart.
+row_scaling_params <- function(expr, label = NULL, use.mgm = TRUE,
+                               pooled.sd = FALSE) {
+  if (!isTRUE(use.mgm)) {
+    ## Rows with zero or NA SD are left unscaled; `row_scale_zmean()`
+    ## then collapses them to zero via its `is.na()` guard.
+    sds <- sparseMatrixStats::rowSds(expr, na.rm = TRUE)
+    sds[sds == 0 | is.na(sds)] <- 1
+    return(list(
+      centre = sparseMatrixStats::rowMeans2(expr, na.rm = TRUE),
+      inv_sd = 1 / sds,
+      na_zero = TRUE
+    ))
+  }
+
   ## Cache column indices per group once; the group-mean and pooled-SD
   ## paths previously recomputed `label == i` inside every `vapply`
   ## iteration, which is O(K * N) in scan cost.
@@ -32,14 +63,12 @@ scale_mgm <- function(expr, label, pooled.sd = FALSE) {
   group_means <- vapply(idx_by_grp, function(cols)
     sparseMatrixStats::rowMeans2(expr[, cols, drop = FALSE], na.rm = TRUE),
     numeric(nrow(expr)))
-  mgm <- rowMeans(group_means, na.rm = TRUE) # mean of per-group means
 
-  # scale
-  ## Single broadcast + single allocation: `(expr - mgm) * inv_sd`
-  ## collapses the prior two temporaries ((expr - mgm), then divide) into
-  ## one. Division-by-zero is guarded by the additive epsilon.
-  inv_sd <- 1 / (sds + 1e-8)
-  (expr - mgm) * inv_sd
+  list(
+    centre = rowMeans(group_means, na.rm = TRUE), # mean of per-group means
+    inv_sd = 1 / (sds + 1e-8),
+    na_zero = FALSE
+  )
 }
 
 

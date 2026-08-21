@@ -145,3 +145,37 @@
 * `SVT_SparseMatrix` from the SparseArray package, which current
   SingleCellExperiment readers emit, is still rejected; it is not a
   `Matrix` subclass and supporting it would add a dependency.
+
+# smartid 1.9.2
+
+* All the main wrapper functions keep the same usage.
+
+## Performance
+
+* `top_markers()` no longer scales the full feature-by-cell matrix.
+  Row centring densifies a `dgCMatrix` by construction, and that dense
+  intermediate was the single largest allocation in the pipeline.
+  The scaling is now deferred to the reduced G x K / K x G
+  statistic: `scale_mgm()` applies a per-row affine map with a strictly
+  positive scale, and every statistic downstream of it is
+  affine-equivariant, so scaling the reduced result is the same
+  operation on a matrix thousands of times smaller. On a
+  5000 x 3000 input at 3% non-zero this is 9-18x faster and uses
+  10-17x less memory for sparse input, and roughly 1.2x faster with
+  1.4x less memory for dense input.
+* `mad` and the 1-vs-max beta contrast are location-invariant, so they
+  take the scale factor only; `mean`, `median` and the raw label
+  coefficients take both terms.
+* `scale_mgm()` itself is unchanged, including its return class. The
+  new `row_scaling_params()` holds the centre and inverse SD both it
+  and the deferred path use, so the two cannot drift apart.
+* Scores are unchanged. `median` and `mad` are bitwise identical; the
+  `mean` and glm paths agree to within 1e-15, the round-off expected
+  from reassociating the arithmetic, and the selected marker sets were
+  identical across every scaling, aggregation, batch and softmax
+  combination tested.
+* The deferral applies only where `fit_label_betas()` takes the
+  closed-form solve. A non-identity link is not affine in the response,
+  and a rank-deficient design (a batch or donor covariate nested inside
+  the label) is rejected by the closed form, so both cases fall back to
+  the previous materialised route with no change in behaviour.

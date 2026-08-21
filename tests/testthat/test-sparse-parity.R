@@ -327,6 +327,92 @@ invisible(lapply(TOP_MARKERS_CASES, function(case) {
 }))
 
 ## ---------------------------------------------------------------------
+## 6b. Deferred row scaling
+## ---------------------------------------------------------------------
+
+## `top_markers_abs()` and `top_markers_glm()` scale the reduced
+## G x K / K x G statistic rather than the G x N input, which is what
+## keeps a dgCMatrix sparse. The reference below is the materialised
+## route it replaced: scale the full matrix first, then reduce. Sparse
+## vs dense parity alone cannot catch a mistake that moves both routes
+## together, so the identity is pinned directly.
+
+invisible(lapply(c("mean", "median", "mad"), function(method) {
+  test_that(paste0("deferred scaling matches materialised: ", method), {
+    fx     <- sparse_fixture()
+    params <- smartid:::row_scaling_params(fx$sparse, fx$label)
+    scaled <- smartid:::apply_row_scaling(fx$sparse, fx$label,
+                                          TRUE, TRUE, FALSE)
+    expect_equal(
+      smartid:::apply_deferred_scaling(
+        smartid:::aggregate_rows_by_group(fx$sparse, fx$label, method),
+        params, centre = method != "mad"
+      ),
+      smartid:::aggregate_rows_by_group(scaled, fx$label, method),
+      tolerance = 1e-10
+    )
+  })
+}))
+
+test_that("deferred scaling matches materialised: glm 1-vs-max contrast", {
+  fx     <- sparse_fixture()
+  lab    <- factor(fx$label)
+  params <- smartid:::row_scaling_params(fx$sparse, lab)
+  scaled <- smartid:::apply_row_scaling(fx$sparse, lab, TRUE, TRUE, FALSE)
+
+  got <- smartid:::apply_deferred_scaling(
+    smartid:::betas_to_logfc_1v_max(
+      smartid:::fit_label_betas_closed_form(fx$sparse, lab, NULL)
+    ),
+    params, margin = 2L, centre = FALSE
+  )
+  want <- smartid:::betas_to_logfc_1v_max(
+    smartid:::fit_label_betas_closed_form(scaled, lab, NULL)
+  )
+  expect_equal(unname(got), unname(want), tolerance = 1e-10)
+})
+
+## Covariate designs crossed with the label keep the closed-form fast
+## path; one nested inside the label is rank-deficient, so the closed
+## form declines and the materialised fallback takes over. Both routes
+## must land on the same scores.
+BATCH_CASES <- list(
+  list(label = "no batch",      batch = function(n) NULL),
+  list(label = "two levels",    batch = function(n)
+    rep(c("b1", "b2"), length.out = n)),
+  list(label = "four levels",   batch = function(n)
+    rep(c("b1", "b2", "b3", "b4"), length.out = n)),
+  list(label = "batch x donor", batch = function(n) as.character(
+    interaction(rep(c("b1", "b2"), length.out = n),
+                rep(c("d1", "d2", "d3"), each = 4, length.out = n),
+                drop = TRUE))),
+  list(label = "confounded with label", batch = function(n)
+    paste0("blk_", rep(c("A", "B", "C"), length.out = n)))
+)
+
+invisible(lapply(BATCH_CASES, function(case) {
+  test_that(paste0("top_markers glm matches dense with batch: ",
+                   case$label), {
+    fx  <- sparse_fixture(G = 60L, N = 36L)
+    bat <- case$batch(ncol(fx$sparse))
+    got  <- top_markers(fx$sparse, label = fx$label, n = 5, batch = bat)
+    want <- top_markers(fx$dense,  label = fx$label, n = 5, batch = bat)
+    expect_top_markers_equal(got, want)
+  })
+}))
+
+## Guarantees the fallback branch above is genuinely exercised: if this
+## design ever became full rank, the confounded case would silently stop
+## covering the materialised route.
+test_that("a label-confounded design makes the closed form decline", {
+  fx  <- sparse_fixture(G = 60L, N = 36L)
+  bat <- factor(paste0("blk_", fx$label))
+  expect_null(
+    smartid:::fit_label_betas_closed_form(fx$sparse, factor(fx$label), bat)
+  )
+})
+
+## ---------------------------------------------------------------------
 ## 7. SummarizedExperiment carrying a sparse assay
 ## ---------------------------------------------------------------------
 
